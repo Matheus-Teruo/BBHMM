@@ -13,7 +13,6 @@ import java.util.*;
 @Table(name = "user")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id @GeneratedValue(generator = "UUID")
@@ -29,10 +28,9 @@ public class User implements UserDetails {
     private String fullname;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Pix pixKey;
+    private Pix pix;
 
-    @OneToMany(mappedBy = "payer", cascade = CascadeType.ALL)
-    private List<Bill> bills = new ArrayList<>();
+    @Column()
 
     @ManyToMany(mappedBy = "users")
     private Set<Event> events = new HashSet<>();

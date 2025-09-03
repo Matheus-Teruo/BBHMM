@@ -1,12 +1,11 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
-import com.BBHMM.backend.BBHMM.models.Event;
-import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.EventCreateRequest;
 import com.BBHMM.backend.BBHMM.models.request.EventUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.response.EventResponse;
+import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,26 +23,28 @@ public class EventController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody EventCreateRequest request) {
+    public ResponseEntity<EventResponse> createEvent(@RequestBody EventCreateRequest request) {
         var event = service.createEvent(request);
 
-        return ResponseEntity.ok(event);
+        return ResponseEntity.ok(new EventResponse(event));
     }
 
     @GetMapping
-    public ResponseEntity<List<Event>> listEvents() {
-        return ResponseEntity.ok(service.listEvent());
+    public ResponseEntity<List<EventResponse>> listEvents() {
+        var response = service.listEvent().stream().map(EventResponse::new).toList();
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping
-    public ResponseEntity<Event> updateEvent(@RequestBody EventUpdateRequest request) {
+    public ResponseEntity<EventResponse> updateEvent(@RequestBody EventUpdateRequest request) {
         var event = service.updateEvent(request);
 
-        return ResponseEntity.ok(event);
+        return ResponseEntity.ok(new EventResponse(event));
     }
 
     @GetMapping("/{uuid}/users")
-    public ResponseEntity<List<User>> listUsersFromEvent(@PathVariable UUID uuid) {
-        return ResponseEntity.ok(userService.findParticipantsByEventUuid(uuid));
+    public ResponseEntity<List<UserResponse>> listUsersFromEvent(@PathVariable UUID uuid) {
+        var response = userService.findParticipantsByEventUuid(uuid).stream().map(UserResponse::new).toList();
+        return ResponseEntity.ok(response);
     }
 }

@@ -30,7 +30,7 @@ public class Event {
     )
     private Set<User> users = new HashSet<>();
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", orphanRemoval = true)
     private List<Bill> bills = new ArrayList<>();
 
     public Event(EventCreateRequest request) {

@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.models;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -9,7 +10,6 @@ import lombok.*;
 @Table(name = "participants")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Participants {
 
     @Id @GeneratedValue(generator = "UUID")
@@ -23,9 +23,20 @@ public class Participants {
     @JoinColumn(name = "uuid_bill", nullable = false)
     private Bill bill;
 
+    @Setter
     @Column(nullable = false)
-    private Double paidValue = 0.0;
+    private BigDecimal value = BigDecimal.ZERO;
 
+    @Setter
+    @Column(name = "paid_value", nullable = false)
+    private BigDecimal paidValue = BigDecimal.ZERO;
+
+    @Setter
     @Column(nullable = false)
     private Boolean paid = false;
+
+    public Participants(User user, Bill bill) {
+        this.user = user;
+        this.bill = bill;
+    }
 }

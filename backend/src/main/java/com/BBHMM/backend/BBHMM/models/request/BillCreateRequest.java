@@ -1,10 +1,9 @@
 package com.BBHMM.backend.BBHMM.models.request;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.util.UUID;
 
 public record BillCreateRequest(
     @NotNull(message = "Nome de usuário é necessário")

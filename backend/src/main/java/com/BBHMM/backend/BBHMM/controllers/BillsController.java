@@ -1,8 +1,8 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
-import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.request.BillCreateRequest;
 import com.BBHMM.backend.BBHMM.models.request.BillUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.response.BillResponse;
 import com.BBHMM.backend.BBHMM.services.BillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +19,21 @@ public class BillsController {
     private final BillService service;
 
     @PostMapping
-    public ResponseEntity<Bill> createBill(@RequestBody BillCreateRequest request) {
-        return ResponseEntity.ok(service.createBill(request));
+    public ResponseEntity<BillResponse> createBill(@RequestBody BillCreateRequest request) {
+        var bill = service.createBill(request);
+        return ResponseEntity.ok(new BillResponse(bill));
     }
 
     @GetMapping("/{eventUuid}")
-    public ResponseEntity<List<Bill>> listBills(@PathVariable UUID eventUuid) {
-        return ResponseEntity.ok(service.listBillsByEvent(eventUuid));
+    public ResponseEntity<List<BillResponse>> listBills(@PathVariable UUID eventUuid) {
+        var response = service.listBillsByEvent(eventUuid).stream().map(BillResponse::new).toList();
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping
-    public ResponseEntity<Bill> updateBill(@RequestBody BillUpdateRequest request) {
+    public ResponseEntity<BillResponse> updateBill(@RequestBody BillUpdateRequest request) {
         var bill = service.updateBill(request);
 
-        return ResponseEntity.ok(bill);
+        return ResponseEntity.ok(new BillResponse(bill));
     }
 }

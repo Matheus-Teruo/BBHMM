@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import com.BBHMM.backend.BBHMM.models.request.BillCreateRequest;
+import com.BBHMM.backend.BBHMM.models.request.BillUpdateRequest;
 
 @Entity
 @Table(name = "bills")
@@ -29,11 +30,12 @@ public class Bill {
     private Event event;
 
     @Column(nullable = false)
-    private Double paidValue = 0.0;
+    private BigDecimal paidValue = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private Boolean paid = false;
 
+    @Setter
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participants> participants = new ArrayList<>();
 
@@ -41,5 +43,11 @@ public class Bill {
         this.value = request.value();
         this.event = event;
         this.payer = user;
+    }
+
+    public void update(BillUpdateRequest request) {
+        if(request.value() != null) {
+            this.value = request.value();
+        }
     }
 }

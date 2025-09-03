@@ -1,6 +1,7 @@
 package com.BBHMM.backend.BBHMM.models.request;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ public record BillUpdateRequest(
     @Positive(message = "Valor deve ser positivo")
     BigDecimal value,
 
-    UUID participantsUuid
+    @NotNull(message = "Lista de participantes é necessário")
+    List<UUID> listPartUuids
 ) {   
 }

@@ -1,18 +1,23 @@
 package com.BBHMM.backend.BBHMM.services;
 
-import org.springframework.stereotype.Service;
-
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
+import com.BBHMM.backend.BBHMM.models.Participants;
+import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.BillCreateRequest;
 import com.BBHMM.backend.BBHMM.models.request.BillUpdateRequest;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
-
+import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +56,8 @@ public class BillService {
     public Bill updateBill(BillUpdateRequest request) {
         var bill = safeTakeBillByUuid(request.uuid());
 
-        
+        bill.update(request);
+        updateParticipants(bill, request);
 
         return bill;
     }
@@ -59,4 +65,41 @@ public class BillService {
     public void deleteBill() {
 
     }
+
+    @Transactional
+    public void updateParticipants(Bill bill, BillUpdateRequest request) {
+        List<Participants> currentParticipants = bill.getParticipants();
+
+        Set<UUID> newUuids = new HashSet<>(request.listPartUuids());
+        Set<UUID> currentUuids = currentParticipants.stream()
+                .map(p -> p.getUser().getUuid())
+                .collect(Collectors.toSet());
+
+        List<Participants> toRemove = currentParticipants.stream()
+                .filter(p -> !newUuids.contains(p.getUser().getUuid()))
+                .toList();
+
+        currentParticipants.removeAll(toRemove);
+
+        List<Participants> toAdd = newUuids.stream()
+                .filter(uuid -> !currentUuids.contains(uuid))
+                .map(uuid -> {
+                    User user = userService.safeTakeUserByUuid(uuid);
+                    Participants p = new Participants(user, bill);
+                    return p;
+                })
+                .toList();
+
+        currentParticipants.addAll(toAdd);
+
+        BigDecimal share = request.value().divide(BigDecimal.valueOf(currentParticipants.size()), RoundingMode.HALF_UP);
+
+        for (Participants p : currentParticipants) {
+            p.setPaidValue(share);
+            p.setPaid(false);
+        }
+
+        bill.setParticipants(currentParticipants);
+    }
+
 }

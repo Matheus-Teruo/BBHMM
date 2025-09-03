@@ -36,6 +36,7 @@ CREATE TABLE participants (
     uuid CHAR(36) PRIMARY KEY,
     uuid_user CHAR(36) NOT NULL,
     uuid_bill CHAR(36) NOT NULL,
+    value DECIMAL(10,2) DEFAULT 0,
     paid_value DECIMAL(10,2) DEFAULT 0,
     paid BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_participants_user FOREIGN KEY (uuid_user) REFERENCES user(uuid),

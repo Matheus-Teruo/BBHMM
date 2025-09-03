@@ -22,6 +22,6 @@ public record UserUpdateRequest(
     @Pattern(regexp = "^[\\p{L} ]*$", message = "Seu nome completo só deve conter letras e espaço")
     String fullname,
 
-    PixUpdateRequest listPix
+    PixUpdateRequest pix
 ) {
 }

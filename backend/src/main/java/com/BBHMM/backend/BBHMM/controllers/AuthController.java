@@ -1,9 +1,9 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
-import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.UserCreateRequest;
+import com.BBHMM.backend.BBHMM.models.request.UserLoginRequest;
+import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.UserService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +16,18 @@ public class AuthController {
     private final UserService service;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody UserCreateRequest request) {
+    public ResponseEntity<UserResponse> signUp(@RequestBody UserCreateRequest request) {
         var user = service.createUser(request);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(new UserResponse(user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginRequest) {
+    public ResponseEntity<String> login(@RequestBody UserLoginRequest request) {
         return ResponseEntity.ok("fake-jwt-token");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        return ResponseEntity.ok("fake-jwt-token");
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.noContent().build();
     }
 }
