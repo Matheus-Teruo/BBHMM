@@ -1,4 +1,4 @@
-package com.BBHMM.backend.BBHMM.configs.security;
+package com.BBHMM.backend.BBHMM.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

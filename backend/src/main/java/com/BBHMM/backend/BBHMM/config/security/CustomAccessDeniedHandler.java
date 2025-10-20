@@ -1,4 +1,4 @@
-package com.BBHMM.backend.BBHMM.configs.security;
+package com.BBHMM.backend.BBHMM.config.security;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

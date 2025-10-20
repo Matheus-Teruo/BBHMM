@@ -1,4 +1,4 @@
-package com.BBHMM.backend.BBHMM.configs.security;
+package com.BBHMM.backend.BBHMM.config.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

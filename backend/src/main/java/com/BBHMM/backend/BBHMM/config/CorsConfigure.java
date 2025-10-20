@@ -1,4 +1,4 @@
-package com.BBHMM.backend.BBHMM.configs;
+package com.BBHMM.backend.BBHMM.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

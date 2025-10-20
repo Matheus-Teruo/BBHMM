@@ -1,4 +1,4 @@
-package com.BBHMM.backend.BBHMM.configs.security;
+package com.BBHMM.backend.BBHMM.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
