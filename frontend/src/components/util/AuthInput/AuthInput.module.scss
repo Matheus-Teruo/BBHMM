@@ -1,0 +1,83 @@
+@use "@styles/variables" as *;
+
+.inputGroup {
+  position: relative;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  border-bottom: solid 1px;
+  box-sizing: border-box;
+  border-color: $color-gray-600;
+  background: $color-gray-000;
+
+  label {
+    color: $color-gray-600;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    margin-right: -3px;
+  }
+
+  input {
+    height: 24px;
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+  }
+
+  &.unfocOK {
+    border-color: $color-accepted;
+    transition: border-color 0.4s;
+
+    label {
+      color: $color-accepted;
+      transition: color 0.4s;
+    }
+
+    input {
+      color: $color-accepted;
+      transition: color 0.4s;
+    }
+  }
+
+  &.unfocNO {
+    border-color: $color-unaccepted;
+    transition: border-color 0.4s;
+
+    label {
+      color: $color-unaccepted;
+      transition: color 0.4s;
+    }
+
+    input {
+      color: $color-unaccepted;
+      transition: color 0.4s;
+    }
+  }
+
+  &:focus-within {
+    border-color: $color-secundary-3;
+
+    label {
+      color: $color-secundary-3;
+    }
+
+    input {
+      color: $color-secundary-3;
+    }
+  }
+
+  .messageError {
+    z-index: 20;
+    font-size: 0.75rem;
+    position: absolute;
+    right: 6px;
+    top: 30px;
+    color: $color-primary-4;
+    background-color: $color-primary-1;
+    padding: 2px 5px;
+    max-width: 200px;
+    border-radius: $border-radius;
+  }
+}

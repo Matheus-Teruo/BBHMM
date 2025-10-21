@@ -1,10 +1,16 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import AlertProvider from "@context/AlertContext/AlertContext";
+import UserProvider from "@context/UserContext/UserContext";
+import App from "./App";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <AlertProvider>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </AlertProvider>
   </StrictMode>,
-)
+);
