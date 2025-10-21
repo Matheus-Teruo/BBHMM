@@ -1,8 +1,4 @@
-import {
-  regexLeterNumber,
-  regexLeterSpace,
-  regexPassword,
-} from "@/utils/regex";
+import { regexLeterNumber, regexLeterSpace, regexPassword } from "@/util/regex";
 import { LoginUser, SignupUser } from "@data/User";
 
 type SignupAction =

@@ -1,5 +1,5 @@
 import styles from "./AuthMain.module.scss";
-import Logo from "@/assets/image/LogoStoreControl.png";
+import Logo from "@/assets/image/BBHMM.png";
 
 function AuthMain({ children }: { children: React.ReactNode }) {
   return (
