@@ -24,7 +24,7 @@ const useUserService = () => {
     [handleApiError],
   );
 
-  const signupVoluntary = useCallback(
+  const signupUser = useCallback(
     async (user: SignupUser): Promise<User | Message | null> =>
       safeRequest(() =>
         api.post<User>("user/signup", user).then((res) => res.data),
@@ -32,7 +32,7 @@ const useUserService = () => {
     [api, safeRequest],
   );
 
-  const loginVoluntary = useCallback(
+  const loginUser = useCallback(
     async (user: LoginUser): Promise<User | Message | null> =>
       safeRequest(() =>
         api.post<User>("user/login", user).then((res) => res.data),
@@ -46,15 +46,15 @@ const useUserService = () => {
     [api],
   );
 
-  const logoutVoluntary = useCallback(async (): Promise<void> => {
+  const logoutUser = useCallback(async (): Promise<void> => {
     await safeRequest(() => api.post<void>("/user/logout").then(() => {}));
   }, [api, safeRequest]);
 
   return {
-    signupVoluntary,
-    loginVoluntary,
+    signupUser,
+    loginUser,
     getUser,
-    logoutVoluntary,
+    logoutUser,
   };
 };
 

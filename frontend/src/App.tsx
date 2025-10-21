@@ -1,7 +1,7 @@
+import "./App.module.scss";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useState, useEffect } from "react";
-import "./App.css";
-import { isUserUnlogged } from "./util/checkAuthentication";
+import { isUserLogged } from "./util/checkAuthentication";
 import AuthMain from "./components/auth/AuthMain";
 import Login from "./components/auth/Login";
 import SignUp from "./components/auth/Signup";
@@ -17,7 +17,7 @@ function App() {
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (isUserUnlogged(user)) {
+    if (isUserLogged(user)) {
       setLogged(Logged.LOGGED);
     }
   }, [user]);
@@ -32,11 +32,11 @@ function App() {
     </div>
   ) : logged === Logged.LOGIN ? (
     <AuthMain>
-      <Login />
+      <Login signupRedirect={() => setLogged(Logged.SIGNUP)} />
     </AuthMain>
   ) : (
     <AuthMain>
-      <SignUp />
+      <SignUp loginRedirect={() => setLogged(Logged.LOGIN)} />
     </AuthMain>
   );
 }

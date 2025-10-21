@@ -1,3 +1,4 @@
+import styles from "./Login.module.scss";
 import {
   ArrowRightSVG,
   LockPadCloseSVG,
@@ -6,7 +7,6 @@ import {
   UserSVG,
   UserXSVG,
 } from "@/assets/svg";
-import styles from "./Login.module.scss";
 import AuthInput from "@/components/util/AuthInput";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
@@ -25,21 +25,21 @@ import {
 import useUserService from "@service/useUserService";
 import { useReducer, useState } from "react";
 
-function Login() {
+function Login({ signupRedirect }: { signupRedirect: () => void }) {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
-  const { loginVoluntary } = useUserService();
+  const { loginUser } = useUserService();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch(true);
     setTouched(false);
     setMessageError({});
-    const user = await loginVoluntary(loginPayload(state));
+    const user = await loginUser(loginPayload(state));
     if (user && !isMessage<User>(user)) {
       addNotification({
         title: "Login Success",
@@ -100,7 +100,7 @@ function Login() {
       </form>
       <div className={styles.footer}>
         <p>Não esta cadastrado?</p>
-        <div>
+        <div onClick={signupRedirect}>
           <span>Cadastre-se</span>
         </div>
       </div>
