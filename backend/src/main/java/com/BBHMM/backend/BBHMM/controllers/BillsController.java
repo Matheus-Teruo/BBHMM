@@ -1,7 +1,7 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
-import com.BBHMM.backend.BBHMM.models.request.BillCreateRequest;
-import com.BBHMM.backend.BBHMM.models.request.BillUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.BillResponse;
 import com.BBHMM.backend.BBHMM.services.BillService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class BillsController {
     private final BillService service;
 
     @PostMapping
-    public ResponseEntity<BillResponse> createBill(@RequestBody BillCreateRequest request) {
+    public ResponseEntity<BillResponse> createBill(@RequestBody CreateBillRequest request) {
         var bill = service.createBill(request);
         return ResponseEntity.ok(new BillResponse(bill));
     }
@@ -31,7 +31,7 @@ public class BillsController {
     }
 
     @PutMapping
-    public ResponseEntity<BillResponse> updateBill(@RequestBody BillUpdateRequest request) {
+    public ResponseEntity<BillResponse> updateBill(@RequestBody UpdateBillRequest request) {
         var bill = service.updateBill(request);
 
         return ResponseEntity.ok(new BillResponse(bill));

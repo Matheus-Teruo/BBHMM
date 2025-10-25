@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record BillCreateRequest(
+public record CreateBillRequest(
     @NotNull(message = "Nome de usuário é necessário")
     @Positive(message = "Valor deve ser positivo")
     BigDecimal value,

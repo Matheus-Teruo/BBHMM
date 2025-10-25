@@ -3,7 +3,7 @@ package com.BBHMM.backend.BBHMM.models;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.BBHMM.backend.BBHMM.models.request.UserUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,7 +41,7 @@ public class User implements UserDetails {
         this.fullname = fullname;
     }
 
-    public void updateUser(UserUpdateRequest request, String password, boolean passwordFlag) {
+    public void updateUser(UpdateUserRequest request, String password, boolean passwordFlag) {
         if (request.username() != null) {
             this.username = request.username();
         }

@@ -6,8 +6,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import com.BBHMM.backend.BBHMM.models.request.BillCreateRequest;
-import com.BBHMM.backend.BBHMM.models.request.BillUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 
 @Entity
 @Table(name = "bills")
@@ -39,13 +39,13 @@ public class Bill {
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participants> participants = new ArrayList<>();
 
-    public Bill(BillCreateRequest request, Event event, User user) {
+    public Bill(CreateBillRequest request, Event event, User user) {
         this.value = request.value();
         this.event = event;
         this.payer = user;
     }
 
-    public void update(BillUpdateRequest request) {
+    public void update(UpdateBillRequest request) {
         if(request.value() != null) {
             this.value = request.value();
         }

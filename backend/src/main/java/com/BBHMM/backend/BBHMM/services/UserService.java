@@ -2,8 +2,8 @@ package com.BBHMM.backend.BBHMM.services;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.User;
-import com.BBHMM.backend.BBHMM.models.request.UserCreateRequest;
-import com.BBHMM.backend.BBHMM.models.request.UserUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.request.CreateUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 import com.BBHMM.backend.BBHMM.services.validation.UserValidation;
 import jakarta.transaction.Transactional;
@@ -19,13 +19,11 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
-
     private final UserValidation validation;
-
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createUser(UserCreateRequest request) {
+    public User createUser(CreateUserRequest request) {
         validation.checkNameDuplication(request.username(), request.fullname());
         var user = new User(
             request.username(),
@@ -53,7 +51,7 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(UserUpdateRequest request) {
+    public User updateUser(UpdateUserRequest request) {
         var user = safeTakeUserByUuid(request.uuid());
         validation.checkUserAuthentication(request.uuid(), user);
         validation.checkNameDuplication(request.username(), request.fullname());

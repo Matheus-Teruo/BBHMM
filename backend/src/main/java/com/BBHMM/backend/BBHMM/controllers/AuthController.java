@@ -2,8 +2,8 @@ package com.BBHMM.backend.BBHMM.controllers;
 
 import com.BBHMM.backend.BBHMM.config.security.TokenServiceConfig;
 import com.BBHMM.backend.BBHMM.models.User;
-import com.BBHMM.backend.BBHMM.models.request.UserCreateRequest;
-import com.BBHMM.backend.BBHMM.models.request.UserLoginRequest;
+import com.BBHMM.backend.BBHMM.models.request.CreateUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.LoginUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.UserService;
 import jakarta.servlet.http.Cookie;
@@ -35,7 +35,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(
         @RequestBody @Valid
-        UserCreateRequest request,
+        CreateUserRequest request,
         HttpServletResponse response) {
         var user = service.createUser(request);
 
@@ -58,7 +58,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(
         @RequestBody @Valid
-        UserLoginRequest request,
+        LoginUserRequest request,
         HttpServletResponse response) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         var authentication = manager.authenticate(authenticationToken);

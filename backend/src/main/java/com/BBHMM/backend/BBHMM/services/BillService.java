@@ -4,8 +4,8 @@ import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
-import com.BBHMM.backend.BBHMM.models.request.BillCreateRequest;
-import com.BBHMM.backend.BBHMM.models.request.BillUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
@@ -24,13 +24,11 @@ import java.util.stream.Collectors;
 public class BillService {
 
     private final BillRepository repository;
-
     private final EventService eventService;
-
     private final UserService userService;
 
     @Transactional
-    public Bill createBill(BillCreateRequest request) {
+    public Bill createBill(CreateBillRequest request) {
         var user = userService.safeTakeUserByUuid(request.payerUuid());
         var event = eventService.safeTakeEventByUuid(request.eventUuid());
         var bill = new Bill(request, event, user);
@@ -53,7 +51,7 @@ public class BillService {
     }
 
     @Transactional
-    public Bill updateBill(BillUpdateRequest request) {
+    public Bill updateBill(UpdateBillRequest request) {
         var bill = safeTakeBillByUuid(request.uuid());
 
         bill.update(request);
@@ -67,7 +65,7 @@ public class BillService {
     }
 
     @Transactional
-    public void updateParticipants(Bill bill, BillUpdateRequest request) {
+    public void updateParticipants(Bill bill, UpdateBillRequest request) {
         List<Participants> currentParticipants = bill.getParticipants();
 
         Set<UUID> newUuids = new HashSet<>(request.listPartUuids());

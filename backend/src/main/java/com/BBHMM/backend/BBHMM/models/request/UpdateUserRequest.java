@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
-public record UserUpdateRequest(
+public record UpdateUserRequest(
     @NotNull(message = "Nome de usuário é necessário")
     UUID uuid,
 
@@ -22,6 +22,6 @@ public record UserUpdateRequest(
     @Pattern(regexp = "^[\\p{L} ]*$", message = "Seu nome completo só deve conter letras e espaço")
     String fullname,
 
-    PixUpdateRequest pix
+    UpdatePixRequest pix
 ) {
 }

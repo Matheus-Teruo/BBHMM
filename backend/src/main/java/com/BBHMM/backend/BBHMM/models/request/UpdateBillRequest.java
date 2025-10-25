@@ -7,7 +7,7 @@ import java.util.UUID;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record BillUpdateRequest(
+public record UpdateBillRequest(
     @NotNull(message = "ID é necessário")
     UUID uuid,
 
