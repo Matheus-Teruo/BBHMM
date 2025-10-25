@@ -30,7 +30,8 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Pix pix;
 
-    @Column()
+    @Column(nullable = false, length = 255)
+    private String email;
 
     @ManyToMany(mappedBy = "users")
     private Set<Event> events = new HashSet<>();

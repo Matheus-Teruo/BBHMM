@@ -29,8 +29,8 @@ public class Bill {
     @JoinColumn(name = "uuid_event", nullable = false)
     private Event event;
 
-    @Column(nullable = false)
-    private BigDecimal paidValue = BigDecimal.ZERO;
+    @Column(name = "debit_amount",nullable = false)
+    private BigDecimal debitAmount = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private Boolean paid = false;

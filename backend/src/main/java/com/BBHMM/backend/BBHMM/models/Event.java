@@ -33,6 +33,9 @@ public class Event {
     @OneToMany(mappedBy = "event", orphanRemoval = true)
     private List<Bill> bills = new ArrayList<>();
 
+    @OneToMany(mappedBy = "event", orphanRemoval = true)
+    private List<EventInvitation> eventInvitations = new ArrayList<>();
+
     public Event(CreateEventRequest request, User user) {
         this.eventName=request.eventName();
         this.description=request.description();
@@ -46,5 +49,9 @@ public class Event {
         if (request.description() != null) {
             this.description=request.description();
         }
+    }
+
+    public void addUser(User user) {
+        this.users.add(user);
     }
 }

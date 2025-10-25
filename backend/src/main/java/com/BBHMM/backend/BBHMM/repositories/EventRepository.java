@@ -24,5 +24,15 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     """)
     List<Event> findAllbyUser(UUID userUuid);
 
+    @Query("""
+    SELECT CASE WHEN EXISTS(
+        SELECT 1 FROM Event e
+        JOIN e.users u
+        WHERE e.uuid = :eventUuid
+        AND u.uuid = :userUuid
+        ) THEN TRUE ELSE FALSE END
+    """)
+    boolean userAlreadyInEvent(UUID userUuid, UUID eventUuid);
+
     boolean existsByEventName(String eventName);
 }

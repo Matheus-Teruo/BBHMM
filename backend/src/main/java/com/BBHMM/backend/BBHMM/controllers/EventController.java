@@ -23,7 +23,6 @@ import java.util.UUID;
 public class EventController {
 
     private final EventService service;
-
     private final UserService userService;
 
     @PostMapping
@@ -59,9 +58,9 @@ public class EventController {
         return ResponseEntity.ok(new EventResponse(event));
     }
 
-    @GetMapping("/{uuid}/users")
-    public ResponseEntity<List<UserResponse>> listUsersFromEvent(@PathVariable UUID uuid) {
-        var response = userService.findParticipantsByEventUuid(uuid).stream().map(UserResponse::new).toList();
+    @GetMapping("/{eventUuid}/users")
+    public ResponseEntity<List<UserResponse>> listUsersFromEvent(@PathVariable UUID eventUuid) {
+        var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(UserResponse::new).toList();
         return ResponseEntity.ok(response);
     }
 }
