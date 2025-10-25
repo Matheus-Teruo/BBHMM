@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.*;
 
-import com.BBHMM.backend.BBHMM.models.request.EventCreateRequest;
-import com.BBHMM.backend.BBHMM.models.request.EventUpdateRequest;
+import com.BBHMM.backend.BBHMM.models.request.CreateEventRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
 
 @Entity
 @Table(name = "event")
@@ -33,12 +33,13 @@ public class Event {
     @OneToMany(mappedBy = "event", orphanRemoval = true)
     private List<Bill> bills = new ArrayList<>();
 
-    public Event(EventCreateRequest request) {
+    public Event(CreateEventRequest request, User user) {
         this.eventName=request.eventName();
         this.description=request.description();
+        this.users.add(user);
     }
 
-    public void update(EventUpdateRequest request) {
+    public void update(UpdateEventRequest request) {
         if (request.eventName() != null) {
             this.eventName=request.eventName();
         }
