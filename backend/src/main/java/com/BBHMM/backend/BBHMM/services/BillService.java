@@ -7,6 +7,9 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
+import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 public class BillService {
 
     private final BillRepository repository;
+    private final BillValidation validation;
     private final EventService eventService;
     private final UserService userService;
 
@@ -31,9 +35,11 @@ public class BillService {
     public Bill createBill(CreateBillRequest request) {
         var user = userService.safeTakeUserByUuid(request.payerUuid());
         var event = eventService.safeTakeEventByUuid(request.eventUuid());
-        var bill = new Bill(request, event, user);
+        validation.checkUserParticipationInEvent(user.getUuid(), event.getUuid());
 
+        var bill = new Bill(request, event, user);
         repository.save(bill);
+
         return bill;
     }
 
@@ -53,6 +59,9 @@ public class BillService {
     @Transactional
     public Bill updateBill(UpdateBillRequest request) {
         var bill = safeTakeBillByUuid(request.uuid());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        validation.checkUserParticipationInEvent(user.getUuid(), bill.getEvent().getUuid());
+        validation.checkUsersParticipationInEvent(bill.getEvent().getUuid(), request.listPartUuids());
 
         bill.update(request);
         updateParticipants(bill, request);

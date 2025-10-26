@@ -3,6 +3,7 @@ package com.BBHMM.backend.BBHMM.repositories;
 import com.BBHMM.backend.BBHMM.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +21,19 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> listUsersByEvent(UUID eventUuid);
 
     UserDetails findByUsername(String username);
+
+    @Query("""
+    SELECT CASE WHEN EXISTS (
+        SELECT 1 FROM User u
+        JOIN u.events e
+        WHERE u.uuid = :userUuid
+        AND e.uuid = :eventUuid
+        ) THEN TRUE ELSE FALSE END
+    """)
+    boolean isUserParticipantInEvent(
+        @Param("userUuid") UUID userUuid,
+        @Param("eventUuid") UUID eventUuid
+    );
 
     boolean existsByUsername(String username);
 

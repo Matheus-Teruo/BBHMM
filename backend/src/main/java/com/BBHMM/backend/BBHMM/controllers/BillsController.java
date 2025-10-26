@@ -12,25 +12,25 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/event/bills")
+@RequestMapping("/events")
 @RequiredArgsConstructor
 public class BillsController {
 
     private final BillService service;
 
-    @PostMapping
+    @PostMapping("/bills")
     public ResponseEntity<BillResponse> createBill(@RequestBody CreateBillRequest request) {
         var bill = service.createBill(request);
         return ResponseEntity.ok(new BillResponse(bill));
     }
 
-    @GetMapping("/{eventUuid}")
+    @GetMapping("/{eventUuid}/bills")
     public ResponseEntity<List<BillResponse>> listBills(@PathVariable UUID eventUuid) {
         var response = service.listBillsByEvent(eventUuid).stream().map(BillResponse::new).toList();
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
+    @PutMapping("/bills")
     public ResponseEntity<BillResponse> updateBill(@RequestBody UpdateBillRequest request) {
         var bill = service.updateBill(request);
 
