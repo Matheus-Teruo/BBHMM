@@ -5,6 +5,7 @@ import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
+import com.BBHMM.backend.BBHMM.models.request.DeleteBillRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
@@ -69,8 +70,13 @@ public class BillService {
         return bill;
     }
 
-    public void deleteBill() {
+    @Transactional
+    public void deleteBill(DeleteBillRequest request) {
+        var bill = safeTakeBillByUuid(request.uuid());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        validation.checkUserParticipationInEvent(user.getUuid(), bill.getEvent().getUuid());
 
+        repository.delete(bill);
     }
 
     @Transactional
