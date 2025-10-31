@@ -19,6 +19,11 @@ public class Bill {
     private UUID uuid;
 
     @Column(nullable = false)
+    private String name;
+
+    private String description;
+
+    @Column(nullable = false)
     private BigDecimal value;
 
     @ManyToOne
@@ -34,6 +39,8 @@ public class Bill {
 
     @Column(nullable = false)
     private Boolean paid = false;
+
+    private BillType type = BillType.BILL;
 
     @Setter
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
