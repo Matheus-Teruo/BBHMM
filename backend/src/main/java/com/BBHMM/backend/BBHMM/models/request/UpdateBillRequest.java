@@ -8,13 +8,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record UpdateBillRequest(
+
     @NotNull(message = "ID é necessário")
     UUID uuid,
+    
+    String name,
+    
+    String description,
 
     @Positive(message = "Valor deve ser positivo")
     BigDecimal value,
 
-    @NotNull(message = "Lista de participantes é necessário")
     List<UUID> listPartUuids
 ) {   
 }

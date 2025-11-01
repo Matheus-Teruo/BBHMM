@@ -38,5 +38,25 @@ public class Participants {
     public Participants(User user, Bill bill) {
         this.user = user;
         this.bill = bill;
+        this.paid = false;
+    }
+
+    public void addPaidValue(BigDecimal value) {
+        this.paidValue = this.paidValue.add(value);
+    }
+
+    public void subtractPaidValue(BigDecimal value) {
+        this.paidValue = this.paidValue.subtract(value);
+        this.paid = false;
+    }
+
+    public void completeParticipation() {
+        this.paidValue = this.value;
+        this.paid = true;
+    }
+
+    public void undoParticipation() {
+        this.paidValue = BigDecimal.ZERO;
+        this.paid = false;
     }
 }

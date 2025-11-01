@@ -34,6 +34,7 @@ public class Bill {
     @JoinColumn(name = "uuid_event", nullable = false)
     private Event event;
 
+    @Setter
     @Column(name = "debit_amount",nullable = false)
     private BigDecimal debitAmount = BigDecimal.ZERO;
 
@@ -56,5 +57,24 @@ public class Bill {
         if(request.value() != null) {
             this.value = request.value();
         }
+    }
+
+    public void addToDebit(BigDecimal paymentAmount) {
+        this.debitAmount = debitAmount.add(paymentAmount);
+    }
+
+    public void subtractToDebit(BigDecimal paymentAmount) {
+        this.debitAmount = debitAmount.subtract(paymentAmount);
+        this.paid = false;
+    }
+
+    public void completeBill() {
+        this.debitAmount = this.value;
+        this.paid = true;
+    }
+
+    public void undoCompleteBill() {
+        this.debitAmount = BigDecimal.ZERO;
+        this.paid = false;
     }
 }

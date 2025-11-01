@@ -5,6 +5,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
+import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
 import com.BBHMM.backend.BBHMM.services.validation.UserValidation;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class UserService {
 
     private final UserRepository repository;
     private final UserValidation validation;
+    private final BillValidation billValidation;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -46,6 +48,7 @@ public class UserService {
 
     public List<User> findParticipantsByEventUuid(UUID eventUuid) {
         var users = repository.listUsersByEvent(eventUuid);
+        billValidation.checkUsersParticipationInEvent(eventUuid, users.stream().map(User::getUuid).toList());
 
         return users;
     }

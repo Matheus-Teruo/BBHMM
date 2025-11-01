@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
+import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.UserService;
@@ -7,7 +8,6 @@ import com.BBHMM.backend.BBHMM.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/users")
@@ -18,10 +18,9 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<UserResponse> updateUser(@RequestBody UpdateUserRequest request) {
-        var user = service.updateUser(request);
+        User user = service.updateUser(request);
 
         return ResponseEntity.ok(new UserResponse(user));
     }
-    
 }
 

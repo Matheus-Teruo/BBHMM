@@ -65,7 +65,7 @@ public class BillService {
         validation.checkUsersParticipationInEvent(bill.getEvent().getUuid(), request.listPartUuids());
 
         bill.update(request);
-        updateParticipants(bill, request);
+        updateParticipants(bill, request, bill.getPayer().getUuid());
 
         return bill;
     }
@@ -76,12 +76,18 @@ public class BillService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         validation.checkUserParticipationInEvent(user.getUuid(), bill.getEvent().getUuid());
 
+        List<Participants> currentParticipants = bill.getParticipants();
+
+        reversePaidValue(currentParticipants, bill, bill.getPayer().getUuid());
+
         repository.delete(bill);
     }
 
     @Transactional
-    public void updateParticipants(Bill bill, UpdateBillRequest request) {
+    private void updateParticipants(Bill bill, UpdateBillRequest request, UUID ownerUuid) {
         List<Participants> currentParticipants = bill.getParticipants();
+
+        reversePaidValue(currentParticipants, bill, ownerUuid);
 
         Set<UUID> newUuids = new HashSet<>(request.listPartUuids());
         Set<UUID> currentUuids = currentParticipants.stream()
@@ -107,12 +113,64 @@ public class BillService {
 
         BigDecimal share = request.value().divide(BigDecimal.valueOf(currentParticipants.size()), RoundingMode.HALF_UP);
 
-        for (Participants p : currentParticipants) {
-            p.setPaidValue(share);
-            p.setPaid(false);
-        }
+        updatePaidValue(currentParticipants, bill, share, ownerUuid);
 
         bill.setParticipants(currentParticipants);
     }
 
+    @Transactional
+    private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal share, UUID ownerUuid) {
+        for (Participants participation : currentParticipants) {
+            participation.setValue(share);
+            BigDecimal userDebit = share;
+            List<Bill> userBills = repository.findBillsByPayerUuidAndNotPaid(ownerUuid, bill.getEvent().getUuid());
+            for (Bill userBill : userBills) {
+                BigDecimal debtBill = userBill.getValue().subtract(userBill.getDebitAmount());
+                if (userDebit.compareTo(debtBill) < 0) {
+                    participation.completeParticipation();
+                    userBill.addToDebit(userDebit);
+                    userDebit = BigDecimal.ZERO;
+                } else if (userDebit.compareTo(debtBill) >= 0) {
+                    userBill.completeBill();
+                    if (userDebit.compareTo(debtBill) == 0) {
+                        participation.completeParticipation();
+                    } else {
+                        participation.addPaidValue(debtBill);
+                    }
+                    userDebit = userDebit.subtract(debtBill);
+                }
+                if (userDebit.compareTo(BigDecimal.ZERO) == 0) {
+                    participation.setPaid(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Transactional
+    private void reversePaidValue(List<Participants> removedParticipants, Bill bill, UUID ownerUuid) {
+        for (Participants participation : removedParticipants) {
+            BigDecimal undoPaidValue = participation.getPaidValue();
+            List<Bill> userBills = repository.findBillsByPayerUuidAndPaid(ownerUuid, bill.getEvent().getUuid());
+            for (Bill userBill : userBills) {
+                BigDecimal undoDebtBill = userBill.getDebitAmount();
+                if (undoPaidValue.compareTo(undoDebtBill) < 0) {
+                    participation.undoParticipation();
+                    userBill.subtractToDebit(undoPaidValue);
+                    undoPaidValue = BigDecimal.ZERO;
+                } else if (undoPaidValue.compareTo(undoDebtBill) >= 0) {
+                    userBill.undoCompleteBill();
+                    if (undoPaidValue.compareTo(undoDebtBill) == 0) {
+                        participation.undoParticipation();
+                    } else {
+                        participation.subtractPaidValue(undoDebtBill);
+                    }
+                    undoPaidValue = undoPaidValue.subtract(undoDebtBill);
+                }
+                if (undoPaidValue.compareTo(BigDecimal.ZERO) == 0) {
+                    break;
+                }
+            }
+        }
+    }
 }
