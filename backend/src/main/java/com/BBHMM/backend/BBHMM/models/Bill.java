@@ -26,6 +26,9 @@ public class Bill {
     @Column(nullable = false)
     private BigDecimal value;
 
+    @Column(name = "uuid_payer", insertable = false, updatable = false)
+    private UUID payerUuid;
+
     @ManyToOne
     @JoinColumn(name = "uuid_payer", nullable = false)
     private User payer;
@@ -57,6 +60,10 @@ public class Bill {
         if(request.value() != null) {
             this.value = request.value();
         }
+    }
+
+    public BigDecimal getRemainingBalance() {
+        return this.value.subtract(this.debitAmount);
     }
 
     public void addToDebit(BigDecimal paymentAmount) {

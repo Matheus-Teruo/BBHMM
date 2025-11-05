@@ -15,6 +15,9 @@ public class Participants {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
 
+    @Column(name = "uuid_user", insertable = false, updatable = false)
+    private UUID userUuid;
+
     @ManyToOne
     @JoinColumn(name = "uuid_user", nullable = false)
     private User user;
@@ -40,6 +43,10 @@ public class Participants {
         this.bill = bill;
         this.paid = false;
     }
+
+    public BigDecimal getRemainingBalance() {
+        return this.value.subtract(this.paidValue);
+    } 
 
     public void addPaidValue(BigDecimal value) {
         this.paidValue = this.paidValue.add(value);
