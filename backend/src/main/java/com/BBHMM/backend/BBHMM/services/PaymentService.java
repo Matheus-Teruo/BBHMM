@@ -14,10 +14,12 @@ import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.UserBalance;
+import com.BBHMM.backend.BBHMM.models.request.PayBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.PaymentResponse;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,6 +28,8 @@ public class PaymentService {
 
     private BillValidation billValidation;
     private BillRepository billRepository;
+    private UserService userService;
+    private EventService eventService;
 
     public List<PaymentResponse> getPaymenList(UUID eventuuid, User userOwner) {
         billValidation.checkUserParticipationInEvent(eventuuid, eventuuid);
@@ -76,6 +80,18 @@ public class PaymentService {
         return payments.stream()
             .filter(payment -> payment.userToPayUuid().equals(userOwner.getUuid()))
             .toList();
+    }
+
+    @Transactional
+    public void payOffDebit(PayBillRequest request, User userOwner) {
+        var user = userService.safeTakeUserByUuid(userOwner.getUuid());
+        var event = eventService.safeTakeEventByUuid(request.eventuUuid());
+        billValidation.checkUserParticipationInEvent(user.getUuid(), event.getUuid());
+
+        Bill bill = new Bill(request, event, user);
+        Participants participants = new Participants(request, user, bill);
+        bill.addParticipant(participants);
+        billRepository.save(bill);
     }
 
     private void addTotal(Map<UUID, BigDecimal> mapa, UUID userUuid, BigDecimal value) {

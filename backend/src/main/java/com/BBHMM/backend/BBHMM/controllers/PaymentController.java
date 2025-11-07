@@ -4,10 +4,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BBHMM.backend.BBHMM.models.User;
+import com.BBHMM.backend.BBHMM.models.request.PayBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.PaymentResponse;
 import com.BBHMM.backend.BBHMM.services.PaymentService;
 
@@ -30,5 +33,13 @@ public class PaymentController {
         List<PaymentResponse> response = service.getPaymenList(eventUuid, userOwner);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/{eventUuid}")
+    public ResponseEntity<Void> payOffDebtPayment(@RequestBody PayBillRequest request) {
+        User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        service.payOffDebit(request, userOwner);
+        return ResponseEntity.noContent().build();
+    } 
 }
  

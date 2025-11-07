@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
+import com.BBHMM.backend.BBHMM.models.request.PayBillRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 
 @Entity
@@ -51,9 +52,25 @@ public class Bill {
     private List<Participants> participants = new ArrayList<>();
 
     public Bill(CreateBillRequest request, Event event, User user) {
+        this.name = request.name();
+        this.description = request.description();
         this.value = request.value();
         this.event = event;
         this.payer = user;
+    }
+
+    public Bill(PayBillRequest request, Event event, User user) {
+        this.name = "Pagamento";
+        this.value = request.value();
+        this.debitAmount = request.value();
+        this.event = event;
+        this.payer = user;
+        this.type = BillType.PAYMENT;
+        this.paid = true;
+    }
+
+    public void addParticipant(Participants participant) {
+        participants.add(participant);
     }
 
     public void update(UpdateBillRequest request) {

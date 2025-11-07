@@ -3,6 +3,8 @@ package com.BBHMM.backend.BBHMM.models;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.BBHMM.backend.BBHMM.models.request.PayBillRequest;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +44,14 @@ public class Participants {
         this.user = user;
         this.bill = bill;
         this.paid = false;
+    }
+
+    public Participants(PayBillRequest request, User user, Bill bill) {
+        this.user = user;
+        this.bill = bill;
+        this.value = request.value();
+        this.paidValue = request.value();
+        this.paid = true;
     }
 
     public BigDecimal getRemainingBalance() {
