@@ -7,7 +7,7 @@ const LOCAL_STORAGE_KEY = "loggedInUser";
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null | "unlogged">(null);
-  const { getUser, logoutVoluntary } = useUserService();
+  const { getUser, logoutUser } = useUserService();
 
   const login = (user: User) => {
     setUser(user);
@@ -32,7 +32,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     if (user) {
       setUser("unlogged");
-      await logoutVoluntary();
+      await logoutUser();
     }
   };
 
