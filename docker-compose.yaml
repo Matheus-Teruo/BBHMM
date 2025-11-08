@@ -1,5 +1,6 @@
 services:
   backend:
+    container_name: bbhmm_backend
     build:
       context: ./backend
       dockerfile: dockerfile
@@ -15,6 +16,7 @@ services:
     depends_on:
       - db
   db:
+    container_name: bbhmm_database
     image: mysql
     command:
       - --character-set-server=utf8mb4
@@ -34,6 +36,7 @@ services:
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
   frontend:
+    container_name: bbhmm_frontend
     build:
       context: ./frontend
       dockerfile: dockerfile
