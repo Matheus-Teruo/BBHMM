@@ -7,7 +7,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 public record UserListResponse(
     UUID uuid,
     String fullname,
-    PixResponse Pix
+    PixResponse pix
 ) {
     public UserListResponse(User user) {
         this(user.getUuid(),

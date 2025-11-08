@@ -22,6 +22,9 @@ public record UpdateUserRequest(
     @Pattern(regexp = "^[\\p{L} ]*$", message = "Seu nome completo só deve conter letras e espaço")
     String fullname,
 
+    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Formato de e-mail inválido")
+    String email,
+
     UpdatePixRequest pix
 ) {
 }

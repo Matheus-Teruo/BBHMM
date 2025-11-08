@@ -8,7 +8,7 @@ public record UserResponse(
     UUID uuid,
     String username,
     String fullname,
-    PixResponse Pix
+    PixResponse pix
 ) {
     public UserResponse(User user) {
         this(user.getUuid(),

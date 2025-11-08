@@ -28,9 +28,8 @@ public class UserService {
     public User createUser(CreateUserRequest request) {
         validation.checkNameDuplication(request.username(), request.fullname());
         var user = new User(
-            request.username(),
-            passwordEncoder.encode(request.password()),
-            request.fullname()
+            request,
+            passwordEncoder.encode(request.password())
         );
         repository.save(user);
 

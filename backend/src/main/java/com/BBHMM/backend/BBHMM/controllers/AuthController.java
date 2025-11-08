@@ -5,6 +5,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.LoginUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
+import com.BBHMM.backend.BBHMM.models.response.UserResumeResponse;
 import com.BBHMM.backend.BBHMM.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,10 +72,10 @@ public class AuthController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<UserResponse> user(HttpServletRequest request) {
+    public ResponseEntity<UserResumeResponse> user(HttpServletRequest request) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(new UserResumeResponse(user));
     }
 
     @PostMapping("/logout")
