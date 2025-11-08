@@ -35,7 +35,7 @@ public class EventValidation {
     }
 
     public void checkDuplicationInvate(UUID invitedUserUuid, UUID eventUuid) {
-        if (eventInvitationRepository.existsByUserRequestUuidAndEventUuidAndAcceptedIsNull(invitedUserUuid, eventUuid)) {
+        if (eventInvitationRepository.existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(invitedUserUuid, eventUuid)) {
             throw new InvalidDatabaseInsertionException(
                 "Convite pendente já existente",
                 "Convite de Evento",

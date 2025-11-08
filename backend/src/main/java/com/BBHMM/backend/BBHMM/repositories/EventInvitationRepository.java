@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
 
+@Repository
 public interface EventInvitationRepository extends JpaRepository<EventInvitation, UUID> {
 
     @Query("""
@@ -21,5 +23,5 @@ public interface EventInvitationRepository extends JpaRepository<EventInvitation
     """)
     Page<EventInvitation> findAllByUserInvitedUuid(UUID userUuid, Pageable pageable);
 
-    boolean existsByUserRequestUuidAndEventUuidAndAcceptedIsNull(UUID userUuid, UUID eventUuid);
+    boolean existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(UUID userUuid, UUID eventUuid);
 }

@@ -13,13 +13,13 @@ import java.util.UUID;
 @Repository
 public interface BillRepository extends JpaRepository<Bill, UUID>{    
     
-    @Query("SELECT b FROM Bills b WHERE b.uuid = :uuid")
+    @Query("SELECT b FROM Bill b WHERE b.uuid = :uuid")
     Optional<Bill> findByUuid(UUID uuid);
 
-    @Query("SELECT b FROM Bills b WHERE b.event.uuid = :eventUuid")
+    @Query("SELECT b FROM Bill b WHERE b.event.uuid = :eventUuid")
     List<Bill> findBillsByEventUuid(UUID eventUuid);
 
-    @Query("SELECT b FROM Bills b WHERE b.event.uuid = :eventUuid AND b.paid = false")
+    @Query("SELECT b FROM Bill b WHERE b.event.uuid = :eventUuid AND b.paid = false")
     List<Bill> findBillsByEventUuidAndNotPaid(UUID eventUuid);
 
     @Query("SELECT b FROM Bill b WHERE b.payer.uuid = :payerUuid AND b.event.uuid = :eventUuid AND b.paid = false")

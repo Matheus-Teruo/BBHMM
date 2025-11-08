@@ -39,7 +39,7 @@ public class Bill {
     private Event event;
 
     @Setter
-    @Column(name = "debit_amount",nullable = false)
+    @Column(name = "debit_amount", nullable = false)
     private BigDecimal debitAmount = BigDecimal.ZERO;
 
     @Column(nullable = false)
