@@ -2,8 +2,7 @@ package com.BBHMM.backend.BBHMM.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.BBHMM.backend.BBHMM.models.request.CreateUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 
 import jakarta.persistence.*;
@@ -28,6 +27,7 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 100)
     private String fullname;
 
+    @Setter
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Pix pix;
 
@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "users")
     private Set<Event> events = new HashSet<>();
 
-    public User(CreateUserRequest request, String password) {
+    public User(SignUpUserRequest request, String password) {
         this.username = request.username();
         this.password = password;
         this.fullname = request.fullname();

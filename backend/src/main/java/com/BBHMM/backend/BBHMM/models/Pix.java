@@ -2,6 +2,9 @@ package com.BBHMM.backend.BBHMM.models;
 
 import java.util.UUID;
 
+import com.BBHMM.backend.BBHMM.models.request.CreatePixRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdatePixRequest;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,4 +26,19 @@ public class Pix {
     @OneToOne
     @JoinColumn(name = "uuid_user", nullable = false)
     private User user;
+
+    public Pix(CreatePixRequest request, User user) {
+        this.pixKey = request.pixKey();
+        this.bankAccount = request.bankAccount();
+        this.user = user;
+    }
+
+    public void update(UpdatePixRequest request) {
+        if (request.pixKey() != null) {
+            this.pixKey = request.pixKey();
+        }
+        if (request.bankAccount() != null) {
+            this.bankAccount = request.bankAccount();
+        }
+    }
 }

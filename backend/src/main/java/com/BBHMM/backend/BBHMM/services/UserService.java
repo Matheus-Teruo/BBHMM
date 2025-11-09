@@ -1,8 +1,9 @@
 package com.BBHMM.backend.BBHMM.services;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
+import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.User;
-import com.BBHMM.backend.BBHMM.models.request.CreateUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
@@ -25,12 +26,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createUser(CreateUserRequest request) {
+    public User createUser(SignUpUserRequest request) {
         validation.checkNameDuplication(request.username(), request.fullname());
-        var user = new User(
+        User user = new User(
             request,
             passwordEncoder.encode(request.password())
         );
+        if (request.pix() != null) {
+            Pix newPix = new Pix(request.pix(), user);
+            user.setPix(newPix);
+        }
         repository.save(user);
 
         return user;
@@ -65,6 +70,9 @@ public class UserService {
             newPasswordFlag = true;
         }
         user.updateUser(request,  passwordEncoder.encode(newPassword), newPasswordFlag);
+        if (request.pix() != null) {
+            user.getPix().update(request.pix());
+        }
 
         return user;
     }

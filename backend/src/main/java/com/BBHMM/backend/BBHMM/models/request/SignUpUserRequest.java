@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record CreateUserRequest(
+public record SignUpUserRequest(
     @NotBlank(message = "Nome de usuário é necessário")
     @Size(min = 3, message = "Nome de usuário precisa ter pelomenos 3 caractéres")
     @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "Nome de usuário não pode ter alguns caracteres especiais")
@@ -24,6 +24,6 @@ public record CreateUserRequest(
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Formato de e-mail inválido")
     String email,
 
-    UpdatePixRequest pix
+    CreatePixRequest pix
 ) {
 }
