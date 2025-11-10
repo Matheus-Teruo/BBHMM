@@ -1,7 +1,7 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
-import User, { LoginUser, SignupUser } from "@data/User";
+import User, { LoginUser, SignupUser, UserResume } from "@data/User";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
 
@@ -33,16 +33,16 @@ const useUserService = () => {
   );
 
   const loginUser = useCallback(
-    async (user: LoginUser): Promise<User | Message | null> =>
+    async (user: LoginUser): Promise<UserResume | Message | null> =>
       safeRequest(() =>
-        api.post<User>("user/login", user).then((res) => res.data),
+        api.post<UserResume>("user/login", user).then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getUser = useCallback(
-    async (): Promise<User | null> =>
-      api.get<User>("/user/check").then((res) => res.data),
+    async (): Promise<UserResume | null> =>
+      api.get<UserResume>("/user/check").then((res) => res.data),
     [api],
   );
 

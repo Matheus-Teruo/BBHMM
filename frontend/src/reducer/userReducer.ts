@@ -1,4 +1,9 @@
-import { regexLeterNumber, regexLeterSpace, regexPassword } from "@/util/regex";
+import {
+  regexEmail,
+  regexLeterNumber,
+  regexLeterSpace,
+  regexPassword,
+} from "@/util/regex";
 import { LoginUser, SignupUser } from "@data/User";
 
 type SignupAction =
@@ -6,6 +11,7 @@ type SignupAction =
   | { type: "SET_FULLNAME"; payload: string }
   | { type: "SET_PASSWORD"; payload: string }
   | { type: "SET_CONFIRM_PASSWORD"; payload: string }
+  | { type: "SET_EMAIL"; payload: string }
   | { type: "RESET" };
 
 export const initialUserState: SignupUser & { confirmPassword: string } = {
@@ -13,6 +19,8 @@ export const initialUserState: SignupUser & { confirmPassword: string } = {
   fullname: "",
   password: "",
   confirmPassword: "",
+  email: "",
+  pix: undefined,
 };
 
 export function userReducer(
@@ -44,6 +52,12 @@ export function userReducer(
       }
       return { ...state, confirmPassword: action.payload };
     }
+    case "SET_EMAIL": {
+      if (!regexEmail.test(action.payload)) {
+        return state;
+      }
+      return { ...state, email: action.payload };
+    }
     case "RESET":
       return initialUserState;
     default:
@@ -64,6 +78,8 @@ export const loginPayload = (
   const {
     fullname: _fullname,
     confirmPassword: _confirmPassword,
+    email: _email,
+    pix: _pix,
     ...signupPayload
   } = state;
   return signupPayload as LoginUser;

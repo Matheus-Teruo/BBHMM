@@ -1,9 +1,9 @@
-import User from "@data/User";
+import { UserResume } from "@data/User";
 import { useContext, createContext } from "react";
 
 interface UserContextType {
-  user: User | null | "unlogged";
-  login: (user: User) => void;
+  user: UserResume | null | "unlogged";
+  login: (user: UserResume) => void;
   checkLogged: () => void;
   logout: () => void;
 }

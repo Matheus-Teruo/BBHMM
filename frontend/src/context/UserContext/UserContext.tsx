@@ -1,4 +1,4 @@
-import User from "@data/User";
+import { UserResume } from "@data/User";
 import React, { useCallback, useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
 import useUserService from "@service/useUserService";
@@ -6,10 +6,10 @@ import useUserService from "@service/useUserService";
 const LOCAL_STORAGE_KEY = "loggedInUser";
 
 function UserProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null | "unlogged">(null);
+  const [user, setUser] = useState<UserResume | null | "unlogged">(null);
   const { getUser, logoutUser } = useUserService();
 
-  const login = (user: User) => {
+  const login = (user: UserResume) => {
     setUser(user);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
   };

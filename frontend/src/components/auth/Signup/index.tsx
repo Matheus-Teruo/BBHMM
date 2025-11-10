@@ -45,12 +45,12 @@ function SignUp({ loginRedirect }: { loginRedirect: () => void }) {
       if (user && !isMessage(user)) {
         addNotification({
           title: "Signup Success",
-          message: `Create user ${user.firstName} and logged`,
+          message: `Create user ${user.fullname} and logged`,
           type: MessageType.OK,
         });
         login({
           uuid: user.uuid,
-          firstName: user.firstName,
+          firstName: user.fullname.split(" ")[0],
         });
         dispatch({ type: "RESET" });
       } else if (isMessage(user)) {
@@ -140,6 +140,25 @@ function SignUp({ loginRedirect }: { loginRedirect: () => void }) {
             onlyStatus
             showStatus={touched}
             message={messageError["password"]}
+          />
+        </div>
+        <div className={styles.field}>
+          <AuthInput
+            value={state.email}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_EMAIL",
+                payload: e.target.value,
+              })
+            }
+            ComponentUntouched={LockPadOpenSVG}
+            ComponentAccepted={LockPadCloseSVG}
+            ComponentRejected={LockPadOpenSVG}
+            id="email"
+            placeholder="E-mail"
+            isRequired
+            showStatus={touched}
+            message={messageError["email"]}
           />
         </div>
         <div className={styles.button}>
