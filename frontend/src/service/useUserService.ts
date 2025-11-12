@@ -27,7 +27,7 @@ const useUserService = () => {
   const signupUser = useCallback(
     async (user: SignupUser): Promise<User | Message | null> =>
       safeRequest(() =>
-        api.post<User>("user/signup", user).then((res) => res.data),
+        api.post<User>("/auth/signup", user).then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -35,19 +35,19 @@ const useUserService = () => {
   const loginUser = useCallback(
     async (user: LoginUser): Promise<UserResume | Message | null> =>
       safeRequest(() =>
-        api.post<UserResume>("user/login", user).then((res) => res.data),
+        api.post<UserResume>("/auth/login", user).then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getUser = useCallback(
     async (): Promise<UserResume | null> =>
-      api.get<UserResume>("/user/check").then((res) => res.data),
+      api.get<UserResume>("/auth/check").then((res) => res.data),
     [api],
   );
 
   const logoutUser = useCallback(async (): Promise<void> => {
-    await safeRequest(() => api.post<void>("/user/logout").then(() => {}));
+    await safeRequest(() => api.post<void>("/auth/logout").then(() => {}));
   }, [api, safeRequest]);
 
   return {

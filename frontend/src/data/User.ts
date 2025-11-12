@@ -1,11 +1,11 @@
-import Pix, { UpdatePix } from "./Pix";
+import Pix, { CreatePix, UpdatePix } from "./Pix";
 
 export interface SignupUser {
   username: string;
   password: string;
   fullname: string;
   email: string;
-  pix?: UpdatePix;
+  pix: CreatePix;
 }
 
 export interface LoginUser {

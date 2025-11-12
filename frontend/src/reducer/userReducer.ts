@@ -4,29 +4,44 @@ import {
   regexLeterSpace,
   regexPassword,
 } from "@/util/regex";
-import { LoginUser, SignupUser } from "@data/User";
+import { CreatePix, UpdatePix } from "@data/Pix";
+import { LoginUser, SignupUser, UpdateUser } from "@data/User";
+import {
+  createPixPayload,
+  initialPixState,
+  updatePixPayload,
+} from "./pixReducer";
 
-type SignupAction =
+type UserState = {
+  uuid: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+  fullname: string;
+  email: string;
+  pix: CreatePix | UpdatePix;
+};
+
+type UserAction =
   | { type: "SET_USERNAME"; payload: string }
   | { type: "SET_FULLNAME"; payload: string }
   | { type: "SET_PASSWORD"; payload: string }
   | { type: "SET_CONFIRM_PASSWORD"; payload: string }
   | { type: "SET_EMAIL"; payload: string }
+  | { type: "SET_PIX"; payload: CreatePix | UpdatePix }
   | { type: "RESET" };
 
-export const initialUserState: SignupUser & { confirmPassword: string } = {
+export const initialUserState: UserState = {
+  uuid: "",
   username: "",
   fullname: "",
   password: "",
   confirmPassword: "",
   email: "",
-  pix: undefined,
+  pix: initialPixState,
 };
 
-export function userReducer(
-  state: SignupUser & { confirmPassword: string },
-  action: SignupAction,
-): SignupUser & { confirmPassword: string } {
+export function userReducer(state: UserState, action: UserAction): UserState {
   switch (action.type) {
     case "SET_USERNAME": {
       if (!regexLeterNumber.test(action.payload)) {
@@ -58,6 +73,9 @@ export function userReducer(
       }
       return { ...state, email: action.payload };
     }
+    case "SET_PIX": {
+      return { ...state, pix: action.payload };
+    }
     case "RESET":
       return initialUserState;
     default:
@@ -65,22 +83,38 @@ export function userReducer(
   }
 }
 
-export const signupPayload = (
-  state: SignupUser & { confirmPassword: string },
-): SignupUser => {
-  const { confirmPassword: _confirmPassword, ...signupPayload } = state;
-  return signupPayload as SignupUser;
+export const signupPayload = (s: UserState): SignupUser => {
+  const { username, password, fullname, email, pix } = s;
+  return {
+    username,
+    password,
+    fullname,
+    email,
+    pix: createPixPayload(pix),
+  } as SignupUser;
 };
 
-export const loginPayload = (
-  state: SignupUser & { confirmPassword: string },
-): LoginUser => {
-  const {
-    fullname: _fullname,
-    confirmPassword: _confirmPassword,
-    email: _email,
-    pix: _pix,
-    ...signupPayload
-  } = state;
-  return signupPayload as LoginUser;
+export const loginPayload = (s: UserState): LoginUser => {
+  const { username, password } = s;
+  return { username, password } as LoginUser;
+};
+
+export const updatePayload = (s: UserState): UpdateUser => {
+  const payload: Partial<UpdateUser> = {
+    uuid: s.uuid,
+    username: s.username,
+    password: s.password,
+    fullname: s.fullname,
+    email: s.email,
+    pix: updatePixPayload(s.pix),
+  };
+
+  Object.keys(payload).forEach((key) => {
+    const k = key as keyof typeof payload;
+    if (payload[k] === "" || payload[k] === undefined) {
+      delete payload[k];
+    }
+  });
+
+  return payload as UpdateUser;
 };

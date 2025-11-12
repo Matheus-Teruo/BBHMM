@@ -3,17 +3,20 @@ import AuthInput from "@/components/util/AuthInput";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import {
+  BankSVG,
   CheckSVG,
+  EmailSVG,
   FaceFrownSVG,
   FaceMehSVG,
   FaceSmileSVG,
   LockPadCloseSVG,
   LockPadOpenSVG,
+  PixSVG,
   UserCheckSVG,
   UserSVG,
   UserXSVG,
 } from "@/assets/svg";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import {
   initialUserState,
   signupPayload,
@@ -26,15 +29,24 @@ import {
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import useUserService from "@service/useUserService";
+import { initialPixState, pixReducer } from "@reducer/pixReducer";
 
 function SignUp({ loginRedirect }: { loginRedirect: () => void }) {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
+  const [pixState, pixDispatch] = useReducer(pixReducer, initialPixState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const { signupUser } = useUserService();
+
+  useEffect(() => {
+    dispatch({
+      type: "SET_PIX",
+      payload: pixState,
+    });
+  }, [pixState]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,15 +163,56 @@ function SignUp({ loginRedirect }: { loginRedirect: () => void }) {
                 payload: e.target.value,
               })
             }
-            ComponentUntouched={LockPadOpenSVG}
-            ComponentAccepted={LockPadCloseSVG}
-            ComponentRejected={LockPadOpenSVG}
+            ComponentUntouched={EmailSVG}
+            ComponentAccepted={EmailSVG}
+            ComponentRejected={EmailSVG}
             id="email"
             placeholder="E-mail"
             isRequired
             showStatus={touched}
             message={messageError["email"]}
           />
+        </div>
+        <div>
+          <h3>Pix</h3>
+          <div className={styles.field}>
+            <AuthInput
+              value={pixState.pixKey}
+              onChange={(e) =>
+                pixDispatch({
+                  type: "SET_PIX_KEY",
+                  payload: e.target.value,
+                })
+              }
+              ComponentUntouched={PixSVG}
+              ComponentAccepted={PixSVG}
+              ComponentRejected={PixSVG}
+              id="pixKey"
+              placeholder="Chave Pix"
+              isRequired
+              showStatus={touched}
+              message={messageError["email"]}
+            />
+          </div>
+          <div className={styles.field}>
+            <AuthInput
+              value={pixState.bankAccount}
+              onChange={(e) =>
+                pixDispatch({
+                  type: "SET_BANK_ACCOUNT",
+                  payload: e.target.value,
+                })
+              }
+              ComponentUntouched={BankSVG}
+              ComponentAccepted={BankSVG}
+              ComponentRejected={BankSVG}
+              id="bankAccount"
+              placeholder="Nome do banco"
+              isRequired
+              showStatus={touched}
+              message={messageError["email"]}
+            />
+          </div>
         </div>
         <div className={styles.button}>
           <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
