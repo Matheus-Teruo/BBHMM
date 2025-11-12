@@ -2,6 +2,7 @@ import AlertCircleSVG from "./components/AlertCircleSVG";
 import ArrowRightSVG from "./components/ArrowRightSVG";
 import AwardSVG from "./components/AwardSVG";
 import BadgeSVG from "./components/BadgeSVG";
+import BankSVG from "./components/BankSVG";
 import CameraSVG from "./components/CameraSVG";
 import CheckCircleSVG from "./components/CheckCircleSVG";
 import CheckSVG from "./components/CheckSVG";
@@ -10,6 +11,7 @@ import ChevronRightSVG from "./components/ChevronRightSVG";
 import CircleSVG from "./components/CircleSVG";
 import CropSVG from "./components/CropSVG";
 import EditSVG from "./components/EditSVG";
+import EmailSVG from "./components/EmailSVG";
 import FaceFrownSVG from "./components/FaceFrown";
 import FaceMehSVG from "./components/FaceMeh";
 import FaceSmileSVG from "./components/FaceSmile";
@@ -25,6 +27,7 @@ import LockPadOpenSVG from "./components/LockPadOpenSVG";
 import LockPadCloseSVG from "./components/LockPadCloseSVG";
 import MenuSVG from "./components/MenuSVG";
 import MinusSVG from "./components/MinusSVG";
+import PixSVG from "./components/PixSVG";
 import PlusSVG from "./components/PlusSVG";
 import QRcodeScanSVG from "./components/QRcodeScanSVG";
 import SearchSVG from "./components/SearchSVG";
@@ -43,6 +46,7 @@ export {
   ArrowRightSVG,
   AwardSVG,
   BadgeSVG,
+  BankSVG,
   CameraSVG,
   CheckCircleSVG,
   CheckSVG,
@@ -51,6 +55,7 @@ export {
   CircleSVG,
   CropSVG,
   EditSVG,
+  EmailSVG,
   FaceFrownSVG,
   FaceMehSVG,
   FaceSmileSVG,
@@ -66,6 +71,7 @@ export {
   LockPadCloseSVG,
   MenuSVG,
   MinusSVG,
+  PixSVG,
   PlusSVG,
   QRcodeScanSVG,
   SearchSVG,
