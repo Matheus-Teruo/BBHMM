@@ -34,7 +34,7 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{eventUuid}")
+    @PostMapping("/payment")
     public ResponseEntity<Void> payOffDebtPayment(@RequestBody PayBillRequest request) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
