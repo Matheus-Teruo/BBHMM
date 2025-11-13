@@ -1,13 +1,9 @@
 package com.BBHMM.backend.BBHMM.services;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
@@ -19,10 +15,11 @@ import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventRepository;
 import com.BBHMM.backend.BBHMM.services.validation.EventValidation;
-
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -56,9 +53,9 @@ public class EventService {
         );
     }
 
-    public List<Event> listEvent() {
+    public Page<Event> listEvent(Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return repository.findAllbyUser(user.getUuid());
+        return repository.findAllbyUser(pageable, user.getUuid());
     }
 
     @Transactional
@@ -71,7 +68,7 @@ public class EventService {
         return event;
     }
 
-    public EventInvitation userInvitationEvent(UUID eventUuid, UserInvitationRequest request) {
+    public EventInvitation userEventInvitation(UUID eventUuid, UserInvitationRequest request) {
         Event event = getEvent(eventUuid);
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User userInvited = userService.safeTakeUserByUuid(eventUuid);
@@ -85,7 +82,7 @@ public class EventService {
     }
 
     @Transactional
-    public EventInvitation acceptedInvitationEvent(UUID invitationUuid, AcceptInvitationRequest request) {
+    public EventInvitation acceptedEventInvitation(UUID invitationUuid, AcceptInvitationRequest request) {
         EventInvitation eventInvitation = eventInvitationRepository.findById(invitationUuid).orElseThrow(EntityNotFoundException::new);
         User userInvitedSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User userInvited = userService.safeTakeUserByUuid(userInvitedSecurity.getUuid());

@@ -30,29 +30,29 @@ public class EventInvitationController {
     private final EventService eventService;
 
     @PostMapping("/{eventUuid}/invitation")
-    public ResponseEntity<EventInvitationResponse> userInvitationEvent(
+    public ResponseEntity<EventInvitationResponse> userEventInvitation(
         @PathVariable UUID eventUuid,
         @RequestBody UserInvitationRequest request
         ) {
-        EventInvitation eventInvitation = eventService.userInvitationEvent(eventUuid, request);
+        EventInvitation eventInvitation = eventService.userEventInvitation(eventUuid, request);
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(eventUuid), eventInvitation.getUserInvited(), userOwner));
     }
 
     @PostMapping("/invitation/{invitationUuid}/accepted")
-    public ResponseEntity<EventInvitationResponse> acceptedInvitationEvent(
+    public ResponseEntity<EventInvitationResponse> acceptedEventInvitation(
         @PathVariable UUID invitationUuid,
         @RequestBody AcceptInvitationRequest request
         ) {
-        EventInvitation eventInvitation = eventService.acceptedInvitationEvent(invitationUuid, request);
+        EventInvitation eventInvitation = eventService.acceptedEventInvitation(invitationUuid, request);
         User invitedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         return ResponseEntity.ok(new EventInvitationResponse(invitationUuid, eventService.getEvent(request.eventUuid()), invitedUser, eventInvitation.getUserOwner()));
     }
 
     @GetMapping("/invitation")
-    public ResponseEntity<Page<EventInvitationResponse>> userInvitationList(
+    public ResponseEntity<Page<EventInvitationResponse>> listEventInvitation(
         @PageableDefault(size = 10) Pageable pageable
     ) {
         var response = eventService.listEventInvitation(pageable).map(EventInvitationResponse::new);
