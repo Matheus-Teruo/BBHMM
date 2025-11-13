@@ -1,7 +1,6 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
-import com.BBHMM.backend.BBHMM.models.request.DeleteBillRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.BillResponse;
 import com.BBHMM.backend.BBHMM.services.BillService;
@@ -38,9 +37,9 @@ public class BillsController {
         return ResponseEntity.ok(new BillResponse(bill));
     }
 
-    @DeleteMapping("/bills")
-    public ResponseEntity<Void> deleteBill(@RequestBody DeleteBillRequest request) {
-        service.deleteBill(request);
+    @DeleteMapping("/bills/{billUuid}")
+    public ResponseEntity<Void> deleteBill(@PathVariable UUID billUuid) {
+        service.deleteBill(billUuid);
 
         return ResponseEntity.noContent().build();
     }
