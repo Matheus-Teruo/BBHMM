@@ -1,7 +1,12 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
-import User, { LoginUser, SignupUser, UserResume } from "@data/User";
+import User, {
+  LoginUser,
+  SignupUser,
+  UpdateUser,
+  UserResume,
+} from "@data/User";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
 
@@ -50,11 +55,18 @@ const useUserService = () => {
     await safeRequest(() => api.post<void>("/auth/logout").then(() => {}));
   }, [api, safeRequest]);
 
+  const updateUser = useCallback(
+    async (user: UpdateUser): Promise<User | Message | null> =>
+      safeRequest(() => api.put<User>("/users", user).then((res) => res.data)),
+    [api, safeRequest],
+  );
+
   return {
     signupUser,
     loginUser,
     getUser,
     logoutUser,
+    updateUser,
   };
 };
 
