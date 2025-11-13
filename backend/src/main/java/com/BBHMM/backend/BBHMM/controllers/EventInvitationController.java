@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,6 @@ import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.models.response.EventInvitationResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,29 +27,27 @@ public class EventInvitationController {
 
     private final EventService eventService;
 
-    @PostMapping("/{eventUuid}/invitation")
+    @PostMapping("/invitation")
     public ResponseEntity<EventInvitationResponse> userEventInvitation(
-        @PathVariable UUID eventUuid,
         @RequestBody UserInvitationRequest request
         ) {
-        EventInvitation eventInvitation = eventService.userEventInvitation(eventUuid, request);
+        EventInvitation eventInvitation = eventService.userEventInvitation(request);
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(eventUuid), eventInvitation.getUserInvited(), userOwner));
+        return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(request.eventUuid()), eventInvitation.getUserInvited(), userOwner));
     }
 
-    @PostMapping("/invitation/{invitationUuid}/accepted")
+    @PostMapping("/invitation/accepted")
     public ResponseEntity<EventInvitationResponse> acceptedEventInvitation(
-        @PathVariable UUID invitationUuid,
         @RequestBody AcceptInvitationRequest request
         ) {
-        EventInvitation eventInvitation = eventService.acceptedEventInvitation(invitationUuid, request);
+        EventInvitation eventInvitation = eventService.acceptedEventInvitation(request);
         User invitedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return ResponseEntity.ok(new EventInvitationResponse(invitationUuid, eventService.getEvent(request.eventUuid()), invitedUser, eventInvitation.getUserOwner()));
+        return ResponseEntity.ok(new EventInvitationResponse(request.uuid(), eventService.getEvent(request.eventUuid()), invitedUser, eventInvitation.getUserOwner()));
     }
 
-    @GetMapping("/invitation")
+    @GetMapping("/invitations")
     public ResponseEntity<Page<EventInvitationResponse>> listEventInvitation(
         @PageableDefault(size = 10) Pageable pageable
     ) {

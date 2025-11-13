@@ -68,12 +68,12 @@ public class EventService {
         return event;
     }
 
-    public EventInvitation userEventInvitation(UUID eventUuid, UserInvitationRequest request) {
-        Event event = getEvent(eventUuid);
+    public EventInvitation userEventInvitation(UserInvitationRequest request) {
+        Event event = safeTakeEventByUuid(request.eventUuid());
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User userInvited = userService.safeTakeUserByUuid(eventUuid);
-        validation.checkDuplicationInvate(request.userUuid(), eventUuid);
-        validation.checkUserAlreadyInEvent(request.userUuid(), eventUuid);
+        User userInvited = userService.safeTakeUserByUuid(request.userUuid());
+        validation.checkDuplicationInvate(request.userUuid(), request.eventUuid());
+        validation.checkUserAlreadyInEvent(request.userUuid(), request.eventUuid());
 
         EventInvitation eventInvitation = new EventInvitation(userInvited, userOwner, event);
         eventInvitationRepository.save(eventInvitation);
@@ -82,8 +82,8 @@ public class EventService {
     }
 
     @Transactional
-    public EventInvitation acceptedEventInvitation(UUID invitationUuid, AcceptInvitationRequest request) {
-        EventInvitation eventInvitation = eventInvitationRepository.findById(invitationUuid).orElseThrow(EntityNotFoundException::new);
+    public EventInvitation acceptedEventInvitation(AcceptInvitationRequest request) {
+        EventInvitation eventInvitation = eventInvitationRepository.findById(request.uuid()).orElseThrow(EntityNotFoundException::new);
         User userInvitedSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User userInvited = userService.safeTakeUserByUuid(userInvitedSecurity.getUuid());
         validation.checkInvateValid(eventInvitation, userInvited);

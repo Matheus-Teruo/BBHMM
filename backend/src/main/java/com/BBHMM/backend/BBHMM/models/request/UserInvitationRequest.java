@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 
 public record UserInvitationRequest(
     @NotNull(message = "User ID é necessário")
-    UUID userUuid
+    UUID userUuid,
+
+    @NotNull(message = "Event ID é necessário")
+    UUID eventUuid
 ) {
 }
