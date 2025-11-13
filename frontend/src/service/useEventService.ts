@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 import { useCallback } from "react";
 import { PaginatedResponse } from "./PagesType";
 
-const useUserService = () => {
+const useEventService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
 
@@ -76,4 +76,4 @@ const useUserService = () => {
   };
 };
 
-export default useUserService;
+export default useEventService;

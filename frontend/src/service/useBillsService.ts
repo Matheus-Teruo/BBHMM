@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 import { useCallback } from "react";
 import Bill, { CreateBill, UpdateBill } from "@data/Bills";
 
-const useUserService = () => {
+const useBillsService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
 
@@ -32,9 +32,9 @@ const useUserService = () => {
     [api, safeRequest],
   );
 
-  const listBill = useCallback(
-    async (eventUuid: string): Promise<Bill | null> =>
-      api.get<Bill>(`/events/${eventUuid}/bills`).then((res) => res.data),
+  const listBills = useCallback(
+    async (eventUuid: string): Promise<Bill[] | null> =>
+      api.get<Bill[]>(`/events/${eventUuid}/bills`).then((res) => res.data),
     [api],
   );
 
@@ -56,10 +56,10 @@ const useUserService = () => {
 
   return {
     createBill,
-    listBill,
+    listBills,
     updateBill,
     deleteBill,
   };
 };
 
-export default useUserService;
+export default useBillsService;
