@@ -1,7 +1,7 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
-import { CreateEvent, UpdateEvent } from "@data/Event";
+import Event, { CreateEvent, UpdateEvent } from "@data/Event";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
 import { PaginatedResponse } from "./PagesType";
