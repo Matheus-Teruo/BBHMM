@@ -1,0 +1,20 @@
+@use "@styles/variables" as *;
+
+.body {
+  margin: 2px 0;
+  display: flex;
+  align-items: center;
+
+  input {
+    margin: 0 4px;
+    padding: 2px 4px;
+    box-sizing: border-box;
+    border-radius: $border-radius;
+    border: none;
+  }
+
+  button {
+    padding: 2px 6px;
+    background-color: $color-secundary-1;
+  }
+}
