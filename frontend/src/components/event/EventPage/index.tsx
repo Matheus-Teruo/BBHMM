@@ -6,7 +6,8 @@ import Event from "@data/Event";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useReducer, useState } from "react";
-import NewEvent from "../NewEvent";
+import FormEvent from "../FormEvent";
+import { EditSVG } from "@/assets/svg";
 
 interface EventPageProps {
   onChange: (event: Event) => void;
@@ -15,7 +16,8 @@ interface EventPageProps {
 function EventPage({ onChange }: EventPageProps) {
   const [events, setEvents] = useState<Event[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
-  const [createForm, setCreateForm] = useState<boolean>(false);
+  const [eventForm, setEventForm] = useState<null | "Create" | "Update">(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | undefined>();
   const { getEvents } = useEventService();
   const { user } = useUserContext();
 
@@ -32,22 +34,39 @@ function EventPage({ onChange }: EventPageProps) {
     }
   }, [user, fetchEvent]);
 
+  function updateEvent(event: Event) {
+    setSelectedEvent(event);
+    setEventForm("Update");
+  }
+
   return (
     <div>
       <h2>Eventos</h2>
       <div>
-        <Button onClick={() => setCreateForm(true)}>Criar Novo Evento</Button>
+        <Button onClick={() => setEventForm("Create")}>
+          Criar Novo Evento
+        </Button>
       </div>
       <ul>
         {events.map((event) => (
-          <li onClick={() => onChange(event)}>
-            <h3>{event.eventName}</h3>
+          <li>
+            <h3 onClick={() => onChange(event)}>{event.eventName}</h3>
             <p>{event.description}</p>
+            <div onClick={() => updateEvent(event)}>
+              <p>Editar</p>
+              <EditSVG />
+            </div>
           </li>
         ))}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      {createForm && <NewEvent onChange={() => setCreateForm(false)} />}
+      {eventForm && (
+        <FormEvent
+          form={eventForm}
+          initialValue={selectedEvent}
+          onChange={() => setEventForm(null)}
+        />
+      )}
     </div>
   );
 }

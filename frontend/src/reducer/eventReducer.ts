@@ -1,5 +1,5 @@
 import { regexDate, regexLeterNumberSpace, regexUuid } from "@/util/regex";
-import { CreateEvent, UpdateEvent } from "@data/Event";
+import Event, { CreateEvent, UpdateEvent } from "@data/Event";
 
 interface EvetState {
   uuid: string;
@@ -13,6 +13,7 @@ export type PageAction =
   | { type: "SET_EVENT_NAME"; payload: string }
   | { type: "SET_DESCRIPTION"; payload: string }
   | { type: "SET_DATE"; payload: string }
+  | { type: "SET_EVENT"; payload: Event }
   | { type: "RESET" };
 
 export const initialEventState: EvetState = {
