@@ -18,6 +18,7 @@ const eventNull: Event = {
   uuid: "",
   eventName: "Sem Evento",
   description: "Nenhum evento selecionado",
+  eventDate: "",
 };
 
 function App() {

@@ -1,22 +1,25 @@
-import { regexLeterNumberSpace, regexUuid } from "@/util/regex";
+import { regexDate, regexLeterNumberSpace, regexUuid } from "@/util/regex";
 import { CreateEvent, UpdateEvent } from "@data/Event";
 
 interface EvetState {
   uuid: string;
   eventName: string;
   description: string;
+  eventDate: string;
 }
 
 export type PageAction =
   | { type: "SET_UUID"; payload: string }
   | { type: "SET_EVENT_NAME"; payload: string }
   | { type: "SET_DESCRIPTION"; payload: string }
+  | { type: "SET_DATE"; payload: string }
   | { type: "RESET" };
 
 export const initialEventState: EvetState = {
   uuid: "",
   eventName: "",
   description: "",
+  eventDate: "",
 };
 
 export function eventReducer(state: EvetState, action: PageAction): EvetState {
@@ -39,6 +42,12 @@ export function eventReducer(state: EvetState, action: PageAction): EvetState {
       }
       return { ...state, description: action.payload };
     }
+    case "SET_DATE": {
+      if (!regexDate.test(action.payload)) {
+        return state;
+      }
+      return { ...state, eventDate: action.payload };
+    }
     case "RESET":
 
     default:
@@ -47,10 +56,11 @@ export function eventReducer(state: EvetState, action: PageAction): EvetState {
 }
 
 export const createEventPayload = (s: EvetState): CreateEvent => {
-  const { uuid: _uuid, eventName, description } = s;
+  const { uuid: _uuid, eventName, description, eventDate } = s;
   return {
     eventName,
     description,
+    eventDate,
   } as CreateEvent;
 };
 
@@ -59,6 +69,7 @@ export const updateEventPayload = (s: EvetState): UpdateEvent => {
     uuid: s.uuid,
     eventName: s.eventName,
     description: s.description,
+    eventDate: s.eventDate,
   };
 
   Object.keys(payload).forEach((key) => {

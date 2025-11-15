@@ -2,6 +2,7 @@ export default interface EventInvitation {
   uuid: string;
   eventName: string;
   description: string;
+  eventDate: string;
   invitedUserUuid: string;
   ownerUser: string;
 }

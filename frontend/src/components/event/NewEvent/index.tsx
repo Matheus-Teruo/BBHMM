@@ -77,6 +77,18 @@ function NewEvent({ onChange }: NewEventProps) {
             showStatus={touched}
             message={messageError["username"]}
           />
+          <GeneralInput
+            value={state.eventDate}
+            onChange={(e) =>
+              dispatch({ type: "SET_DATE", payload: e.target.value })
+            }
+            id="eventDate"
+            placeholder="Dia do evento"
+            type="date"
+            isRequired
+            showStatus={touched}
+            message={messageError["username"]}
+          />
           <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
             <p>Criar</p>
             <CheckSVG />
