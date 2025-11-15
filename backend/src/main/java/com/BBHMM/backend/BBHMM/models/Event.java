@@ -1,11 +1,12 @@
 package com.BBHMM.backend.BBHMM.models;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.util.*;
-
 import com.BBHMM.backend.BBHMM.models.request.CreateEventRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 @Table(name = "event")
@@ -22,6 +23,9 @@ public class Event {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "event_date")
+    private LocalDate eventDate; 
+
     @ManyToMany
     @JoinTable(
             name = "event_user",
@@ -37,9 +41,10 @@ public class Event {
     private List<EventInvitation> eventInvitations = new ArrayList<>();
 
     public Event(CreateEventRequest request, User user) {
-        this.eventName=request.eventName();
-        this.description=request.description();
+        this.eventName = request.eventName();
+        this.description = request.description();
         this.users.add(user);
+        this.eventDate = request.eventDate();
     }
 
     public void update(UpdateEventRequest request) {
@@ -48,6 +53,9 @@ public class Event {
         }
         if (request.description() != null) {
             this.description=request.description();
+        }
+        if (request.eventDate() != null) {
+            this.eventDate=request.eventDate();
         }
     }
 

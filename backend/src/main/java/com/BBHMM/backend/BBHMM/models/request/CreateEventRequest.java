@@ -1,8 +1,11 @@
 package com.BBHMM.backend.BBHMM.models.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
 
 public record CreateEventRequest(
     @NotBlank(message = "Nome do evento é necessário")
@@ -14,6 +17,9 @@ public record CreateEventRequest(
     @NotBlank(message = "A decrição é necessário")
     @Size(min = 3, message = "A decrição precisa pelomenos 3 caractéres")
     @Pattern(regexp = "^[\\p{L}\\p{N} ]*$", message = "A decrição só deve conter letras, numeros e espaço")
-    String description
+    String description,
+
+    @NotNull(message = "A data do evento é necessário")
+    LocalDate eventDate
 ) {
 }

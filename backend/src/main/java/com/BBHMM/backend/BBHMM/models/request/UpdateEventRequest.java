@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.models.request;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,8 @@ public record UpdateEventRequest(
 
     @Size(min = 3, message = "A decrição precisa pelomenos 3 caractéres")
     @Pattern(regexp = "^[\\p{L}\\p{N} ]*$", message = "A decrição só deve conter letras, numeros e espaço")
-    String description
+    String description,
+
+    LocalDate eventDate
 ) {
 }
