@@ -3,6 +3,7 @@ package com.BBHMM.backend.BBHMM.controllers;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.BillResponse;
+import com.BBHMM.backend.BBHMM.models.response.BillsResumeResponse;
 import com.BBHMM.backend.BBHMM.services.BillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class BillsController {
     }
 
     @GetMapping("/{eventUuid}/bills")
-    public ResponseEntity<List<BillResponse>> listBills(@PathVariable UUID eventUuid) {
-        var response = service.listBillsByEvent(eventUuid).stream().map(BillResponse::new).toList();
+    public ResponseEntity<List<BillsResumeResponse>> listBills(@PathVariable UUID eventUuid) {
+        var response = service.listBillsByEvent(eventUuid).stream().map(BillsResumeResponse::new).toList();
         return ResponseEntity.ok(response);
     }
 
