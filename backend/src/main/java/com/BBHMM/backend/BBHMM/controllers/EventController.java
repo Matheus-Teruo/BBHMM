@@ -11,7 +11,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateEventRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
 import com.BBHMM.backend.BBHMM.models.response.EventResponse;
-import com.BBHMM.backend.BBHMM.models.response.UserResponse;
+import com.BBHMM.backend.BBHMM.models.response.UserResumeResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class EventController {
             .path("/{uuid}")
             .buildAndExpand(event.getUuid())
             .toUri();
-   
+
         return ResponseEntity.created(location).body(new EventResponse(event));
     }
 
@@ -62,8 +62,8 @@ public class EventController {
     }
 
     @GetMapping("/{eventUuid}/users")
-    public ResponseEntity<List<UserResponse>> listUsersFromEvent(@PathVariable UUID eventUuid) {
-        var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(UserResponse::new).toList();
+    public ResponseEntity<List<UserResumeResponse>> listUsersFromEvent(@PathVariable UUID eventUuid) {
+        var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(UserResumeResponse::new).toList();
         return ResponseEntity.ok(response);
     }
 }
