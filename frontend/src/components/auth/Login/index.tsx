@@ -16,7 +16,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import User from "@data/User";
+import { UserResume } from "@data/User";
 import {
   initialUserState,
   loginPayload,
@@ -40,10 +40,10 @@ function Login({ signupRedirect }: { signupRedirect: () => void }) {
     setTouched(false);
     setMessageError({});
     const user = await loginUser(loginPayload(state));
-    if (user && !isMessage<User>(user)) {
+    if (user && !isMessage<UserResume>(user)) {
       addNotification({
-        title: "Login Success",
-        message: `User ${state.username} logged`,
+        title: "Sucesso ao fazer Login",
+        message: `Usuário ${state.username} loggado`,
         type: MessageType.OK,
       });
       login(user);

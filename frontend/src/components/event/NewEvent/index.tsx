@@ -66,6 +66,17 @@ function NewEvent({ onChange }: NewEventProps) {
             showStatus={touched}
             message={messageError["username"]}
           />
+          <GeneralInput
+            value={state.description}
+            onChange={(e) =>
+              dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
+            }
+            id="description"
+            placeholder="Descrição do evento"
+            isRequired
+            showStatus={touched}
+            message={messageError["username"]}
+          />
           <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
             <p>Criar</p>
             <CheckSVG />
