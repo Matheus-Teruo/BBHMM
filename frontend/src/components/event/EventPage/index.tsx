@@ -6,7 +6,11 @@ import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 
-function EventPage() {
+interface EventPageProps {
+  onChange: (event: Event) => void;
+}
+
+function EventPage({ onChange }: EventPageProps) {
   const [events, setEvents] = useState<Event[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const { getEvents } = useEventService();
@@ -30,7 +34,7 @@ function EventPage() {
       <h2>Eventos</h2>
       <ul>
         {events.map((event) => (
-          <li>
+          <li onClick={() => onChange(event)}>
             <h3>{event.eventName}</h3>
             <p>{event.description}</p>
           </li>

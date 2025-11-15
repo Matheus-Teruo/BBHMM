@@ -1,12 +1,12 @@
-export type PageAction =
-  | { type: "SET_PAGE_NUMBER"; payload: number }
-  | { type: "INCREMENT_PAGE" }
-  | { type: "SET_PAGE_MAX"; payload: number };
-
 interface PageState {
   number: number;
   max: number;
 }
+
+export type PageAction =
+  | { type: "SET_PAGE_NUMBER"; payload: number }
+  | { type: "INCREMENT_PAGE" }
+  | { type: "SET_PAGE_MAX"; payload: number };
 
 export const initialPageState: PageState = {
   number: 0,
