@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./ProductInput.module.scss";
+import styles from "./GeneralInput.module.scss";
 import { InputStatus } from "../InputStatus";
 
 interface GeneralInputProps {
