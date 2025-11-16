@@ -50,8 +50,8 @@ public class PaymentService {
             .map(e -> new UserBalance(e.getKey(), e.getValue()))
             .sorted(Comparator.comparing(UserBalance::getBalance).reversed())
             .toList();
-        
-         List<UserBalance> payers = participantsMap.entrySet().stream()
+
+        List<UserBalance> payers = participantsMap.entrySet().stream()
             .map(e -> new UserBalance(e.getKey(), e.getValue()))
             .sorted(Comparator.comparing(UserBalance::getBalance).reversed())
             .toList();

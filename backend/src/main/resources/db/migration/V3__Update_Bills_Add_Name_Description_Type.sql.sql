@@ -3,4 +3,4 @@
 ALTER TABLE bills
 ADD COLUMN name VARCHAR(100) AFTER uuid,
 ADD COLUMN description TEXT AFTER name;
-ADD COLUMN type ENUM('bill', 'payment') NOT NULL DEFAULT 'bill' AFTER paid;
+ADD COLUMN type ENUM('BILL', 'PAYMENT') NOT NULL DEFAULT 'BILL' AFTER paid;

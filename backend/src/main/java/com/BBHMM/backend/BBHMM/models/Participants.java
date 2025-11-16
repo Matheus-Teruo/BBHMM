@@ -20,11 +20,14 @@ public class Participants {
     @Column(name = "uuid_user", insertable = false, updatable = false)
     private UUID userUuid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uuid_user", nullable = false)
     private User user;
 
-    @ManyToOne
+    @Column(name = "uuid_bill", insertable = false, updatable = false)
+    private UUID billUuid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uuid_bill", nullable = false)
     private Bill bill;
 

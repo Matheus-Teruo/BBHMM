@@ -30,7 +30,7 @@ public class Bill {
     @Column(name = "uuid_payer", insertable = false, updatable = false)
     private UUID payerUuid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uuid_payer", nullable = false)
     private User payer;
 
@@ -45,6 +45,7 @@ public class Bill {
     @Column(nullable = false)
     private Boolean paid = false;
 
+    @Enumerated(EnumType.STRING)
     private BillType type = BillType.BILL;
 
     @Setter
@@ -53,7 +54,9 @@ public class Bill {
 
     public Bill(CreateBillRequest request, Event event, User user) {
         this.name = request.name();
-        this.description = request.description();
+        if (request.description() != null) {
+            this.description = request.description();
+        }
         this.value = request.value();
         this.event = event;
         this.payer = user;
@@ -74,6 +77,12 @@ public class Bill {
     }
 
     public void update(UpdateBillRequest request) {
+        if (request.name() != null) {
+            this.name = request.name();
+        }
+        if (request.description() != null) {
+            this.description = request.description();
+        }
         if(request.value() != null) {
             this.value = request.value();
         }

@@ -6,13 +6,15 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ParticipantResponse(
+    UUID uuid,
     BigDecimal value,
     BigDecimal paid_value,
     Boolean paid,
     UUID userUuid
 ) {
     public ParticipantResponse(Participants participants) {
-        this(participants.getValue(),
+        this(participants.getUuid(),
+            participants.getValue(),
             participants.getPaidValue(),
             participants.getPaid(),
             participants.getUuid()

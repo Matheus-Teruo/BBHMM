@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
+import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.BillResponse;
@@ -27,7 +28,12 @@ public class BillsController {
 
     @GetMapping("/{eventUuid}/bills")
     public ResponseEntity<List<BillsResumeResponse>> listBills(@PathVariable UUID eventUuid) {
-        var response = service.listBillsByEvent(eventUuid).stream().map(BillsResumeResponse::new).toList();
+        var participants = service.listParticipantsByEvent(eventUuid);
+        var response = service.listBillsByEvent(eventUuid).stream().map((bill) ->
+            new BillsResumeResponse(
+                bill,
+                participants.stream().filter(participant -> participant.getBillUuid().equals(bill.getUuid())).map(Participants::getUuid).toList()
+            )).toList();
         return ResponseEntity.ok(response);
     }
 

@@ -53,7 +53,15 @@ public class BillService {
     }
 
     public List<Bill> listBillsByEvent(UUID eventUuid) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        validation.checkUserParticipationInEvent(user.getUuid(), eventUuid);
         return repository.findBillsByEventUuid(eventUuid);
+    }
+
+    public List<Participants> listParticipantsByEvent(UUID eventUuid) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        validation.checkUserParticipationInEvent(user.getUuid(), eventUuid);
+        return repository.findParticipantsByEventUuid(eventUuid);
     }
 
     @Transactional

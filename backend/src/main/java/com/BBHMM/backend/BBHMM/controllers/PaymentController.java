@@ -23,9 +23,9 @@ import java.util.UUID;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class PaymentController {
-    
+
     private final PaymentService service;
-    
+
     @GetMapping("/{eventUuid}/payment")
     public ResponseEntity<List<PaymentResponse>> getDebtPayment(@PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -42,4 +42,3 @@ public class PaymentController {
         return ResponseEntity.noContent().build();
     } 
 }
- 
