@@ -5,6 +5,7 @@ import Event, { CreateEvent, UpdateEvent } from "@data/Event";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
 import { PaginatedResponse } from "./PagesType";
+import { UserResume } from "@data/User";
 
 const useEventService = () => {
   const api = useAxios();
@@ -62,8 +63,10 @@ const useEventService = () => {
   );
 
   const listUserFromEvent = useCallback(
-    async (eventUuid: string): Promise<Event[] | null> =>
-      api.get<Event[]>(`/events/${eventUuid}/users`).then((res) => res.data),
+    async (eventUuid: string): Promise<UserResume[] | null> =>
+      api
+        .get<UserResume[]>(`/events/${eventUuid}/users`)
+        .then((res) => res.data),
     [api],
   );
 

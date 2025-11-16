@@ -49,7 +49,7 @@ function EventPage({ onChange }: EventPageProps) {
       </div>
       <ul>
         {events.map((event) => (
-          <li>
+          <li key={event.uuid}>
             <h3 onClick={() => onChange(event)}>{event.eventName}</h3>
             <p>{event.description}</p>
             <div onClick={() => updateEvent(event)}>
