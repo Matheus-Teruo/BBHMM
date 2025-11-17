@@ -3,7 +3,7 @@ import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
-import Bill, { CreateBill, UpdateBill } from "@data/Bills";
+import Bill, { BillResume, CreateBill, UpdateBill } from "@data/Bills";
 
 const useBillsService = () => {
   const api = useAxios();
@@ -33,8 +33,10 @@ const useBillsService = () => {
   );
 
   const listBills = useCallback(
-    async (eventUuid: string): Promise<Bill[] | null> =>
-      api.get<Bill[]>(`/events/${eventUuid}/bills`).then((res) => res.data),
+    async (eventUuid: string): Promise<BillResume[] | null> =>
+      api
+        .get<BillResume[]>(`/events/${eventUuid}/bills`)
+        .then((res) => res.data),
     [api],
   );
 
