@@ -16,7 +16,7 @@ public interface BillRepository extends JpaRepository<Bill, UUID>{
     @Query("SELECT b FROM Bill b WHERE b.uuid = :uuid")
     Optional<Bill> findByUuid(UUID uuid);
 
-    @Query("SELECT b FROM Bill b WHERE b.event.uuid = :eventUuid AND b.type = com.seu.pacote.BillType.BILL")
+    @Query("SELECT b FROM Bill b WHERE b.event.uuid = :eventUuid AND b.type = com.BBHMM.backend.BBHMM.models.BillType.BILL")
     List<Bill> findBillsByEventUuid(UUID eventUuid);
 
     @Query("SELECT b FROM Bill b WHERE b.event.uuid = :eventUuid AND b.paid = false")
@@ -28,7 +28,7 @@ public interface BillRepository extends JpaRepository<Bill, UUID>{
     @Query("SELECT b FROM Bill b WHERE b.payer.uuid = :payerUuid AND b.event.uuid = :eventUuid AND b.debitAmount > 0")
     List<Bill> findBillsByPayerUuidAndPaid(UUID payerUuid, UUID eventUuid);
 
-    @Query("SELECT p FROM Participants p JOIN p.bill b WHERE b.event.uuid = :eventUuid AND b.type = com.seu.pacote.BillType.BILL")
+    @Query("SELECT p FROM Participants p WHERE p.bill.event.uuid = :eventUuid AND p.bill.type = com.BBHMM.backend.BBHMM.models.BillType.BILL")
     List<Participants> findParticipantsByEventUuid(UUID eventUuid);
 
     @Query("SELECT p FROM Participants p WHERE p.paid = false")

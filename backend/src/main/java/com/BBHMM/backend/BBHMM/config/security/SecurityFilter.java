@@ -33,7 +33,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     var tokenJWT = recoverToken(request);
 
     if (tokenJWT != null) {
-      var userUuid = service.recoverVoluntaryUuid(tokenJWT);
+      var userUuid = service.recoverUserUuid(tokenJWT);
       Optional<User> user = repository.findById(userUuid);
 
       if (user.isPresent()){

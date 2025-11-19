@@ -13,14 +13,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.net.URI;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/auth")
@@ -32,6 +33,9 @@ public class AuthController {
     private final AuthenticationManager manager;
 
     private final TokenServiceConfig tokenService;
+
+    @Value("${spring.profiles.active:default}")
+    private String activeProfile;
 
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(
@@ -86,11 +90,12 @@ public class AuthController {
     }
 
     private Cookie createCookie(String tokenJWT, int hours) {
-    Cookie authCookie = new Cookie("auth", tokenJWT);
-    authCookie.setHttpOnly(true);
-    authCookie.setSecure(true);
-    authCookie.setPath("/");
-    authCookie.setMaxAge(60 * 60 * hours);
-    return authCookie;
-  }
+        Cookie authCookie = new Cookie("auth", tokenJWT);
+        authCookie.setHttpOnly(true);
+        authCookie.setSecure(true);
+        authCookie.setPath("/");
+        authCookie.setMaxAge(60 * 60 * hours);
+        if (activeProfile.equals("dev")) authCookie.setAttribute("SameSite", "None");
+        return authCookie;
+    }
 }

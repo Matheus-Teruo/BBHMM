@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Entity
-@Table(name = "event")
+@Table(name = "events")
 @Getter
 @NoArgsConstructor
 public class Event {

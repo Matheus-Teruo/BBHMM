@@ -10,7 +10,7 @@ import lombok.*;
 import java.util.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @NoArgsConstructor
 public class User implements UserDetails {

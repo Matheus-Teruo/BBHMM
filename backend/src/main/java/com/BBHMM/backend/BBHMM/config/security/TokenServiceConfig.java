@@ -36,7 +36,7 @@ public class TokenServiceConfig {
     }
   }
 
-  public UUID recoverVoluntaryUuid(String jwtToken) {
+  public UUID recoverUserUuid(String jwtToken) {
     try {
       return UUID.fromString(
           JWT.require(Algorithm.HMAC256(secret))

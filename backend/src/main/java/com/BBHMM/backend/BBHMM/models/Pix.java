@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "pix")
+@Table(name = "pixes")
 @Getter
 @NoArgsConstructor
 public class Pix {

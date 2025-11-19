@@ -14,7 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserValidation {
 
-    private UserRepository repository;
+    private final UserRepository repository;
 
     public void checkNameDuplication(String username, String fullname) {
         if (username != null && repository.existsByUsername(username)) {
