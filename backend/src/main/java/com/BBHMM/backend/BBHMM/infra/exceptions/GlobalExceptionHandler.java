@@ -18,6 +18,20 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
   }
 
+  @ExceptionHandler(InvalidDatabaseInsertionException.class)
+  public ResponseEntity<Map<String, Object>> handleDatabaseInsertionExceptions(InvalidDatabaseInsertionException ex) {
+    Map<String, Object> error = new HashMap<>();
+    error.put("errorType",
+        "Erro ao Inserir no Banco"
+    );
+    error.put("entity", ex.getEntityName());
+    error.put("invalidFields", ex.getFieldErrors());
+    error.put("error", ex.getError());
+    error.put("message", ex.getMessage());
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
   @ExceptionHandler(InvalidDatabaseQueryException.class)
   public ResponseEntity<Map<String, String>> handleDatabaseQueryExceptions(InvalidDatabaseQueryException ex) {
     Map<String, String> error = new HashMap<>();
