@@ -16,12 +16,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT e FROM Event e WHERE e.uuid = :uuid")
     Optional<Event> findByUuid(UUID uuid);
 
-    @Query("""
-    SELECT e 
-    FROM Event e 
-    JOIN e.users u 
-    WHERE u.uuid = :userId
-    """)
+    @Query("SELECT e FROM Event e JOIN e.users u WHERE u.uuid = :userUuid")
     Page<Event> findAllbyUser(Pageable pageable, UUID userUuid);
 
     @Query("""
