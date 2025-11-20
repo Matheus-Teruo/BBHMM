@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionException;
+import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 
@@ -21,14 +22,11 @@ public class BillValidation {
     private final UserRepository userRepository;
 
     public void checkUserParticipationInEvent(UUID userUuid, UUID eventUuid) {
-        if (userRepository.isUserParticipantInEvent(userUuid, eventUuid)) {
-            throw new InvalidDatabaseInsertionException(
-                "Campo duplicado",
-                "Nome de usuário",
-                Map.of(
-                    "eventUuid",
-                    eventUuid.toString()
-                )
+        if (!userRepository.isUserParticipantInEvent(userUuid, eventUuid)) {
+            throw new InvalidDatabaseQueryException(
+                "Usuário inválido",
+                "Usuário não pertence ao evento",
+                userUuid.toString()
             );
         }
     }
@@ -39,8 +37,8 @@ public class BillValidation {
                                         .map(User::getUuid)
                                         .collect(Collectors.toSet());
         List<UUID> missingUsers = participantsUuid.stream()
-                                                  .filter(uuid -> !foundUserUuids.contains(uuid))
-                                                  .toList();
+                                                .filter(uuid -> !foundUserUuids.contains(uuid))
+                                                .toList();
 
         if (!missingUsers.isEmpty()) {
             throw new InvalidDatabaseInsertionException(
