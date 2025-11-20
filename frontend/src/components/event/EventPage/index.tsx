@@ -64,7 +64,10 @@ function EventPage({ onChange }: EventPageProps) {
         <FormEvent
           form={eventForm}
           initialValue={selectedEvent}
-          onChange={() => setEventForm(null)}
+          onChange={() => {
+            fetchEvent();
+            return setEventForm(null);
+          }}
         />
       )}
     </div>

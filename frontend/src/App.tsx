@@ -7,6 +7,7 @@ import Login from "./components/auth/Login";
 import SignUp from "./components/auth/Signup";
 import EventPage from "./components/event/EventPage";
 import Event from "@data/Event";
+import BillPage from "./components/bill/BillPage";
 
 enum Logged {
   LOGGED = "logged",
@@ -37,6 +38,7 @@ function App() {
       {event.uuid !== "" ? (
         <div>
           <h2>{event.eventName}</h2>
+          <BillPage event={event} />
         </div>
       ) : (
         <>

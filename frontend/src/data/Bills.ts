@@ -13,7 +13,7 @@ export interface UpdateBill {
   uuid: string;
   name?: string;
   description?: string;
-  value?: string;
+  value?: number;
   listPartUuids: string[];
 }
 

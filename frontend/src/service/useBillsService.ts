@@ -32,6 +32,12 @@ const useBillsService = () => {
     [api, safeRequest],
   );
 
+  const getBill = useCallback(
+    async (billUuid: string): Promise<Bill | null> =>
+      api.get<Bill>(`/events/bills/${billUuid}`).then((res) => res.data),
+    [api],
+  );
+
   const listBills = useCallback(
     async (eventUuid: string): Promise<BillResume[] | null> =>
       api
@@ -58,6 +64,7 @@ const useBillsService = () => {
 
   return {
     createBill,
+    getBill,
     listBills,
     updateBill,
     deleteBill,

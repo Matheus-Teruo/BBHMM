@@ -1,3 +1,4 @@
+import Button from "@/components/util/Button";
 import { isUserLogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume } from "@data/Bills";
@@ -6,6 +7,8 @@ import { UserResume } from "@data/User";
 import useBillsService from "@service/useBillsService";
 import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useState } from "react";
+import FormBill from "../FormBill";
+import { EditSVG } from "@/assets/svg";
 
 interface BillPageProps {
   event: Event;
@@ -14,6 +17,8 @@ interface BillPageProps {
 function BillPage({ event }: BillPageProps) {
   const [bills, setBills] = useState<BillResume[]>([]);
   const [users, setUsers] = useState<UserResume[]>([]);
+  const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
+  const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
   const { listUserFromEvent } = useEventService();
   const { listBills } = useBillsService();
   const { user } = useUserContext();
@@ -39,6 +44,9 @@ function BillPage({ event }: BillPageProps) {
     <div>
       <h2>Contas</h2>
       <div>
+        <Button onClick={() => setBillForm("Create")}>Criar Nova conta</Button>
+      </div>
+      <div>
         <ul>
           <li>
             <p>Nome</p>
@@ -57,10 +65,27 @@ function BillPage({ event }: BillPageProps) {
                   checked={bill.participantsUuid.includes(user.uuid)}
                 />
               ))}
+              <div>
+                <Button onClick={() => setSelectedBill(bill)}>
+                  <p>Editar</p>
+                  <EditSVG />
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
       </div>
+      {billForm && (
+        <FormBill
+          form={billForm}
+          initialValue={selectedBill}
+          eventUuid={event.uuid}
+          onChange={() => {
+            fetchBill();
+            return setBillForm(null);
+          }}
+        />
+      )}
     </div>
   );
 }

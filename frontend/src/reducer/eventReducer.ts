@@ -1,14 +1,14 @@
 import { regexDate, regexLeterNumberSpace, regexUuid } from "@/util/regex";
 import Event, { CreateEvent, UpdateEvent } from "@data/Event";
 
-interface EvetState {
+interface EventState {
   uuid: string;
   eventName: string;
   description: string;
   eventDate: string;
 }
 
-export type PageAction =
+export type EventAction =
   | { type: "SET_UUID"; payload: string }
   | { type: "SET_EVENT_NAME"; payload: string }
   | { type: "SET_DESCRIPTION"; payload: string }
@@ -16,14 +16,17 @@ export type PageAction =
   | { type: "SET_EVENT"; payload: Event }
   | { type: "RESET" };
 
-export const initialEventState: EvetState = {
+export const initialEventState: EventState = {
   uuid: "",
   eventName: "",
   description: "",
   eventDate: "",
 };
 
-export function eventReducer(state: EvetState, action: PageAction): EvetState {
+export function eventReducer(
+  state: EventState,
+  action: EventAction,
+): EventState {
   switch (action.type) {
     case "SET_UUID": {
       if (!regexUuid.test(action.payload)) {
@@ -49,14 +52,17 @@ export function eventReducer(state: EvetState, action: PageAction): EvetState {
       }
       return { ...state, eventDate: action.payload };
     }
+    case "SET_EVENT": {
+      return action.payload;
+    }
     case "RESET":
-
+      return initialEventState;
     default:
       throw new Error("Ação desconhecida no reducer");
   }
 }
 
-export const createEventPayload = (s: EvetState): CreateEvent => {
+export const createEventPayload = (s: EventState): CreateEvent => {
   const { uuid: _uuid, eventName, description, eventDate } = s;
   return {
     eventName,
@@ -65,7 +71,7 @@ export const createEventPayload = (s: EvetState): CreateEvent => {
   } as CreateEvent;
 };
 
-export const updateEventPayload = (s: EvetState): UpdateEvent => {
+export const updateEventPayload = (s: EventState): UpdateEvent => {
   const payload: Partial<UpdateEvent> = {
     uuid: s.uuid,
     eventName: s.eventName,
