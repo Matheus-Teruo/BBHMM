@@ -97,7 +97,7 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
             onChange={(e) =>
               dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
             }
-            id="description"
+            id="eventDescription"
             placeholder="Descrição do evento"
             isRequired
             showStatus={touched}

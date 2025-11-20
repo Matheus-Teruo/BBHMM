@@ -106,7 +106,7 @@ function FormBill({
             onChange={(e) =>
               dispatch({ type: "SET_NAME", payload: e.target.value })
             }
-            id="name"
+            id="billName"
             placeholder="Nome da conta"
             isRequired
             showStatus={touched}
@@ -117,7 +117,7 @@ function FormBill({
             onChange={(e) =>
               dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
             }
-            id="description"
+            id="billDescription"
             placeholder="Descrição da conta"
             isRequired
             showStatus={touched}
@@ -131,7 +131,7 @@ function FormBill({
                 payload: parseFloat(e.target.value),
               })
             }
-            id="value"
+            id="billValue"
             placeholder="Valor da conta"
             type="number"
             isRequired
