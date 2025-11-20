@@ -92,10 +92,17 @@ public class AuthController {
     private Cookie createCookie(String tokenJWT, int hours) {
         Cookie authCookie = new Cookie("auth", tokenJWT);
         authCookie.setHttpOnly(true);
-        authCookie.setSecure(true);
         authCookie.setPath("/");
         authCookie.setMaxAge(60 * 60 * hours);
-        if (activeProfile.equals("dev")) authCookie.setAttribute("SameSite", "None");
+        if (activeProfile.equals("local")) {
+            authCookie.setSecure(false);
+            authCookie.setAttribute("SameSite", "Lax");
+        } else if (activeProfile.equals("dev")) {
+            authCookie.setSecure(true);
+            authCookie.setAttribute("SameSite", "None");
+        } else {
+            authCookie.setSecure(true);
+        }
         return authCookie;
     }
 }

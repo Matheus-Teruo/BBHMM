@@ -22,9 +22,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
-  TokenServiceConfig service;
+  private final TokenServiceConfig service;
 
-  UserRepository repository;
+  private final UserRepository repository;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
