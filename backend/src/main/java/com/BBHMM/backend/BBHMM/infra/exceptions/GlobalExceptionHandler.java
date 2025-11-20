@@ -2,6 +2,8 @@ package com.BBHMM.backend.BBHMM.infra.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,6 +18,25 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<Void> handleError404(EntityNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    Map<String, String> invalidFields = new HashMap<>();
+
+    for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+      invalidFields.put(error.getField(), error.getDefaultMessage());
+    }
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("status", HttpStatus.BAD_REQUEST.value());
+    response.put("errorType", "Erro de Validação");
+    response.put("invalidFields", invalidFields);
+    response.put("error", "Campos inválidos");
+    response.put("message", "Alguns campos contêm valores inválidos. Verifique e tente novamente.");
+
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(InvalidDatabaseInsertionException.class)
