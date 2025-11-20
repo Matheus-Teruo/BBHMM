@@ -26,6 +26,13 @@ public class BillsController {
         return ResponseEntity.ok(new BillResponse(bill));
     }
 
+    @GetMapping("/bills/{billUuid}")
+    public ResponseEntity<BillResponse> getBills(@PathVariable UUID billUuid) {
+        var bill = service.getBill(billUuid);
+
+        return ResponseEntity.ok(new BillResponse(bill));
+    }
+
     @GetMapping("/{eventUuid}/bills")
     public ResponseEntity<List<BillsResumeResponse>> listBills(@PathVariable UUID eventUuid) {
         var participants = service.listParticipantsByEvent(eventUuid);

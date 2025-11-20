@@ -11,6 +11,7 @@ import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +41,14 @@ public class BillService {
         var bill = new Bill(request, event, user);
         repository.save(bill);
 
+        return bill;
+    }
+
+    public Bill getBill(UUID uuid) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var bill = repository.findByUuid(uuid)
+            .orElseThrow(EntityNotFoundException::new);
+        validation.checkUserParticipationInEvent(user.getUuid(), bill.getEventUuid());
         return bill;
     }
 

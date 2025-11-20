@@ -34,7 +34,10 @@ public class Bill {
     @JoinColumn(name = "uuid_payer", nullable = false)
     private User payer;
 
-    @ManyToOne
+    @Column(name = "uuid_event", insertable = false, updatable = false)
+    private UUID eventUuid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uuid_event", nullable = false)
     private Event event;
 
