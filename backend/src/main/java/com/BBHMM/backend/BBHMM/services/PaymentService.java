@@ -26,10 +26,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private BillValidation billValidation;
-    private BillRepository billRepository;
-    private UserService userService;
-    private EventService eventService;
+    private final BillValidation billValidation;
+    private final BillRepository billRepository;
+    private final UserService userService;
+    private final EventService eventService;
 
     public List<PaymentResponse> getPaymenList(UUID eventuuid, User userOwner) {
         billValidation.checkUserParticipationInEvent(eventuuid, eventuuid);

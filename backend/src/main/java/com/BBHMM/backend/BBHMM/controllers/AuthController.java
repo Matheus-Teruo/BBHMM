@@ -29,9 +29,7 @@ import java.net.URI;
 public class AuthController {
 
     private final UserService service;
-
     private final AuthenticationManager manager;
-
     private final TokenServiceConfig tokenService;
 
     @Value("${spring.profiles.active:default}")

@@ -18,8 +18,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EventValidation {
 
-    private EventRepository repository;
-    private EventInvitationRepository eventInvitationRepository;
+    private final EventRepository repository;
+    private final EventInvitationRepository eventInvitationRepository;
 
     public void checkNameDuplication(String eventName) {
         if (eventName != null && repository.existsByEventName(eventName)) {
