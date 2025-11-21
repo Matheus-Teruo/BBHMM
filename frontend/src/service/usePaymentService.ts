@@ -1,28 +1,12 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
 import Payment, { PayBill } from "@data/Payment";
-import { AxiosError } from "axios";
 import { useCallback } from "react";
+import { useSafeRequest } from "./useHandleRequest";
 
 const usePaymentService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const getPayment = useCallback(
     async (eventUuid: string): Promise<Payment | null> =>

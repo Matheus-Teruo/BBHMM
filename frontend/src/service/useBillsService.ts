@@ -1,28 +1,18 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
-import { AxiosError } from "axios";
+import { AxiosResponse } from "axios";
 import { useCallback } from "react";
-import Bill, { BillResume, CreateBill, UpdateBill } from "@data/Bills";
+import Bill, {
+  BillResume,
+  CreateBill,
+  UpdateBill,
+  UpdateBillParticipants,
+} from "@data/Bills";
+import { useSafeRequest } from "./useHandleRequest";
 
 const useBillsService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest, safeRequestWithoutMessage } = useSafeRequest();
 
   const createBill = useCallback(
     async (bill: CreateBill): Promise<Bill | Message | null> =>
@@ -54,6 +44,14 @@ const useBillsService = () => {
     [api, safeRequest],
   );
 
+  const updateBillParticipant = useCallback(
+    async (bill: UpdateBillParticipants): Promise<AxiosResponse<void> | null> =>
+      safeRequestWithoutMessage(() =>
+        api.put<void>("/events/bills/participants", bill).then((res) => res),
+      ),
+    [api, safeRequest],
+  );
+
   const deleteBill = useCallback(
     async (billUuid: string): Promise<void | Message | null> =>
       safeRequest(() =>
@@ -67,6 +65,7 @@ const useBillsService = () => {
     getBill,
     listBills,
     updateBill,
+    updateBillParticipant,
     deleteBill,
   };
 };

@@ -17,6 +17,12 @@ export interface UpdateBill {
   listPartUuids: string[];
 }
 
+export interface UpdateBillParticipants {
+  type: string;
+  uuid: string;
+  partUuid: string;
+}
+
 export default interface Bill {
   uuid: string;
   billName: string;

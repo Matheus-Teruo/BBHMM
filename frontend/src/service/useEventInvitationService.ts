@@ -1,32 +1,16 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
-import { AxiosError } from "axios";
 import { useCallback } from "react";
-import { PaginatedResponse } from "./PagesType";
+import { PaginatedResponse } from "../data/PagesType";
 import EventInvitation, {
   AcceptInvitation,
   UserInvitation,
 } from "@data/EventInvitation";
+import { useSafeRequest } from "./useHandleRequest";
 
 const useEventInvitationService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const userEventInvitation = useCallback(
     async (
