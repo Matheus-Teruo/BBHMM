@@ -1,10 +1,12 @@
+import { UserResume } from "./User";
+
 export default interface EventInvitation {
   uuid: string;
   eventName: string;
   description: string;
   eventDate: string;
   invitedUserUuid: string;
-  ownerUser: string;
+  ownerUser: UserResume;
 }
 
 export interface UserInvitation {
@@ -14,6 +16,5 @@ export interface UserInvitation {
 
 export interface AcceptInvitation {
   uuid: string;
-  eventUuid: string;
   accept: boolean;
 }
