@@ -2,6 +2,7 @@ package com.BBHMM.backend.BBHMM.controllers;
 
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateBillParticipantsRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.BillResponse;
 import com.BBHMM.backend.BBHMM.models.response.BillsResumeResponse;
@@ -39,7 +40,7 @@ public class BillsController {
         var response = service.listBillsByEvent(eventUuid).stream().map((bill) ->
             new BillsResumeResponse(
                 bill,
-                participants.stream().filter(participant -> participant.getBillUuid().equals(bill.getUuid())).map(Participants::getUuid).toList()
+                participants.stream().filter(participant -> participant.getBillUuid().equals(bill.getUuid())).map(Participants::getUserUuid).toList()
             )).toList();
         return ResponseEntity.ok(response);
     }
@@ -49,6 +50,13 @@ public class BillsController {
         var bill = service.updateBill(request);
 
         return ResponseEntity.ok(new BillResponse(bill));
+    }
+
+    @PutMapping("/bills/participants")
+    public ResponseEntity<Void> updateBillParticipants(@RequestBody UpdateBillParticipantsRequest request) {
+        service.updateBillParticipants(request);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/bills/{billUuid}")
