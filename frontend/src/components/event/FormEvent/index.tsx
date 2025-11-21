@@ -79,7 +79,7 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
   return (
     <>
       <div>
-        <h2>Crie um evento</h2>
+        <h2>{`${form === "Create" ? "Cria um evento" : "Edita evento "}${form === "Update" && initialValue?.eventName}`}</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
             value={state.eventName}

@@ -84,11 +84,13 @@ export function billReducer(state: BillState, action: BillAction): BillState {
 }
 
 export const createBillPayload = (s: BillState): CreateBill => {
-  const { uuid: _uuid, name, description, value } = s;
+  const { uuid: _uuid, name, description, value, eventUuid, payerUuid } = s;
   return {
     name,
     description,
     value,
+    eventUuid,
+    payerUuid,
   } as CreateBill;
 };
 

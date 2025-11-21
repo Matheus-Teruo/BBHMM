@@ -23,20 +23,24 @@ function BillPage({ event }: BillPageProps) {
   const { listBills } = useBillsService();
   const { user } = useUserContext();
 
-  const fetchBill = useCallback(async () => {
-    const billResponse = await listBills(event.uuid);
+  const fetchUsers = useCallback(async () => {
     const usersResponse = await listUserFromEvent(event.uuid);
-    if (billResponse) {
-      setBills(billResponse);
-    }
     if (usersResponse) {
       setUsers(usersResponse);
+    }
+  }, [event, listUserFromEvent]);
+
+  const fetchBill = useCallback(async () => {
+    const billResponse = await listBills(event.uuid);
+    if (billResponse) {
+      setBills(billResponse);
     }
   }, [event, listBills]);
 
   useEffect(() => {
     if (isUserLogged(user)) {
       fetchBill();
+      fetchUsers();
     }
   }, [user, fetchBill]);
 
@@ -54,6 +58,7 @@ function BillPage({ event }: BillPageProps) {
             {users.map((user) => (
               <p key={user.uuid}>{user.firstName}</p>
             ))}
+            <div />
           </li>
           {bills.map((bill) => (
             <li key={bill.uuid}>
