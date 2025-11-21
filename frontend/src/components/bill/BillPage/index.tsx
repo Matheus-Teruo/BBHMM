@@ -1,7 +1,7 @@
 import Button from "@/components/util/Button";
 import { isUserLogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { BillResume } from "@data/Bills";
+import { BillResume, UpdateBillParticipants } from "@data/Bills";
 import Event from "@data/Event";
 import { UserResume } from "@data/User";
 import useBillsService from "@service/useBillsService";
@@ -9,6 +9,7 @@ import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useState } from "react";
 import FormBill from "../FormBill";
 import { EditSVG } from "@/assets/svg";
+import { isSuccess } from "@/util/requestHelper";
 
 interface BillPageProps {
   event: Event;
@@ -20,7 +21,7 @@ function BillPage({ event }: BillPageProps) {
   const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
   const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
   const { listUserFromEvent } = useEventService();
-  const { listBills } = useBillsService();
+  const { listBills, updateBillParticipant } = useBillsService();
   const { user } = useUserContext();
 
   const fetchUsers = useCallback(async () => {
@@ -43,6 +44,22 @@ function BillPage({ event }: BillPageProps) {
       fetchUsers();
     }
   }, [user, fetchBill]);
+
+  const handleCheckBill = async (
+    value: boolean,
+    participant: string,
+    billUuid: string,
+  ) => {
+    const body = {
+      type: value ? "add" : "remove",
+      uuid: billUuid,
+      partUuid: participant,
+    } as UpdateBillParticipants;
+    const response = await updateBillParticipant(body);
+    if (isSuccess(response)) {
+      fetchBill();
+    }
+  };
 
   return (
     <div>
@@ -68,6 +85,9 @@ function BillPage({ event }: BillPageProps) {
                 <input
                   type="checkbox"
                   checked={bill.participantsUuid.includes(user.uuid)}
+                  onChange={(e) =>
+                    handleCheckBill(e.target.checked, user.uuid, bill.uuid)
+                  }
                 />
               ))}
               <div>

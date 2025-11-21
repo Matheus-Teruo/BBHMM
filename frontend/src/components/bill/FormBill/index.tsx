@@ -82,7 +82,7 @@ function FormBill({
       if (event && !isMessage(event)) {
         addNotification({
           title: "Evento Editado",
-          message: `Evento ${state.name} criado, adicione mais pessoas`,
+          message: `Evento ${state.name} modificado`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
