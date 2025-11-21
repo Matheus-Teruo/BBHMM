@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public record AcceptInvitationRequest(
     UUID uuid,
-    UUID eventUuid,
     boolean accept
 ) {
 }

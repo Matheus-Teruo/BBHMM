@@ -13,7 +13,7 @@ public record EventInvitationResponse(
     String description,
     LocalDate eventDate,
     UUID invitedUserUuid,
-    UserResponse ownerUser
+    UserResumeResponse ownerUser
 ) {
     public EventInvitationResponse(UUID uuid, Event event, User invitedUser, User ownerUser) {
         this(
@@ -22,7 +22,7 @@ public record EventInvitationResponse(
             event.getDescription(),
             event.getEventDate(),
             invitedUser.getUuid(),
-            new UserResponse(ownerUser)
+            new UserResumeResponse(ownerUser)
         );
     }
 
@@ -33,7 +33,7 @@ public record EventInvitationResponse(
             eventInvitation.getEvent().getDescription(),
             eventInvitation.getEvent().getEventDate(),
             eventInvitation.getUserInvited().getUuid(),
-            new UserResponse(eventInvitation.getUserOwner())
+            new UserResumeResponse(eventInvitation.getUserOwner())
         );
     }
 }
