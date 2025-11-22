@@ -29,7 +29,7 @@ public class EventInvitation {
     private User userOwner;
 
     @ManyToOne
-    @JoinColumn(name = "event_uuid", nullable = false)
+    @JoinColumn(name = "uuid_event", nullable = false)
     private Event event;
 
     private Boolean accepted;

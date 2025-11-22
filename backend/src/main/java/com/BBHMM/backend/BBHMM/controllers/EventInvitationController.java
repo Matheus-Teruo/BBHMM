@@ -32,9 +32,8 @@ public class EventInvitationController {
         @RequestBody UserInvitationRequest request
         ) {
         EventInvitation eventInvitation = eventService.userEventInvitation(request);
-        User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(request.eventUuid()), eventInvitation.getUserInvited(), userOwner));
+        return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(request.eventUuid()), eventInvitation.getUserInvited(), eventInvitation.getUserOwner()));
     }
 
     @PostMapping("/invitation/accepted")
