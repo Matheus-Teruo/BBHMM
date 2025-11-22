@@ -10,7 +10,7 @@ export default interface EventInvitation {
 }
 
 export interface UserInvitation {
-  username: string;
+  userfield: string;
   eventUuid: string;
 }
 

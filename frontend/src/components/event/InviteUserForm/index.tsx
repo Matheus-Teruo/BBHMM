@@ -19,7 +19,7 @@ interface InviteUserProps {
 }
 
 function InviteUserForm({ event, onChange }: InviteUserProps) {
-  const [username, setUsername] = useState<string>("");
+  const [userfield, setUserfield] = useState<string>("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
@@ -32,7 +32,7 @@ function InviteUserForm({ event, onChange }: InviteUserProps) {
     setTouched(false);
     setMessageError({});
     const invitation = await userEventInvitation({
-      username: username,
+      userfield: userfield,
       eventUuid: event.uuid,
     } as UserInvitation);
     if (invitation && !isMessage(invitation)) {
@@ -41,7 +41,7 @@ function InviteUserForm({ event, onChange }: InviteUserProps) {
         message: `Convite enviado para ${invitation.ownerUser.firstName}`,
         type: MessageType.OK,
       });
-      setUsername("");
+      setUserfield("");
       onChange();
     } else if (invitation) {
       const message = invitation;
@@ -57,13 +57,13 @@ function InviteUserForm({ event, onChange }: InviteUserProps) {
         <h2>Envie um convite</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            id="username"
+            value={userfield}
+            onChange={(e) => setUserfield(e.target.value)}
+            id="userfield"
             placeholder="Nome de usuário ou Nome completo ou Email"
             isRequired
             showStatus={touched}
-            message={messageError["username"]}
+            message={messageError["userfield"]}
           />
           <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
             <p>Convidar</p>
