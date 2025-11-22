@@ -8,6 +8,7 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
 import com.BBHMM.backend.BBHMM.services.validation.UserValidation;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -43,44 +44,50 @@ public class UserService {
         return user;
     }
 
+    public User getUser(UUID uuid, User user) {
+        validation.checkUserAuthentication(uuid, user);
+        return repository.findByUuid(uuid)
+            .orElseThrow(EntityNotFoundException::new);
+    }
+
     public User safeTakeUserByUuid(UUID uuid) {
-    return repository.findByUuid(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException(
-            "Usuário não encontrado",
-            "usuário inexistente",
-            "ID",
-            uuid.toString())
-        );
+        return repository.findByUuid(uuid)
+            .orElseThrow(() -> new InvalidDatabaseQueryException(
+                "Usuário não encontrado",
+                "usuário inexistente",
+                "ID",
+                uuid.toString())
+            );
     }
 
     public User findUserByNameOrFullnameOrEmail(String userfield) {
-    if (userfield.matches("^.+@.+\\..+$")) {
-        return repository.findByEmail(userfield)
+        if (userfield.matches("^.+@.+\\..+$")) {
+            return repository.findByEmail(userfield)
+                    .orElseThrow(() -> new InvalidDatabaseQueryException(
+                            "Usuário não encontrado",
+                            "email não condiz com nenhum usuário",
+                            "userfield",
+                            userfield
+                    ));
+        }
+
+        if (userfield.matches(".*\\s+.*")) {
+            return repository.findByFullname(userfield)
+                    .orElseThrow(() -> new InvalidDatabaseQueryException(
+                            "Usuário não encontrado",
+                            "nome completo não condiz com nenhum usuário",
+                            "userfield",
+                            userfield
+                    ));
+        }
+
+        return repository.findByUsername(userfield)
                 .orElseThrow(() -> new InvalidDatabaseQueryException(
                         "Usuário não encontrado",
-                        "email não condiz com nenhum usuário",
+                        "nome de usuário não condiz com nenhum usuário",
                         "userfield",
                         userfield
                 ));
-    }
-
-    if (userfield.matches(".*\\s+.*")) {
-        return repository.findByFullname(userfield)
-                .orElseThrow(() -> new InvalidDatabaseQueryException(
-                        "Usuário não encontrado",
-                        "nome completo não condiz com nenhum usuário",
-                        "userfield",
-                        userfield
-                ));
-    }
-
-    return repository.findByUsername(userfield)
-            .orElseThrow(() -> new InvalidDatabaseQueryException(
-                    "Usuário não encontrado",
-                    "nome de usuário não condiz com nenhum usuário",
-                    "userfield",
-                    userfield
-            ));
     }
 
     public List<User> findParticipantsByEventUuid(UUID eventUuid) {
