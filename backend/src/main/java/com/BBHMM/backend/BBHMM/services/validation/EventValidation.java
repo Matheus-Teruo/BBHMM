@@ -25,6 +25,7 @@ public class EventValidation {
         if (eventName != null && repository.existsByEventName(eventName)) {
             throw new InvalidDatabaseInsertionException(
                 "Campo duplicado",
+                "nome de usuário já está sendo utilizado",
                 "Nome de usuário",
                 Map.of(
                     "eventName",
@@ -38,6 +39,7 @@ public class EventValidation {
         if (eventInvitationRepository.existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Convite pendente já existente",
+                "usuário ja possui um convite pendente para esse evento",
                 "Convite de Evento",
                 Map.of(
                     "invitedUser",
@@ -53,6 +55,7 @@ public class EventValidation {
         if (repository.userAlreadyInEvent(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Usuário ja está no evento",
+                "usuário já participa desse evento",
                 "Convite de Evento",
                 Map.of(
                     "invitedUser",
@@ -67,7 +70,8 @@ public class EventValidation {
     public void checkInvateValid(EventInvitation eventInvitation, User userInvited) {
         if (!eventInvitation.getUserInvited().getUuid().equals(userInvited.getUuid())) {
             throw new InvalidDatabaseQueryException(
-                "Concite não pertence ao mesmo usuário",
+                "Convite não pode ser aceito",
+                "convite não pertence ao usuário",
                 "Convite de Evento",
                 userInvited.getFullname().split(" ")[0]
             );

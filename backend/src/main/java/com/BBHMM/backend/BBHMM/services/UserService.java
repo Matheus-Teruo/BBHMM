@@ -47,6 +47,7 @@ public class UserService {
     return repository.findByUuid(uuid)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             "Usuário não encontrado",
+            "usuário inexistente",
             "ID",
             uuid.toString())
         );
@@ -56,7 +57,8 @@ public class UserService {
     if (userfield.matches("^.+@.+\\..+$")) {
         return repository.findByEmail(userfield)
                 .orElseThrow(() -> new InvalidDatabaseQueryException(
-                        "Usuário não encontrado pelo email",
+                        "Usuário não encontrado",
+                        "email não condiz com nenhum usuário",
                         "userfield",
                         userfield
                 ));
@@ -65,7 +67,8 @@ public class UserService {
     if (userfield.matches(".*\\s+.*")) {
         return repository.findByFullname(userfield)
                 .orElseThrow(() -> new InvalidDatabaseQueryException(
-                        "Usuário não encontrado pelo nome completo",
+                        "Usuário não encontrado",
+                        "nome completo não condiz com nenhum usuário",
                         "userfield",
                         userfield
                 ));
@@ -73,7 +76,8 @@ public class UserService {
 
     return repository.findByUsername(userfield)
             .orElseThrow(() -> new InvalidDatabaseQueryException(
-                    "Usuário não encontrado pelo nome do usuário",
+                    "Usuário não encontrado",
+                    "nome de usuário não condiz com nenhum usuário",
                     "userfield",
                     userfield
             ));

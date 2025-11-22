@@ -25,7 +25,8 @@ public class BillValidation {
         if (!userRepository.isUserParticipantInEvent(user.getUuid(), eventUuid)) {
             throw new InvalidDatabaseQueryException(
                 "Usuário inválido",
-                "Usuário não pertence ao evento",
+                "não pertence ao evento",
+                "Usuário",
                 user.getFullname().split(" ")[0]
             );
         }
@@ -43,6 +44,7 @@ public class BillValidation {
         if (!missingUsers.isEmpty()) {
             throw new InvalidDatabaseInsertionException(
                 "Usuário(s) não encontrado(s) no evento",
+                "não pertencem ao evento",
                 "UUID do usuário",
                 Map.of(
                 )

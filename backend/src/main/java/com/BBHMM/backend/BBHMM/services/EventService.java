@@ -48,6 +48,7 @@ public class EventService {
     return repository.findByUuid(uuid)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             "Evento não encontrado",
+            "evento inexistente",
             "ID",
             uuid.toString())
         );

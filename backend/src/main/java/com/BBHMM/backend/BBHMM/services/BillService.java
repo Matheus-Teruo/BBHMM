@@ -56,6 +56,7 @@ public class BillService {
     return repository.findByUuid(uuid)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             "Conta não encontrado",
+            "conta inexistente",
             "ID",
             uuid.toString())
         );

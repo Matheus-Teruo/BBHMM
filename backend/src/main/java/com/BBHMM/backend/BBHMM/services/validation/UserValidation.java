@@ -20,6 +20,7 @@ public class UserValidation {
         if (username != null && repository.existsByUsername(username)) {
             throw new InvalidDatabaseInsertionException(
                 "Campo duplicado",
+                "nome de usuário já está em uso",
                 "Nome de usuário",
                 Map.of(
                     "username",
@@ -30,6 +31,7 @@ public class UserValidation {
         if (fullname != null && repository.existsByFullname(fullname)) {
             throw new InvalidDatabaseInsertionException(
                 "Campo duplicado",
+                "esse nome já foi cadastrado",
                 "Nome completo",
                 Map.of(
                     "fullname",
@@ -43,6 +45,7 @@ public class UserValidation {
         if (!requestUuid.equals(user.getUuid())) {
             throw new InvalidDatabaseQueryException(
                 "Usuário não autenticado corretamente",
+                "usuário não tem mesmo código do request",
                 "UUID",
                 user.getFullname().split(" ")[0]
             );
