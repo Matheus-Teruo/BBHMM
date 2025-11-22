@@ -54,7 +54,7 @@ function EventInvitationPage({ onChange }: EventInvitationPageProps) {
   };
 
   return (
-    <div>
+    <>
       <h2>Convites pendentes</h2>
       <ul>
         {invites.map((invite) => (
@@ -75,7 +75,7 @@ function EventInvitationPage({ onChange }: EventInvitationPageProps) {
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       <GlassBackground onClick={onChange} />
-    </div>
+    </>
   );
 }
 

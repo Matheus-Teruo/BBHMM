@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import FormBill from "../FormBill";
 import { EditSVG } from "@/assets/svg";
 import { isSuccess } from "@/util/requestHelper";
+import InviteUserForm from "@/components/event/InviteUserForm";
 
 interface BillPageProps {
   event: Event;
@@ -19,6 +20,7 @@ function BillPage({ event }: BillPageProps) {
   const [bills, setBills] = useState<BillResume[]>([]);
   const [users, setUsers] = useState<UserResume[]>([]);
   const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
+  const [inviteUserForm, setInviteUserForm] = useState<boolean>(false);
   const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
   const { listUserFromEvent } = useEventService();
   const { listBills, updateBillParticipant } = useBillsService();
@@ -65,7 +67,8 @@ function BillPage({ event }: BillPageProps) {
     <div>
       <h2>Contas</h2>
       <div>
-        <Button onClick={() => setBillForm("Create")}>Criar Nova conta</Button>
+        <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
+        <Button onClick={() => setInviteUserForm(true)}>Convidar</Button>
       </div>
       <div>
         <ul>
@@ -108,6 +111,15 @@ function BillPage({ event }: BillPageProps) {
           onChange={() => {
             fetchBill();
             return setBillForm(null);
+          }}
+        />
+      )}
+      {inviteUserForm && (
+        <InviteUserForm
+          event={event}
+          onChange={() => {
+            fetchUsers();
+            return setInviteUserForm(false);
           }}
         />
       )}
