@@ -29,7 +29,7 @@ public class UserService {
 
     @Transactional
     public User createUser(SignUpUserRequest request) {
-        validation.checkNameDuplication(request.username(), request.fullname());
+        validation.checkNameDuplication(request.username(), request.fullname(), request.email());
         User user = new User(
             request,
             passwordEncoder.encode(request.password())
@@ -95,7 +95,7 @@ public class UserService {
     public User updateUser(UpdateUserRequest request) {
         var user = safeTakeUserByUuid(request.uuid());
         validation.checkUserAuthentication(request.uuid(), user);
-        validation.checkNameDuplication(request.username(), request.fullname());
+        validation.checkNameDuplication(request.username(), request.fullname(), request.email());
 
         String newPassword = "";
         boolean newPasswordFlag = false;

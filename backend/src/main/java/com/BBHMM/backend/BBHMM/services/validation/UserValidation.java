@@ -16,7 +16,7 @@ public class UserValidation {
 
     private final UserRepository repository;
 
-    public void checkNameDuplication(String username, String fullname) {
+    public void checkNameDuplication(String username, String fullname, String email) {
         if (username != null && repository.existsByUsername(username)) {
             throw new InvalidDatabaseInsertionException(
                 "Campo duplicado",
@@ -36,6 +36,17 @@ public class UserValidation {
                 Map.of(
                     "fullname",
                     fullname
+                )
+            );
+        }
+        if (email != null && repository.existsByEmail(email)) {
+            throw new InvalidDatabaseInsertionException(
+                "Campo duplicado",
+                "esse email já foi cadastrado",
+                "Email",
+                Map.of(
+                    "email",
+                    email
                 )
             );
         }
