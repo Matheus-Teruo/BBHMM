@@ -1,12 +1,12 @@
 package com.BBHMM.backend.BBHMM.services.validation;
 
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionException;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
+import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
@@ -34,31 +34,31 @@ public class EventValidation {
         }
     }
 
-    public void checkDuplicationInvate(UUID invitedUserUuid, UUID eventUuid) {
-        if (eventInvitationRepository.existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(invitedUserUuid, eventUuid)) {
+    public void checkDuplicationInvate(User invitedUser, Event event) {
+        if (eventInvitationRepository.existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Convite pendente já existente",
                 "Convite de Evento",
                 Map.of(
-                    "invitedUserUuid",
-                    invitedUserUuid.toString(),
-                    "eventUuid",
-                    eventUuid.toString()
+                    "invitedUser",
+                    invitedUser.getFullname().split(" ")[0],
+                    "event",
+                    event.getEventName()
                 )
             );
         }
     }
 
-    public void checkUserAlreadyInEvent(UUID invitedUserUuid, UUID eventUuid) {
-        if (repository.userAlreadyInEvent(invitedUserUuid, eventUuid)) {
+    public void checkUserAlreadyInEvent(User invitedUser, Event event) {
+        if (repository.userAlreadyInEvent(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Usuário ja está no evento",
                 "Convite de Evento",
                 Map.of(
-                    "invitedUserUuid",
-                    invitedUserUuid.toString(),
-                    "eventUuid",
-                    eventUuid.toString()
+                    "invitedUser",
+                    invitedUser.getFullname().split(" ")[0],
+                    "event",
+                    event.getEventName()
                 )
             );
         }
@@ -69,7 +69,7 @@ public class EventValidation {
             throw new InvalidDatabaseQueryException(
                 "Concite não pertence ao mesmo usuário",
                 "Convite de Evento",
-                userInvited.getUuid().toString()
+                userInvited.getFullname().split(" ")[0]
             );
         }
     }

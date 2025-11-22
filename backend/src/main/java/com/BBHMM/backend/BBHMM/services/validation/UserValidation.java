@@ -43,8 +43,8 @@ public class UserValidation {
         if (!requestUuid.equals(user.getUuid())) {
             throw new InvalidDatabaseQueryException(
                 "Usuário não autenticado corretamente",
-                "ID",
-                requestUuid.toString()
+                "UUID",
+                user.getFullname().split(" ")[0]
             );
         }
     }
