@@ -63,6 +63,11 @@ function BillPage({ event }: BillPageProps) {
     }
   };
 
+  function updateBill(bill: BillResume) {
+    setSelectedBill(bill);
+    setBillForm("Update");
+  }
+
   return (
     <div>
       <h2>Contas</h2>
@@ -94,7 +99,7 @@ function BillPage({ event }: BillPageProps) {
                 />
               ))}
               <div>
-                <Button onClick={() => setSelectedBill(bill)}>
+                <Button onClick={() => updateBill(bill)}>
                   <p>Editar</p>
                   <EditSVG />
                 </Button>

@@ -53,7 +53,7 @@ function FormBill({
       dispatch({ type: "SET_EVENT_UUID", payload: eventUuid });
       dispatch({ type: "SET_PAYER_UUID", payload: user.uuid });
       if (form === "Update") {
-        requestBill;
+        requestBill();
       }
     }
   }, [form]);
