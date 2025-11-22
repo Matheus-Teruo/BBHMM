@@ -9,7 +9,6 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateBillParticipantsRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,7 +36,7 @@ public class BillService {
     public Bill createBill(CreateBillRequest request) {
         var user = userService.safeTakeUserByUuid(request.payerUuid());
         var event = eventService.safeTakeEventByUuid(request.eventUuid());
-        validation.checkUserParticipationInEvent(user.getUuid(), event.getUuid());
+        validation.checkUserParticipationInEvent(user, event.getUuid());
 
         var bill = new Bill(request, event, user);
         repository.save(bill);
@@ -49,7 +48,7 @@ public class BillService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var bill = repository.findByUuid(uuid)
             .orElseThrow(EntityNotFoundException::new);
-        validation.checkUserParticipationInEvent(user.getUuid(), bill.getEventUuid());
+        validation.checkUserParticipationInEvent(user, bill.getEventUuid());
         return bill;
     }
 
@@ -64,13 +63,13 @@ public class BillService {
 
     public List<Bill> listBillsByEvent(UUID eventUuid) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        validation.checkUserParticipationInEvent(user.getUuid(), eventUuid);
+        validation.checkUserParticipationInEvent(user, eventUuid);
         return repository.findBillsByEventUuid(eventUuid);
     }
 
     public List<Participants> listParticipantsByEvent(UUID eventUuid) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        validation.checkUserParticipationInEvent(user.getUuid(), eventUuid);
+        validation.checkUserParticipationInEvent(user, eventUuid);
         return repository.findParticipantsByEventUuid(eventUuid);
     }
 
@@ -78,7 +77,7 @@ public class BillService {
     public Bill updateBill(UpdateBillRequest request) {
         var bill = safeTakeBillByUuid(request.uuid());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        validation.checkUserParticipationInEvent(user.getUuid(), bill.getEvent().getUuid());
+        validation.checkUserParticipationInEvent(user, bill.getEvent().getUuid());
         validation.checkUsersParticipationInEvent(bill.getEvent().getUuid(), request.listPartUuids());
 
         bill.update(request);
@@ -91,8 +90,9 @@ public class BillService {
     public void updateBillParticipants(UpdateBillParticipantsRequest request) {
         var bill = safeTakeBillByUuid(request.uuid());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        validation.checkUserParticipationInEvent(user.getUuid(), bill.getEvent().getUuid());
-        validation.checkUserParticipationInEvent(request.partUuid(), bill.getEvent().getUuid());
+        User partUser = userService.safeTakeUserByUuid(request.partUuid());
+        validation.checkUserParticipationInEvent(user, bill.getEvent().getUuid());
+        validation.checkUserParticipationInEvent(partUser, bill.getEvent().getUuid());
 
         boolean plus = true;
         switch (request.type()) {
@@ -115,14 +115,14 @@ public class BillService {
                 return;
         }
 
-        updateParticipants(bill, request.partUuid(), plus, bill.getValue(), bill.getPayer().getUuid());
+        updateParticipants(bill, partUser, plus, bill.getValue(), bill.getPayer().getUuid());
     }
 
     @Transactional
     public void deleteBill(UUID billUuid) {
         var bill = safeTakeBillByUuid(billUuid);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        validation.checkUserParticipationInEvent(user.getUuid(), bill.getEvent().getUuid());
+        validation.checkUserParticipationInEvent(user, bill.getEvent().getUuid());
 
         List<Participants> currentParticipants = bill.getParticipants();
 
@@ -167,7 +167,7 @@ public class BillService {
     }
 
     @Transactional
-    private void updateParticipants(Bill bill, UUID participantUuid, boolean add, BigDecimal value, UUID ownerUuid) {
+    private void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value, UUID ownerUuid) {
 
         List<Participants> currentParticipants = bill.getParticipants();
 
@@ -175,16 +175,15 @@ public class BillService {
 
         if (add) {
             boolean alreadyExists = currentParticipants.stream()
-                    .anyMatch(p -> p.getUser().getUuid().equals(participantUuid));
+                    .anyMatch(p -> p.getUser().getUuid().equals(participant.getUuid()));
 
             if (!alreadyExists) {
-                User user = userService.safeTakeUserByUuid(participantUuid);
-                Participants participant = new Participants(user, bill);
-                currentParticipants.add(participant);
+                Participants newParticipant = new Participants(participant, bill);
+                currentParticipants.add(newParticipant);
             }
 
         } else {
-            currentParticipants.removeIf(p -> p.getUser().getUuid().equals(participantUuid));
+            currentParticipants.removeIf(p -> p.getUser().getUuid().equals(participant.getUuid()));
         }
 
         if (currentParticipants.isEmpty()) {

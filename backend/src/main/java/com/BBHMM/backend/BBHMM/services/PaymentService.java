@@ -32,7 +32,7 @@ public class PaymentService {
     private final EventService eventService;
 
     public List<PaymentResponse> getPaymenList(UUID eventuuid, User userOwner) {
-        billValidation.checkUserParticipationInEvent(eventuuid, eventuuid);
+        billValidation.checkUserParticipationInEvent(userOwner, eventuuid);
         List<Bill> bills = billRepository.findBillsByEventUuidAndNotPaid(eventuuid);
         List<Participants> participants = billRepository.findUnpaidParticipants();
 
@@ -86,7 +86,7 @@ public class PaymentService {
     public void payOffDebit(PayBillRequest request, User userOwner) {
         var user = userService.safeTakeUserByUuid(userOwner.getUuid());
         var event = eventService.safeTakeEventByUuid(request.eventuUuid());
-        billValidation.checkUserParticipationInEvent(user.getUuid(), event.getUuid());
+        billValidation.checkUserParticipationInEvent(user, event.getUuid());
 
         Bill bill = new Bill(request, event, user);
         Participants participants = new Participants(request, user, bill);

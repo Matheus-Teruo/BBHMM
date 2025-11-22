@@ -21,12 +21,12 @@ public class BillValidation {
 
     private final UserRepository userRepository;
 
-    public void checkUserParticipationInEvent(UUID userUuid, UUID eventUuid) {
-        if (!userRepository.isUserParticipantInEvent(userUuid, eventUuid)) {
+    public void checkUserParticipationInEvent(User user, UUID eventUuid) {
+        if (!userRepository.isUserParticipantInEvent(user.getUuid(), eventUuid)) {
             throw new InvalidDatabaseQueryException(
                 "Usuário inválido",
                 "Usuário não pertence ao evento",
-                userUuid.toString()
+                user.getFullname().split(" ")[0]
             );
         }
     }
@@ -45,10 +45,6 @@ public class BillValidation {
                 "Usuário(s) não encontrado(s) no evento",
                 "UUID do usuário",
                 Map.of(
-                    "missingUserUuids",
-                    missingUsers.toString(),
-                    "eventUuid",
-                    eventUuid.toString()
                 )
             );
         }
