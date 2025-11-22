@@ -1,4 +1,5 @@
 import AlertCircleSVG from "./components/AlertCircleSVG";
+import ArrowLeftSVG from "./components/ArrowLeftSVG";
 import ArrowRightSVG from "./components/ArrowRightSVG";
 import AwardSVG from "./components/AwardSVG";
 import BadgeSVG from "./components/BadgeSVG";
@@ -43,6 +44,7 @@ import XSVG from "./components/XSVG";
 
 export {
   AlertCircleSVG,
+  ArrowLeftSVG,
   ArrowRightSVG,
   AwardSVG,
   BadgeSVG,

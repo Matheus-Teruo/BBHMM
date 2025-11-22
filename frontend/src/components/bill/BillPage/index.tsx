@@ -11,6 +11,8 @@ import FormBill from "../FormBill";
 import { EditSVG } from "@/assets/svg";
 import { isSuccess } from "@/util/requestHelper";
 import InviteUserForm from "@/components/event/InviteUserForm";
+import usePaymentService from "@service/usePaymentService";
+import { DebitTotal } from "@data/Payment";
 
 interface BillPageProps {
   event: Event;
@@ -19,11 +21,16 @@ interface BillPageProps {
 function BillPage({ event }: BillPageProps) {
   const [bills, setBills] = useState<BillResume[]>([]);
   const [users, setUsers] = useState<UserResume[]>([]);
+  const [debitTotal, setDebitTotal] = useState<DebitTotal>({
+    debit: true,
+    value: 0,
+  });
   const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
   const [inviteUserForm, setInviteUserForm] = useState<boolean>(false);
   const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
   const { listUserFromEvent } = useEventService();
   const { listBills, updateBillParticipant } = useBillsService();
+  const { getDebitTotal } = usePaymentService();
   const { user } = useUserContext();
 
   const fetchUsers = useCallback(async () => {
@@ -40,10 +47,18 @@ function BillPage({ event }: BillPageProps) {
     }
   }, [event, listBills]);
 
+  const fetchPayment = useCallback(async () => {
+    const paymentResponse = await getDebitTotal(event.uuid);
+    if (paymentResponse) {
+      setDebitTotal(paymentResponse);
+    }
+  }, [event, listBills]);
+
   useEffect(() => {
     if (isUserLogged(user)) {
       fetchBill();
       fetchUsers();
+      fetchPayment();
     }
   }, [user, fetchBill]);
 
@@ -60,6 +75,7 @@ function BillPage({ event }: BillPageProps) {
     const response = await updateBillParticipant(body);
     if (isSuccess(response)) {
       fetchBill();
+      fetchPayment();
     }
   };
 
@@ -72,8 +88,14 @@ function BillPage({ event }: BillPageProps) {
     <div>
       <h2>Contas</h2>
       <div>
-        <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
-        <Button onClick={() => setInviteUserForm(true)}>Convidar</Button>
+        <div>
+          <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
+          <Button onClick={() => setInviteUserForm(true)}>Convidar</Button>
+        </div>
+        <div>
+          <p>Total:</p>
+          <p>R${debitTotal.value.toFixed(2)}</p>
+        </div>
       </div>
       <div>
         <ul>
@@ -115,6 +137,7 @@ function BillPage({ event }: BillPageProps) {
           eventUuid={event.uuid}
           onChange={() => {
             fetchBill();
+            fetchPayment();
             return setBillForm(null);
           }}
         />

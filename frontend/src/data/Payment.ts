@@ -4,6 +4,11 @@ export default interface Payment {
   userToReceiveUuid: string;
 }
 
+export interface DebitTotal {
+  debit: boolean;
+  value: number;
+}
+
 export interface PayBill {
   userToPayUuid: string;
   value: number;
