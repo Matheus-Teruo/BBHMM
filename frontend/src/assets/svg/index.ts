@@ -1,8 +1,6 @@
 import AlertCircleSVG from "./components/AlertCircleSVG";
 import ArrowLeftSVG from "./components/ArrowLeftSVG";
 import ArrowRightSVG from "./components/ArrowRightSVG";
-import AwardSVG from "./components/AwardSVG";
-import BadgeSVG from "./components/BadgeSVG";
 import BankSVG from "./components/BankSVG";
 import CameraSVG from "./components/CameraSVG";
 import CheckCircleSVG from "./components/CheckCircleSVG";
@@ -30,7 +28,6 @@ import MenuSVG from "./components/MenuSVG";
 import MinusSVG from "./components/MinusSVG";
 import PixSVG from "./components/PixSVG";
 import PlusSVG from "./components/PlusSVG";
-import QRcodeScanSVG from "./components/QRcodeScanSVG";
 import SearchSVG from "./components/SearchSVG";
 import ShoppingCartSVG from "./components/ShoppingCartSVG";
 import ToolSVG from "./components/ToolSVG";
@@ -46,8 +43,6 @@ export {
   AlertCircleSVG,
   ArrowLeftSVG,
   ArrowRightSVG,
-  AwardSVG,
-  BadgeSVG,
   BankSVG,
   CameraSVG,
   CheckCircleSVG,
@@ -75,7 +70,6 @@ export {
   MinusSVG,
   PixSVG,
   PlusSVG,
-  QRcodeScanSVG,
   SearchSVG,
   ShoppingCartSVG,
   ToolSVG,
