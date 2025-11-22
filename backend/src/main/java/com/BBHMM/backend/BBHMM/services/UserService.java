@@ -50,6 +50,33 @@ public class UserService {
         );
     }
 
+    public User findUserByNameOrFullnameOrEmail(String userfield) {
+    if (userfield.matches("^.+@.+\\..+$")) {
+        return repository.findByEmail(userfield)
+                .orElseThrow(() -> new InvalidDatabaseQueryException(
+                        "Usuário não encontrado pelo email",
+                        "userfield",
+                        userfield
+                ));
+    }
+
+    if (userfield.matches(".*\\s+.*")) {
+        return repository.findByFullname(userfield)
+                .orElseThrow(() -> new InvalidDatabaseQueryException(
+                        "Usuário não encontrado pelo nome completo",
+                        "userfield",
+                        userfield
+                ));
+    }
+
+    return repository.findByUsername(userfield)
+            .orElseThrow(() -> new InvalidDatabaseQueryException(
+                    "Usuário não encontrado pelo nome do usuário",
+                    "userfield",
+                    userfield
+            ));
+    }
+
     public List<User> findParticipantsByEventUuid(UUID eventUuid) {
         var users = repository.listUsersByEvent(eventUuid);
         billValidation.checkUsersParticipationInEvent(eventUuid, users.stream().map(User::getUuid).toList());

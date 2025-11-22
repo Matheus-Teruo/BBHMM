@@ -20,7 +20,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT u FROM User u JOIN u.events e WHERE e.uuid = :eventUuid")
     List<User> listUsersByEvent(UUID eventUuid);
 
-    UserDetails findByUsername(String username);
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByFullname(String fullname);
+
+    Optional<User> findByUsername(String username);
+
+    @Query("SELECT u FROM User u WHERE u.username = :username")
+    UserDetails findByUsernameReturnDetails(String username);
 
     @Query("""
     SELECT CASE WHEN EXISTS (

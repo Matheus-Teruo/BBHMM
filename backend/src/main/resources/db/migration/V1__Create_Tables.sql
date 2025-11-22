@@ -4,7 +4,7 @@ CREATE TABLE users (
     uuid BINARY(16) PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    fullname VARCHAR(100) NOT NULL
+    fullname VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE events (

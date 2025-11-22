@@ -71,9 +71,9 @@ public class EventService {
     public EventInvitation userEventInvitation(UserInvitationRequest request) {
         Event event = safeTakeEventByUuid(request.eventUuid());
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User userInvited = userService.safeTakeUserByUuid(request.userUuid());
-        validation.checkDuplicationInvate(request.userUuid(), request.eventUuid());
-        validation.checkUserAlreadyInEvent(request.userUuid(), request.eventUuid());
+        User userInvited = userService.findUserByNameOrFullnameOrEmail(request.userfield());
+        validation.checkDuplicationInvate(userInvited.getUuid(), request.eventUuid());
+        validation.checkUserAlreadyInEvent(userInvited.getUuid(), request.eventUuid());
 
         EventInvitation eventInvitation = new EventInvitation(userInvited, userOwner, event);
         eventInvitationRepository.save(eventInvitation);
