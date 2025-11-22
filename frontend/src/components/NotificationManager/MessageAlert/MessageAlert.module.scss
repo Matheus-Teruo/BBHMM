@@ -1,0 +1,100 @@
+@use "@styles/variables" as *;
+
+.frame {
+  padding: 16px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: $color-gray-100;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  width: 300px;
+  animation: slide-in 0.3s ease-out;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    align-items: center;
+
+    .title {
+      display: flex;
+      align-items: center;
+      font-size: 1.125rem;
+      font-weight: 600;
+
+      svg {
+        margin-right: 4px;
+      }
+    }
+
+    .close {
+      box-shadow: none;
+    }
+  }
+
+  .body {
+    font-size: 14px;
+    color: $color-gray-900;
+  }
+}
+
+.ok {
+  border-color: #a5d6a7;
+  box-shadow: 2px 4px 4px 0px rgba(165, 214, 167, 0.3);
+
+  .header {
+    color: #a5d6a7;
+
+    svg {
+      stroke: #a5d6a7;
+    }
+  }
+}
+
+.information {
+  border-color: #48a6db;
+  box-shadow: 2px 4px 4px 0px rgba(126, 184, 255, 0.3);
+
+  .header {
+    color: #48a6db;
+
+    svg {
+      stroke: #48a6db;
+    }
+  }
+}
+
+.warning {
+  border-color: #ffcc80;
+  box-shadow: 2px 4px 4px 0px rgba(255, 204, 128, 0.3);
+
+  .header {
+    color: #ffcc80;
+
+    svg {
+      stroke: #ffcc80;
+    }
+  }
+}
+
+.error {
+  border-color: #ef9a9a;
+  box-shadow: 2px 4px 4px 0px rgba(239, 154, 154, 0.3);
+
+  .header {
+    color: #ef9a9a;
+
+    svg {
+      stroke: #ef9a9a;
+    }
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

@@ -8,6 +8,7 @@ import SignUp from "./components/auth/Signup";
 import EventPage from "./components/event/EventPage";
 import Event from "@data/Event";
 import BillPage from "./components/bill/BillPage";
+import NotificationManager from "./components/NotificationManager";
 
 enum Logged {
   LOGGED = "logged",
@@ -33,30 +34,35 @@ function App() {
     }
   }, [user]);
 
-  return logged === Logged.LOGGED ? (
-    <div>
-      {event.uuid !== "" ? (
+  return (
+    <>
+      <NotificationManager />
+      {logged === Logged.LOGGED ? (
         <div>
-          <h2>{event.eventName}</h2>
-          <BillPage event={event} />
+          {event.uuid !== "" ? (
+            <div>
+              <h2>{event.eventName}</h2>
+              <BillPage event={event} />
+            </div>
+          ) : (
+            <>
+              <div>HEADER</div>
+              <div>
+                <EventPage onChange={(event) => setEvent(event)} />
+              </div>
+            </>
+          )}
         </div>
+      ) : logged === Logged.LOGIN ? (
+        <AuthMain>
+          <Login signupRedirect={() => setLogged(Logged.SIGNUP)} />
+        </AuthMain>
       ) : (
-        <>
-          <div>HEADER</div>
-          <div>
-            <EventPage onChange={(event) => setEvent(event)} />
-          </div>
-        </>
+        <AuthMain>
+          <SignUp loginRedirect={() => setLogged(Logged.LOGIN)} />
+        </AuthMain>
       )}
-    </div>
-  ) : logged === Logged.LOGIN ? (
-    <AuthMain>
-      <Login signupRedirect={() => setLogged(Logged.SIGNUP)} />
-    </AuthMain>
-  ) : (
-    <AuthMain>
-      <SignUp loginRedirect={() => setLogged(Logged.LOGIN)} />
-    </AuthMain>
+    </>
   );
 }
 
