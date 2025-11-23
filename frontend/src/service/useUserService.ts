@@ -29,7 +29,7 @@ const useUserService = () => {
     [api, safeRequest],
   );
 
-  const getUser = useCallback(
+  const checkUser = useCallback(
     async (): Promise<UserResume | null> =>
       api.get<UserResume>("/auth/check").then((res) => res.data),
     [api],
@@ -38,6 +38,12 @@ const useUserService = () => {
   const logoutUser = useCallback(async (): Promise<void> => {
     await safeRequest(() => api.post<void>("/auth/logout").then(() => {}));
   }, [api, safeRequest]);
+
+  const getUser = useCallback(
+    async (userUuid: string): Promise<User | null> =>
+      api.get<User>(`/users/${userUuid}`).then((res) => res.data),
+    [api],
+  );
 
   const updateUser = useCallback(
     async (user: UpdateUser): Promise<User | Message | null> =>
@@ -48,8 +54,9 @@ const useUserService = () => {
   return {
     signupUser,
     loginUser,
-    getUser,
+    checkUser,
     logoutUser,
+    getUser,
     updateUser,
   };
 };

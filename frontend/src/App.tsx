@@ -9,6 +9,7 @@ import EventPage from "./components/event/EventPage";
 import Event from "@data/Event";
 import BillPage from "./components/bill/BillPage";
 import NotificationManager from "./components/NotificationManager";
+import UserProfile from "./components/auth/UserProfile";
 
 enum Logged {
   LOGGED = "logged",
@@ -25,6 +26,7 @@ const eventNull: Event = {
 
 function App() {
   const [logged, setLogged] = useState<Logged>(Logged.LOGIN);
+  const [profile, setProfile] = useState<boolean>(false);
   const [event, setEvent] = useState<Event>(eventNull);
   const { user } = useUserContext();
 
@@ -38,21 +40,27 @@ function App() {
     <>
       <NotificationManager />
       {logged === Logged.LOGGED ? (
-        <div>
-          {event.uuid !== "" ? (
-            <div>
-              <h2>{event.eventName}</h2>
-              <BillPage event={event} />
-            </div>
-          ) : (
-            <>
-              <div>HEADER</div>
+        profile ? (
+          <AuthMain onExit={() => setProfile(false)}>
+            <UserProfile />
+          </AuthMain>
+        ) : (
+          <div>
+            {event.uuid !== "" ? (
               <div>
-                <EventPage onChange={(event) => setEvent(event)} />
+                <h2>{event.eventName}</h2>
+                <BillPage event={event} />
               </div>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <div>HEADER</div>
+                <div>
+                  <EventPage onChange={(event) => setEvent(event)} />
+                </div>
+              </>
+            )}
+          </div>
+        )
       ) : logged === Logged.LOGIN ? (
         <AuthMain>
           <Login signupRedirect={() => setLogged(Logged.SIGNUP)} />

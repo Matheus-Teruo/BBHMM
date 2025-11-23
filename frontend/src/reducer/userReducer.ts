@@ -5,7 +5,7 @@ import {
   regexPassword,
 } from "@/util/regex";
 import { CreatePix, UpdatePix } from "@data/Pix";
-import { LoginUser, SignupUser, UpdateUser } from "@data/User";
+import User, { LoginUser, SignupUser, UpdateUser } from "@data/User";
 import {
   createPixPayload,
   initialPixState,
@@ -29,6 +29,7 @@ type UserAction =
   | { type: "SET_CONFIRM_PASSWORD"; payload: string }
   | { type: "SET_EMAIL"; payload: string }
   | { type: "SET_PIX"; payload: CreatePix | UpdatePix }
+  | { type: "SET_USER"; payload: User }
   | { type: "RESET" };
 
 export const initialUserState: UserState = {
@@ -76,6 +77,16 @@ export function userReducer(state: UserState, action: UserAction): UserState {
     case "SET_PIX": {
       return { ...state, pix: action.payload };
     }
+    case "SET_USER": {
+      return {
+        ...state,
+        uuid: action.payload.uuid,
+        username: action.payload.username,
+        fullname: action.payload.fullname,
+        email: action.payload.email,
+        pix: action.payload.pix,
+      };
+    }
     case "RESET":
       return initialUserState;
     default:
@@ -99,7 +110,7 @@ export const loginPayload = (s: UserState): LoginUser => {
   return { username, password } as LoginUser;
 };
 
-export const updatePayload = (s: UserState): UpdateUser => {
+export const updateUserPayload = (s: UserState): UpdateUser => {
   const payload: Partial<UpdateUser> = {
     uuid: s.uuid,
     username: s.username,

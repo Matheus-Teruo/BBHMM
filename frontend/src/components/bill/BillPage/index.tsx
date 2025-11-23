@@ -3,7 +3,7 @@ import { isUserLogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume, UpdateBillParticipants } from "@data/Bills";
 import Event from "@data/Event";
-import { UserResume } from "@data/User";
+import { UserList } from "@data/User";
 import useBillsService from "@service/useBillsService";
 import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useState } from "react";
@@ -13,6 +13,7 @@ import { isSuccess } from "@/util/requestHelper";
 import InviteUserForm from "@/components/event/InviteUserForm";
 import usePaymentService from "@service/usePaymentService";
 import { DebitTotal } from "@data/Payment";
+import PaymentPage from "../PaymentPage";
 
 interface BillPageProps {
   event: Event;
@@ -20,12 +21,13 @@ interface BillPageProps {
 
 function BillPage({ event }: BillPageProps) {
   const [bills, setBills] = useState<BillResume[]>([]);
-  const [users, setUsers] = useState<UserResume[]>([]);
+  const [users, setUsers] = useState<UserList[]>([]);
   const [debitTotal, setDebitTotal] = useState<DebitTotal>({
     debit: true,
     value: 0,
   });
   const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
+  const [paymentPage, setPaymentPage] = useState<boolean>(false);
   const [inviteUserForm, setInviteUserForm] = useState<boolean>(false);
   const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
   const { listUserFromEvent } = useEventService();
@@ -90,6 +92,7 @@ function BillPage({ event }: BillPageProps) {
       <div>
         <div>
           <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
+          <Button onClick={() => setPaymentPage(true)}>Pagamentos</Button>
           <Button onClick={() => setInviteUserForm(true)}>Convidar</Button>
         </div>
         <div>
@@ -139,6 +142,17 @@ function BillPage({ event }: BillPageProps) {
             fetchBill();
             fetchPayment();
             return setBillForm(null);
+          }}
+        />
+      )}
+      {paymentPage && (
+        <PaymentPage
+          event={event}
+          usersList={users}
+          onChange={() => {
+            fetchBill();
+            fetchPayment();
+            return setPaymentPage(false);
           }}
         />
       )}

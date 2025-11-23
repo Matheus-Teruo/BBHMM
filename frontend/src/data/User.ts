@@ -26,6 +26,7 @@ export default interface User {
   uuid: string;
   username: string;
   fullname: string;
+  email: string;
   pix: Pix;
 }
 
@@ -36,6 +37,7 @@ export interface UserResume {
 
 export interface UserList {
   uuid: string;
+  firstName: string;
   fullname: string;
   pix: Pix;
 }

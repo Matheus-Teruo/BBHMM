@@ -7,7 +7,7 @@ const LOCAL_STORAGE_KEY = "loggedInUser";
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserResume | null | "unlogged">(null);
-  const { getUser, logoutUser } = useUserService();
+  const { checkUser, logoutUser } = useUserService();
 
   const login = (user: UserResume) => {
     setUser(user);
@@ -16,7 +16,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
 
   const checkLogged = useCallback(async () => {
     try {
-      const logginUser = await getUser();
+      const logginUser = await checkUser();
       if (logginUser !== null) {
         setUser(logginUser);
       } else {
@@ -27,7 +27,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
       console.log(error);
       // TODO: verificar o que fazer com as response do axios
     }
-  }, [getUser]);
+  }, [checkUser]);
 
   const logout = async () => {
     if (user) {

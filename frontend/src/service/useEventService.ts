@@ -3,7 +3,7 @@ import { Message } from "@context/AlertContext/useAlertContext";
 import Event, { CreateEvent, UpdateEvent } from "@data/Event";
 import { useCallback } from "react";
 import { PaginatedResponse } from "../data/PagesType";
-import { UserResume } from "@data/User";
+import { UserList } from "@data/User";
 import { useSafeRequest } from "./useHandleRequest";
 
 const useEventService = () => {
@@ -47,10 +47,8 @@ const useEventService = () => {
   );
 
   const listUserFromEvent = useCallback(
-    async (eventUuid: string): Promise<UserResume[] | null> =>
-      api
-        .get<UserResume[]>(`/events/${eventUuid}/users`)
-        .then((res) => res.data),
+    async (eventUuid: string): Promise<UserList[] | null> =>
+      api.get<UserList[]>(`/events/${eventUuid}/users`).then((res) => res.data),
     [api],
   );
 
