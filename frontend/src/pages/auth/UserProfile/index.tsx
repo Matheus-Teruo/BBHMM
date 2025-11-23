@@ -178,12 +178,12 @@ function UserProfile() {
         {update !== "email" ? (
           <div className={styles.value} onClick={() => handleUpdate("email")}>
             <EmailSVG />
-            <p>{state.fullname}</p>
+            <p>{state.email}</p>
           </div>
         ) : (
           <div className={styles.update}>
             <AuthInput
-              value={state.fullname}
+              value={state.email}
               onChange={(e) =>
                 dispatch({ type: "SET_EMAIL", payload: e.target.value })
               }

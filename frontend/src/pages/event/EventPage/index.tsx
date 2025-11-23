@@ -39,6 +39,11 @@ function EventPage() {
     setEventForm("Update");
   }
 
+  const handleSelectEvent = (eventUUID: string) => {
+    navigate(`/event/${eventUUID}/bills`);
+    localStorage.setItem("evento", eventUUID);
+  };
+
   return (
     <div>
       <h2>Eventos</h2>
@@ -50,7 +55,7 @@ function EventPage() {
       <ul>
         {events.map((event) => (
           <li key={event.uuid}>
-            <h3 onClick={() => navigate(`/event/${event.uuid}/bills`)}>
+            <h3 onClick={() => handleSelectEvent(event.uuid)}>
               {event.eventName}
             </h3>
             <p>{event.description}</p>

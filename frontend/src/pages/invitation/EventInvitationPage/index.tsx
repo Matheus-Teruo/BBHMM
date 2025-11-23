@@ -1,8 +1,7 @@
 import { CheckCircleSVG, XCircleSVG } from "@/assets/svg";
-// import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import PageSelect from "@/components/util/PageSelect";
-import { isUserLogged } from "@/util/checkAuthentication";
+import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import {
   isMessage,
   MessageType,
@@ -13,18 +12,17 @@ import EventInvitation, { AcceptInvitation } from "@data/EventInvitation";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import useEventInvitationService from "@service/useEventInvitationService";
 import { useCallback, useEffect, useReducer, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-interface EventInvitationPageProps {
-  onChange: () => void;
-}
-
-function EventInvitationPage({ onChange }: EventInvitationPageProps) {
+function EventInvitationPage() {
   const [invites, setInvites] = useState<EventInvitation[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const { listEventInvitations, acceptedEventInvitation } =
     useEventInvitationService();
   const { addNotification } = useAlertsContext();
   const { user } = useUserContext();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchEventInvitations = useCallback(async () => {
     const eventResponse = await listEventInvitations(page.number);
@@ -36,6 +34,8 @@ function EventInvitationPage({ onChange }: EventInvitationPageProps) {
   useEffect(() => {
     if (isUserLogged(user)) {
       fetchEventInvitations();
+    } else if (isUserUnlogged(user)) {
+      navigate("/auth/login");
     }
   }, [user, fetchEventInvitations]);
 
@@ -54,8 +54,24 @@ function EventInvitationPage({ onChange }: EventInvitationPageProps) {
   };
 
   return (
-    <>
+    <div>
       <h2>Convites pendentes</h2>
+      <div>
+        <Button
+          onClick={() =>
+            navigate("/invites/new/", {
+              state: {
+                backgroundLocation: {
+                  pathname: location.pathname,
+                  search: location.search,
+                },
+              },
+            })
+          }
+        >
+          Novo convite
+        </Button>
+      </div>
       <ul>
         {invites.map((invite) => (
           <li key={invite.uuid}>
@@ -74,9 +90,7 @@ function EventInvitationPage({ onChange }: EventInvitationPageProps) {
         ))}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      {/* <GlassBackground onClick={onChange} /> */}
-      <div onClick={onChange}>FECHAR</div>
-    </>
+    </div>
   );
 }
 

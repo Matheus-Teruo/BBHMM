@@ -10,6 +10,7 @@ import {
 import AuthInput from "@/components/util/AuthInput";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
+import { isUserLogged } from "@/util/checkAuthentication";
 import {
   isMessage,
   MessageType,
@@ -23,8 +24,8 @@ import {
   userReducer,
 } from "@reducer/userReducer";
 import useUserService from "@service/useUserService";
-import { useReducer, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useReducer, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -32,8 +33,15 @@ function Login() {
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const { login } = useUserContext();
+  const { login, user } = useUserContext();
   const { loginUser } = useUserService();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isUserLogged(user)) {
+      navigate("/");
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +57,7 @@ function Login() {
       });
       login(user);
       dispatch({ type: "RESET" });
+      navigate("/");
     } else if (user) {
       const message = user;
       if (message.invalidFields) setMessageError(message.invalidFields);

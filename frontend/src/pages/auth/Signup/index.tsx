@@ -30,7 +30,8 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import useUserService from "@service/useUserService";
 import { initialPixState, pixReducer } from "@reducer/pixReducer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { isUserLogged } from "@/util/checkAuthentication";
 
 function SignUp() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -39,8 +40,15 @@ function SignUp() {
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const { login } = useUserContext();
+  const { login, user } = useUserContext();
   const { signupUser } = useUserService();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isUserLogged(user)) {
+      navigate("/");
+    }
+  }, [user]);
 
   useEffect(() => {
     dispatch({
@@ -66,6 +74,7 @@ function SignUp() {
           firstName: user.fullname.split(" ")[0],
         });
         dispatch({ type: "RESET" });
+        navigate("/");
       } else if (isMessage(user)) {
         const message = user;
         if (message.invalidFields) setMessageError(message.invalidFields);

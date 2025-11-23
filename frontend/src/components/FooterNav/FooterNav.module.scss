@@ -1,0 +1,25 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  background-color: red;
+
+  .subNavigate {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: 20px;
+  }
+  .navigate {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: 24px;
+  }
+  .selected {
+    color: blue;
+  }
+}

@@ -1,6 +1,6 @@
 import { CheckSVG } from "@/assets/svg";
 import Button from "@/components/util/Button";
-// import GlassBackground from "@/components/GlassBackground";
+import GlassBackground from "@/components/GlassBackground";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
 import {
@@ -8,47 +8,52 @@ import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
-import Event from "@data/Event";
 import { UserInvitation } from "@data/EventInvitation";
 import useEventInvitationService from "@service/useEventInvitationService";
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface InviteUserProps {
-  event: Event;
-  onChange: () => void;
-}
-
-function InviteUserForm({ event, onChange }: InviteUserProps) {
+function InviteUserForm() {
   const [userfield, setUserfield] = useState<string>("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { userEventInvitation } = useEventInvitationService();
+  const { eventUUID } = useParams();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    setMessageError({});
-    const invitation = await userEventInvitation({
-      userfield: userfield,
-      eventUuid: event.uuid,
-    } as UserInvitation);
-    if (invitation && !isMessage(invitation)) {
+    if (eventUUID) {
+      e.preventDefault();
+      setWaitingFetch(true);
+      setTouched(false);
+      setMessageError({});
+      const invitation = await userEventInvitation({
+        userfield: userfield,
+        eventUuid: eventUUID,
+      } as UserInvitation);
+      if (invitation && !isMessage(invitation)) {
+        addNotification({
+          title: "Convite enviado",
+          message: `Convite enviado para ${invitation.ownerUser.firstName}`,
+          type: MessageType.OK,
+        });
+        setUserfield("");
+        navigate(-1);
+      } else if (invitation) {
+        const message = invitation;
+        if (message.invalidFields) setMessageError(message.invalidFields);
+      }
+      setTouched(true);
+      setWaitingFetch(false);
+    } else {
       addNotification({
-        title: "Convite enviado",
-        message: `Convite enviado para ${invitation.ownerUser.firstName}`,
-        type: MessageType.OK,
+        title: "Convite não pode ser enviado",
+        message: `Convite não pode ser enviado quando nenhum evento foi selecionado`,
+        type: MessageType.WARNING,
       });
-      setUserfield("");
-      onChange();
-    } else if (invitation) {
-      const message = invitation;
-      if (message.invalidFields) setMessageError(message.invalidFields);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   return (
@@ -70,10 +75,9 @@ function InviteUserForm({ event, onChange }: InviteUserProps) {
             <CheckSVG />
           </Button>
         </form>
-        <p>{`Convite para o evento ${event.eventName}`}</p>
       </div>
-      {/* <GlassBackground onClick={onChange} /> */}
-      <div onClick={onChange}>FECHAR</div>
+      <GlassBackground onClick={() => navigate(-1)} />
+      {/* <div onClick={() => navigate(-1)}>FECHAR</div> */}
     </>
   );
 }

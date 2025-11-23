@@ -94,10 +94,18 @@ function BillPage() {
       <div>
         <div>
           <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
-          <Button onClick={() => navigate(`/event/${eventUUID}/bills`)}>
-            Pagamentos
-          </Button>
-          <Button onClick={() => navigate(`/event/${eventUUID}/bills`)}>
+          <Button
+            onClick={() =>
+              navigate(`/invites/new/${eventUUID}`, {
+                state: {
+                  backgroundLocation: {
+                    pathname: location.pathname,
+                    search: location.search,
+                  },
+                },
+              })
+            }
+          >
             Convidar
           </Button>
         </div>
@@ -122,6 +130,7 @@ function BillPage() {
               <p>{bill.value}</p>
               {users.map((user) => (
                 <input
+                  key={user.uuid}
                   type="checkbox"
                   checked={bill.participantsUuid.includes(user.uuid)}
                   onChange={(e) =>
