@@ -32,7 +32,6 @@ public class EventService {
     
     @Transactional
     public Event createEvent(CreateEventRequest request, User user) {
-        validation.checkNameDuplication(request.eventName());
         var event = new Event(request, user);
         repository.save(event);
 
@@ -61,7 +60,6 @@ public class EventService {
 
     @Transactional
     public Event updateEvent(UpdateEventRequest request) {
-        validation.checkNameDuplication(request.eventName());
         var event = safeTakeEventByUuid(request.uuid());
         
         event.update(request);
