@@ -1,20 +1,18 @@
+import { Outlet } from "react-router-dom";
 import styles from "./AuthMain.module.scss";
 import Logo from "@/assets/image/BBHMM.png";
 
-interface AuthMainProps {
-  children: React.ReactNode;
-  onExit?: () => void;
-}
-
-function AuthMain({ children, onExit = () => undefined }: AuthMainProps) {
+function AuthMain() {
   return (
     <div className={styles.background}>
       <div className={styles.header}>
-        <div className={styles.linkLogo} onClick={() => onExit()}>
+        <div className={styles.linkLogo}>
           <img src={Logo} alt="Logo" />
         </div>
       </div>
-      <div className={styles.body}>{children}</div>
+      <div className={styles.body}>
+        <Outlet />
+      </div>
       <div className={styles.spaceHolder} />
     </div>
   );

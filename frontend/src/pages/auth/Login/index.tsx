@@ -24,8 +24,9 @@ import {
 } from "@reducer/userReducer";
 import useUserService from "@service/useUserService";
 import { useReducer, useState } from "react";
+import { Link } from "react-router-dom";
 
-function Login({ signupRedirect }: { signupRedirect: () => void }) {
+function Login() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
@@ -100,9 +101,9 @@ function Login({ signupRedirect }: { signupRedirect: () => void }) {
       </form>
       <div className={styles.footer}>
         <p>Não esta cadastrado?</p>
-        <div onClick={signupRedirect}>
+        <Link to="/auth/signup">
           <span>Cadastre-se</span>
-        </div>
+        </Link>
       </div>
     </>
   );

@@ -1,8 +1,7 @@
 import Button from "@/components/util/Button";
-import { isUserLogged } from "@/util/checkAuthentication";
+import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume, UpdateBillParticipants } from "@data/Bills";
-import Event from "@data/Event";
 import { UserList } from "@data/User";
 import useBillsService from "@service/useBillsService";
 import useEventService from "@service/useEventService";
@@ -10,16 +9,11 @@ import { useCallback, useEffect, useState } from "react";
 import FormBill from "../FormBill";
 import { EditSVG } from "@/assets/svg";
 import { isSuccess } from "@/util/requestHelper";
-import InviteUserForm from "@/components/event/InviteUserForm";
 import usePaymentService from "@service/usePaymentService";
 import { DebitTotal } from "@data/Payment";
-import PaymentPage from "../PaymentPage";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface BillPageProps {
-  event: Event;
-}
-
-function BillPage({ event }: BillPageProps) {
+function BillPage() {
   const [bills, setBills] = useState<BillResume[]>([]);
   const [users, setUsers] = useState<UserList[]>([]);
   const [debitTotal, setDebitTotal] = useState<DebitTotal>({
@@ -27,40 +21,48 @@ function BillPage({ event }: BillPageProps) {
     value: 0,
   });
   const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
-  const [paymentPage, setPaymentPage] = useState<boolean>(false);
-  const [inviteUserForm, setInviteUserForm] = useState<boolean>(false);
   const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
   const { listUserFromEvent } = useEventService();
   const { listBills, updateBillParticipant } = useBillsService();
   const { getDebitTotal } = usePaymentService();
   const { user } = useUserContext();
+  const navigate = useNavigate();
+  const { eventUUID } = useParams();
 
   const fetchUsers = useCallback(async () => {
-    const usersResponse = await listUserFromEvent(event.uuid);
-    if (usersResponse) {
-      setUsers(usersResponse);
+    if (eventUUID) {
+      const usersResponse = await listUserFromEvent(eventUUID);
+      if (usersResponse) {
+        setUsers(usersResponse);
+      }
     }
-  }, [event, listUserFromEvent]);
+  }, [eventUUID, listUserFromEvent]);
 
   const fetchBill = useCallback(async () => {
-    const billResponse = await listBills(event.uuid);
-    if (billResponse) {
-      setBills(billResponse);
+    if (eventUUID) {
+      const billResponse = await listBills(eventUUID);
+      if (billResponse) {
+        setBills(billResponse);
+      }
     }
-  }, [event, listBills]);
+  }, [eventUUID, listBills]);
 
   const fetchPayment = useCallback(async () => {
-    const paymentResponse = await getDebitTotal(event.uuid);
-    if (paymentResponse) {
-      setDebitTotal(paymentResponse);
+    if (eventUUID) {
+      const paymentResponse = await getDebitTotal(eventUUID);
+      if (paymentResponse) {
+        setDebitTotal(paymentResponse);
+      }
     }
-  }, [event, listBills]);
+  }, [eventUUID, listBills]);
 
   useEffect(() => {
     if (isUserLogged(user)) {
       fetchBill();
       fetchUsers();
       fetchPayment();
+    } else if (isUserUnlogged(user)) {
+      navigate("/auth/login");
     }
   }, [user, fetchBill]);
 
@@ -92,8 +94,12 @@ function BillPage({ event }: BillPageProps) {
       <div>
         <div>
           <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
-          <Button onClick={() => setPaymentPage(true)}>Pagamentos</Button>
-          <Button onClick={() => setInviteUserForm(true)}>Convidar</Button>
+          <Button onClick={() => navigate(`/event/${eventUUID}/bills`)}>
+            Pagamentos
+          </Button>
+          <Button onClick={() => navigate(`/event/${eventUUID}/bills`)}>
+            Convidar
+          </Button>
         </div>
         <div>
           <p>Total:</p>
@@ -137,31 +143,11 @@ function BillPage({ event }: BillPageProps) {
         <FormBill
           form={billForm}
           initialValue={selectedBill}
-          eventUuid={event.uuid}
+          eventUuid={eventUUID}
           onChange={() => {
             fetchBill();
             fetchPayment();
             return setBillForm(null);
-          }}
-        />
-      )}
-      {paymentPage && (
-        <PaymentPage
-          event={event}
-          usersList={users}
-          onChange={() => {
-            fetchBill();
-            fetchPayment();
-            return setPaymentPage(false);
-          }}
-        />
-      )}
-      {inviteUserForm && (
-        <InviteUserForm
-          event={event}
-          onChange={() => {
-            fetchUsers();
-            return setInviteUserForm(false);
           }}
         />
       )}

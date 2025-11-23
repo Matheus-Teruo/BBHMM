@@ -1,60 +1,40 @@
 import { CheckSVG } from "@/assets/svg";
-import GlassBackground from "@/components/GlassBackground";
+// import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
-import { isUserLogged } from "@/util/checkAuthentication";
 import {
   isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
-import { useUserContext } from "@context/UserContext/useUserContext";
-import { BillResume } from "@data/Bills";
+import Event from "@data/Event";
 import {
-  billReducer,
-  createBillPayload,
-  initialBillState,
-  updateBillPayload,
-} from "@reducer/billReducer";
-import useBillsService from "@service/useBillsService";
+  createEventPayload,
+  eventReducer,
+  initialEventState,
+  updateEventPayload,
+} from "@reducer/eventReducer";
+import useEventService from "@service/useEventService";
 import { useEffect, useReducer, useState } from "react";
 
-interface NewBillProps {
+interface NewEventProps {
   form?: "Create" | "Update";
-  initialValue?: BillResume;
-  eventUuid: string;
+  initialValue?: Event;
   onChange: () => void;
 }
 
-function FormBill({
-  form = "Create",
-  initialValue,
-  eventUuid,
-  onChange,
-}: NewBillProps) {
-  const [state, dispatch] = useReducer(billReducer, initialBillState);
+function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
+  const [state, dispatch] = useReducer(eventReducer, initialEventState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const { getBill, createBill, updateBill } = useBillsService();
-  const { user } = useUserContext();
-
-  const requestBill = async () => {
-    if (initialValue) {
-      var bill = await getBill(initialValue.uuid);
-      if (bill) dispatch({ type: "SET_BILL", payload: bill });
-    }
-  };
+  const { createEvent, updateEvent } = useEventService();
 
   useEffect(() => {
-    if (isUserLogged(user)) {
-      dispatch({ type: "SET_EVENT_UUID", payload: eventUuid });
-      dispatch({ type: "SET_PAYER_UUID", payload: user.uuid });
-      if (form === "Update") {
-        requestBill();
-      }
+    if (form === "Update") {
+      if (initialValue) dispatch({ type: "SET_EVENT", payload: initialValue });
     }
   }, [form]);
 
@@ -64,11 +44,11 @@ function FormBill({
     setTouched(false);
     setMessageError({});
     if (form === "Create") {
-      const event = await createBill(createBillPayload(state));
+      const event = await createEvent(createEventPayload(state));
       if (event && !isMessage(event)) {
         addNotification({
           title: "Evento Criado",
-          message: `Evento ${state.name} criado, adicione mais pessoas`,
+          message: `Evento ${state.eventName} criado, adicione mais pessoas`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
@@ -78,11 +58,11 @@ function FormBill({
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     } else if (form === "Update") {
-      const event = await updateBill(updateBillPayload(state));
+      const event = await updateEvent(updateEventPayload(state));
       if (event && !isMessage(event)) {
         addNotification({
           title: "Evento Editado",
-          message: `Evento ${state.name} modificado`,
+          message: `Evento ${state.eventName} criado, adicione mais pessoas`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
@@ -99,44 +79,41 @@ function FormBill({
   return (
     <>
       <div>
-        <h2>{`${form === "Create" ? "Cria uma conta" : "Edita conta "}${form === "Update" && initialValue?.billName}`}</h2>
+        <h2>{`${form === "Create" ? "Cria um evento" : "Edita evento "}${form === "Update" && initialValue?.eventName}`}</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
-            value={state.name}
+            value={state.eventName}
             onChange={(e) =>
-              dispatch({ type: "SET_NAME", payload: e.target.value })
+              dispatch({ type: "SET_EVENT_NAME", payload: e.target.value })
             }
-            id="billName"
-            placeholder="Nome da conta"
+            id="eventName"
+            placeholder="Nome do evento"
             isRequired
             showStatus={touched}
-            message={messageError["name"]}
+            message={messageError["eventName"]}
           />
           <GeneralInput
             value={state.description}
             onChange={(e) =>
               dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
             }
-            id="billDescription"
-            placeholder="Descrição da conta"
+            id="eventDescription"
+            placeholder="Descrição do evento"
             isRequired
             showStatus={touched}
             message={messageError["description"]}
           />
           <GeneralInput
-            value={state.value}
+            value={state.eventDate}
             onChange={(e) =>
-              dispatch({
-                type: "SET_VALUE",
-                payload: parseFloat(e.target.value),
-              })
+              dispatch({ type: "SET_DATE", payload: e.target.value })
             }
-            id="billValue"
-            placeholder="Valor da conta"
-            type="number"
+            id="eventDate"
+            placeholder="Dia do evento"
+            type="date"
             isRequired
             showStatus={touched}
-            message={messageError["value"]}
+            message={messageError["eventDate"]}
           />
           <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
             <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
@@ -144,9 +121,10 @@ function FormBill({
           </Button>
         </form>
       </div>
-      <GlassBackground onClick={onChange} />
+      <div onClick={onChange}>FECHAR</div>
+      {/* <GlassBackground onClick={onChange} /> */}
     </>
   );
 }
 
-export default FormBill;
+export default FormEvent;

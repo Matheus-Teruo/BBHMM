@@ -30,8 +30,9 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import useUserService from "@service/useUserService";
 import { initialPixState, pixReducer } from "@reducer/pixReducer";
+import { Link } from "react-router-dom";
 
-function SignUp({ loginRedirect }: { loginRedirect: () => void }) {
+function SignUp() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
   const [pixState, pixDispatch] = useReducer(pixReducer, initialPixState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
@@ -223,9 +224,9 @@ function SignUp({ loginRedirect }: { loginRedirect: () => void }) {
       </form>
       <div className={styles.footer}>
         <p>Já tem conta?</p>
-        <div onClick={loginRedirect}>
+        <Link to="/auth/login">
           <span>Login</span>
-        </div>
+        </Link>
       </div>
     </>
   );

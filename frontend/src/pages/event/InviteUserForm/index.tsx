@@ -1,6 +1,6 @@
 import { CheckSVG } from "@/assets/svg";
 import Button from "@/components/util/Button";
-import GlassBackground from "@/components/GlassBackground";
+// import GlassBackground from "@/components/GlassBackground";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
 import {
@@ -72,7 +72,8 @@ function InviteUserForm({ event, onChange }: InviteUserProps) {
         </form>
         <p>{`Convite para o evento ${event.eventName}`}</p>
       </div>
-      <GlassBackground onClick={onChange} />
+      {/* <GlassBackground onClick={onChange} /> */}
+      <div onClick={onChange}>FECHAR</div>
     </>
   );
 }

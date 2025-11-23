@@ -1,5 +1,5 @@
 import { CheckCircleSVG, XCircleSVG } from "@/assets/svg";
-import GlassBackground from "@/components/GlassBackground";
+// import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import PageSelect from "@/components/util/PageSelect";
 import { isUserLogged } from "@/util/checkAuthentication";
@@ -74,7 +74,8 @@ function EventInvitationPage({ onChange }: EventInvitationPageProps) {
         ))}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      <GlassBackground onClick={onChange} />
+      {/* <GlassBackground onClick={onChange} /> */}
+      <div onClick={onChange}>FECHAR</div>
     </>
   );
 }
