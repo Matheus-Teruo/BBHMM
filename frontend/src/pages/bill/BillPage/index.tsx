@@ -1,3 +1,4 @@
+import styles from "./BillPage.module.scss";
 import Button from "@/components/util/Button";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
@@ -89,10 +90,10 @@ function BillPage() {
   }
 
   return (
-    <div>
-      <h2>Contas</h2>
-      <div>
-        <div>
+    <div className={styles.body}>
+      <h2 className={styles.title}>Contas</h2>
+      <div className={styles.top}>
+        <div className={styles.actions}>
           <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
           <Button
             onClick={() =>
@@ -109,36 +110,44 @@ function BillPage() {
             Convidar
           </Button>
         </div>
-        <div>
+        <div className={styles.total}>
           <p>Total:</p>
           <p>R${debitTotal.value.toFixed(2)}</p>
         </div>
       </div>
-      <div>
-        <ul>
-          <li>
-            <p>Nome</p>
-            <p>Valor</p>
+      <div className={styles.tableWrapper}>
+        <ul className={styles.list}>
+          <li className={`${styles.row} ${styles.header}`}>
+            <p className={`${styles.cell} ${styles.name}`}>Nome</p>
+            <p className={`${styles.cell} ${styles.value}`}>Valor</p>
             {users.map((user) => (
-              <p key={user.uuid}>{user.firstName}</p>
+              <p key={user.uuid} className={`${styles.cell} ${styles.user}`}>
+                {user.firstname}
+              </p>
             ))}
             <div />
           </li>
           {bills.map((bill) => (
-            <li key={bill.uuid}>
-              <p>{bill.billName}</p>
-              <p>{bill.value}</p>
+            <li key={bill.uuid} className={styles.row}>
+              <p className={`${styles.cell} ${styles.name}`}>{bill.billName}</p>
+              <p className={`${styles.cell} ${styles.value}`}>
+                R${bill.value.toFixed(2)}
+              </p>
               {users.map((user) => (
-                <input
+                <div
                   key={user.uuid}
-                  type="checkbox"
-                  checked={bill.participantsUuid.includes(user.uuid)}
-                  onChange={(e) =>
-                    handleCheckBill(e.target.checked, user.uuid, bill.uuid)
-                  }
-                />
+                  className={`${styles.cell} ${styles.user}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={bill.participantsUuid.includes(user.uuid)}
+                    onChange={(e) =>
+                      handleCheckBill(e.target.checked, user.uuid, bill.uuid)
+                    }
+                  />
+                </div>
               ))}
-              <div>
+              <div className={`${styles.cell} ${styles.actions}`}>
                 <Button onClick={() => updateBill(bill)}>
                   <p>Editar</p>
                   <EditSVG />

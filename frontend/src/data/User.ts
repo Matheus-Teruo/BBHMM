@@ -37,7 +37,7 @@ export interface UserResume {
 
 export interface UserList {
   uuid: string;
-  firstName: string;
+  firstname: string;
   fullname: string;
   pix: Pix;
 }

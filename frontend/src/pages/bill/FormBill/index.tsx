@@ -1,5 +1,6 @@
+import styles from "./FormBill.module.scss";
 import { CheckSVG } from "@/assets/svg";
-// import GlassBackground from "@/components/GlassBackground";
+import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
@@ -98,7 +99,7 @@ function FormBill({
 
   return (
     <>
-      <div>
+      <div className={styles.modal}>
         <h2>{`${form === "Create" ? "Cria uma conta" : "Edita conta "}${form === "Update" && initialValue?.billName}`}</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
@@ -144,8 +145,7 @@ function FormBill({
           </Button>
         </form>
       </div>
-      <div onClick={onChange}>FECHAR</div>
-      {/* <GlassBackground onClick={onChange} /> */}
+      <GlassBackground onClick={onChange} />
     </>
   );
 }

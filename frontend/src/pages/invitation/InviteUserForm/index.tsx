@@ -1,3 +1,4 @@
+import styles from "./InviteUserForm.module.scss";
 import { CheckSVG } from "@/assets/svg";
 import Button from "@/components/util/Button";
 import GlassBackground from "@/components/GlassBackground";
@@ -58,7 +59,7 @@ function InviteUserForm() {
 
   return (
     <>
-      <div>
+      <div className={styles.modal}>
         <h2>Envie um convite</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
@@ -77,7 +78,6 @@ function InviteUserForm() {
         </form>
       </div>
       <GlassBackground onClick={() => navigate(-1)} />
-      {/* <div onClick={() => navigate(-1)}>FECHAR</div> */}
     </>
   );
 }

@@ -1,5 +1,6 @@
+import styles from "./FormEvent.module.scss";
 import { CheckSVG } from "@/assets/svg";
-// import GlassBackground from "@/components/GlassBackground";
+import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
@@ -78,8 +79,8 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
 
   return (
     <>
-      <div>
-        <h2>{`${form === "Create" ? "Cria um evento" : "Edita evento "}${form === "Update" && initialValue?.eventName}`}</h2>
+      <div className={styles.modal}>
+        <h2>{`${form === "Create" ? "Cria um evento" : "Edita evento "}${form === "Update" ? initialValue?.eventName : ""}`}</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
             value={state.eventName}
@@ -115,14 +116,15 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
             showStatus={touched}
             message={messageError["eventDate"]}
           />
-          <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
-            <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
-            <CheckSVG />
-          </Button>
+          <div>
+            <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
+              <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
+              <CheckSVG />
+            </Button>
+          </div>
         </form>
       </div>
-      <div onClick={onChange}>FECHAR</div>
-      {/* <GlassBackground onClick={onChange} /> */}
+      <GlassBackground onClick={onChange} />
     </>
   );
 }

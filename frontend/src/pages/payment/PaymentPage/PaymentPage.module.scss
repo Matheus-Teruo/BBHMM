@@ -1,0 +1,28 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+@use "@styles/animation" as *;
+
+.body {
+  padding: 24px;
+  max-width: 1000px;
+  height: calc(100vh - 24px);
+  margin: 0 auto;
+  background-color: papayawhip;
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .list {
+    min-width: 900px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: flex;
+    }
+  }
+}

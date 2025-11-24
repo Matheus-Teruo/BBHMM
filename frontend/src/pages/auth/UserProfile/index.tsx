@@ -15,7 +15,7 @@ import {
 import AuthInput from "@/components/util/AuthInput";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
-import { isUserLogged } from "@/util/checkAuthentication";
+import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import {
   isMessage,
   MessageType,
@@ -30,6 +30,7 @@ import {
 } from "@reducer/userReducer";
 import useUserService from "@service/useUserService";
 import { useEffect, useReducer, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function UserProfile() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -44,6 +45,7 @@ function UserProfile() {
   const { addNotification } = useAlertsContext();
   const { user, logout } = useUserContext();
   const { getUser, updateUser } = useUserService();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -52,6 +54,8 @@ function UserProfile() {
         if (userResponse) {
           dispatch({ type: "SET_USER", payload: userResponse });
         }
+      } else if (isUserUnlogged(user)) {
+        navigate("/auth/login");
       }
     };
     fetchUser();
@@ -87,6 +91,7 @@ function UserProfile() {
 
   const handleLogout = async () => {
     logout();
+    navigate("/auth/login");
   };
 
   return (
@@ -279,7 +284,10 @@ function UserProfile() {
                 <CheckSVG />
               </Button>
             </div>
-            <Button className={styles.buttonFooter} onClick={handleLogout}>
+            <Button
+              className={styles.buttonFooter}
+              onClick={() => handleLogout()}
+            >
               Sair da conta
             </Button>
           </>

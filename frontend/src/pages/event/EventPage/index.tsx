@@ -1,3 +1,4 @@
+import styles from "./EventPage.module.scss";
 import Button from "@/components/util/Button";
 import PageSelect from "@/components/util/PageSelect";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
@@ -45,21 +46,22 @@ function EventPage() {
   };
 
   return (
-    <div>
-      <h2>Eventos</h2>
-      <div>
+    <div className={styles.body}>
+      <h2 className={styles.title}>Eventos</h2>
+      <div className={styles.header}>
         <Button onClick={() => setEventForm("Create")}>
           Criar Novo Evento
         </Button>
       </div>
-      <ul>
+      <ul className={styles.list}>
         {events.map((event) => (
-          <li key={event.uuid}>
-            <h3 onClick={() => handleSelectEvent(event.uuid)}>
-              {event.eventName}
-            </h3>
-            <p>{event.description}</p>
-            <div onClick={() => updateEvent(event)}>
+          <li key={event.uuid} className={styles.eventCard}>
+            <div onClick={() => handleSelectEvent(event.uuid)}>
+              <h3 className={styles.eventTitle}>{event.eventName}</h3>
+              <p className={styles.eventDescription}>{event.description}</p>
+              <p className={styles.eventDate}>{event.eventDate}</p>
+            </div>
+            <div className={styles.editArea} onClick={() => updateEvent(event)}>
               <p>Editar</p>
               <EditSVG />
             </div>

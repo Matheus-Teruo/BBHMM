@@ -1,3 +1,4 @@
+import styles from "./EventInvitationPage.module.scss";
 import { CheckCircleSVG, XCircleSVG } from "@/assets/svg";
 import Button from "@/components/util/Button";
 import PageSelect from "@/components/util/PageSelect";
@@ -54,9 +55,9 @@ function EventInvitationPage() {
   };
 
   return (
-    <div>
-      <h2>Convites pendentes</h2>
-      <div>
+    <div className={styles.body}>
+      <h2 className={styles.title}>Convites pendentes</h2>
+      <div className={styles.header}>
         <Button
           onClick={() =>
             navigate("/invites/new/", {
@@ -72,12 +73,13 @@ function EventInvitationPage() {
           Novo convite
         </Button>
       </div>
-      <ul>
+      <ul className={styles.list}>
         {invites.map((invite) => (
-          <li key={invite.uuid}>
-            <p>{invite.eventName}</p>
-            <p>{invite.eventDate}</p>
-            <p>{invite.ownerUser.firstName}</p>
+          <li key={invite.uuid} className={styles.eventCard}>
+            <p className={styles.eventTitle}>{invite.eventName}</p>
+            <p className={styles.eventDescription}>{invite.description}</p>
+            <p className={styles.eventDate}>{invite.eventDate}</p>
+            <p className={styles.ownerUser}>{invite.ownerUser.firstName}</p>
             <Button onClick={() => handleInvitation(invite.uuid, true)}>
               <p>Aceitar</p>
               <CheckCircleSVG />

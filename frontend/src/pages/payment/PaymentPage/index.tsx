@@ -1,3 +1,4 @@
+import styles from "./PaymentPage.module.scss";
 import { ArrowLeftSVG, ArrowRightSVG } from "@/assets/svg";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
@@ -23,7 +24,7 @@ function PaymentPage() {
       if (usersResponse) {
         const usersRecord: Record<string, string> = usersResponse.reduce(
           (acc, user) => {
-            acc[user.uuid] = user.firstName;
+            acc[user.uuid] = user.firstname;
             return acc;
           },
           {} as Record<string, string>,
@@ -56,9 +57,9 @@ function PaymentPage() {
   }, [user, fetchPayment]);
 
   return (
-    <div>
-      <h2>Pagamento</h2>
-      <ul>
+    <div className={styles.body}>
+      <h2 className={styles.title}>Pagamento</h2>
+      <ul className={styles.list}>
         {payments.map((payment) => (
           <li key={payment.userToReceiveUuid + "-payment"}>
             <p>{users[payment.userToPayUuid]}</p>

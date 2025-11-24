@@ -1,0 +1,128 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+@use "@styles/animation" as *;
+
+.body {
+  padding: 24px;
+  height: calc(100vh - 24px);
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: peachpuff;
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .total {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      p:first-child {
+        font-size: 14px;
+        color: #666;
+      }
+
+      p:last-child {
+        font-size: 20px;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .tableWrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .list {
+    min-width: 900px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    .row {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:not(.header):hover {
+        background: #f9fafb;
+      }
+
+      &.header {
+        background: #f3f4f6;
+        font-weight: 600;
+      }
+
+      .cell {
+        padding: 12px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        border-right: 1px solid #e5e7eb;
+        min-height: 48px;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+      .name {
+        width: 220px;
+        min-width: 220px;
+      }
+
+      .value {
+        width: 50px;
+        min-width: 120px;
+      }
+
+      .user {
+        width: 80px;
+        justify-content: center;
+
+        input {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+      }
+
+      .actions {
+        width: 60px;
+        min-width: 60px;
+        max-width: 60px;
+        flex: 0 0 80px;
+        justify-content: center;
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: transparent;
+        }
+      }
+    }
+  }
+}

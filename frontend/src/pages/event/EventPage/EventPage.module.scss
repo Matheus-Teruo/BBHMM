@@ -1,0 +1,74 @@
+.body {
+  padding: 24px;
+  max-width: 1000px;
+  height: calc(100vh - 24px);
+  margin: 0 auto;
+  background-color: papayawhip;
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+
+    .eventCard {
+      padding: 18px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: 0.15s ease;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      }
+
+      .eventTitle {
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .eventDescription {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .editArea {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #2563eb;
+        font-weight: 500;
+        cursor: pointer;
+        width: fit-content;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
