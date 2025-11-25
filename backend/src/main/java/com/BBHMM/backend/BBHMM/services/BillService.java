@@ -79,10 +79,12 @@ public class BillService {
         var bill = safeTakeBillByUuid(request.uuid());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         validation.checkUserParticipationInEvent(user, bill.getEvent().getUuid());
-        validation.checkUsersParticipationInEvent(bill.getEvent().getUuid(), request.listPartUuids());
 
         bill.update(request);
-        updateParticipants(bill, request.listPartUuids(), request.value(), bill.getPayer().getUuid());
+        if (request.listPartUuids() != null) {
+            validation.checkUsersParticipationInEvent(bill.getEvent().getUuid(), request.listPartUuids());
+            updateParticipants(bill, request.listPartUuids(), request.value(), bill.getPayer().getUuid());
+        }
 
         return bill;
     }
