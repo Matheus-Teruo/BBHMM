@@ -44,13 +44,24 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/guest/create")
+    @PostMapping("/guest")
     public ResponseEntity<NewGuestResponse> createGuest(@RequestBody CreateGuestRequest request) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         String password = service.generatePassword();
         User user = service.createGuest(request, hostUser, password);
         eventService.addUser(request.eventUuid(), user);
+
+        return ResponseEntity.ok(new NewGuestResponse(user, password));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/guest/{guestUuid}/event/{eventUuid}")
+    public ResponseEntity<NewGuestResponse> getGuest(@PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
+        User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        String password = service.generatePassword();
+        User user = service.getGuest(guestUuid, hostUser, eventUuid, password);
 
         return ResponseEntity.ok(new NewGuestResponse(user, password));
     }

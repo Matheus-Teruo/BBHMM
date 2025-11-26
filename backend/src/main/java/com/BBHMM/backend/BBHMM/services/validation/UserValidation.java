@@ -63,17 +63,6 @@ public class UserValidation {
         }
     }
 
-    public void checkAlreadyUser(User guest) {
-        if (repository.existsByIdAndRoleUser(guest.getUuid())) {
-            throw new InvalidDatabaseInsertionException(
-                "Convidado já é um usuário",
-                "usuário já tem a conta completa",
-                "UUID",
-                Map.of("fullname", guest.getFullname())
-            );
-        }
-    }
-
     public void checkIsNotAGuest(User user) {
         if (repository.existsByIdAndRoleGuest(user.getUuid())) {
             throw new InvalidDatabaseInsertionException(

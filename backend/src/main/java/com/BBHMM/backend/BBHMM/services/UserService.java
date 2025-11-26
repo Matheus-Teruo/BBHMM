@@ -118,7 +118,8 @@ public class UserService {
             newPassword = request.password();
             newPasswordFlag = true;
         }
-        user.updateUser(request,  passwordEncoder.encode(newPassword), newPasswordFlag);
+        user.updateUser(request);
+        if (newPasswordFlag) user.updatePassword(passwordEncoder.encode(newPassword));
         if (request.pix() != null) {
             user.getPix().update(request.pix());
         }
@@ -130,21 +131,30 @@ public class UserService {
         validation.checkNameDuplication(request.guestName(), request.guestName(), null);
         billValidation.checkUserParticipationInEvent(hostUser, request.eventUuid());
 
-        User user = new User(request, password);
+        User guest = new User(request, passwordEncoder.encode(password));
 
-        repository.save(user);
-        return user;
+        repository.save(guest);
+        return guest;
+    }
+
+    @Transactional
+    public User getGuest(UUID guestUuid, User hostUser, UUID eventUuid, String password) {
+        billValidation.checkUsersParticipationInEvent(eventUuid, List.of(guestUuid, hostUser.getUuid()));
+        User guest = safeTakeUserByUuid(guestUuid);
+
+        guest.updatePassword(passwordEncoder.encode(password));
+
+        return guest;
     }
 
     @Transactional
     public User upgradeGuestToUser(UpgradeGuestToUserRequest request) {
         validation.checkNameDuplication(null, null, request.email());
-        User guestUser = safeTakeUserByUuid(request.uuid());
-        validation.checkAlreadyUser(guestUser);
+        User guest = safeTakeUserByUuid(request.uuid());
 
-        guestUser.upgradeGuestToUser(request);
+        guest.upgradeGuestToUser(request);
         
-        return guestUser;
+        return guest;
     }
 
     public String generatePassword() {

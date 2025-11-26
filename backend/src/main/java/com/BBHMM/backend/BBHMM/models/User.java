@@ -60,12 +60,9 @@ public class User implements UserDetails {
         this.fullname = request.guestName();
     }
 
-    public void updateUser(UpdateUserRequest request, String password, boolean passwordFlag) {
+    public void updateUser(UpdateUserRequest request) {
         if (request.username() != null) {
             this.username = request.username();
-        }
-        if (passwordFlag) {
-            this.password = password;
         }
         if (request.fullname() != null) {
             this.fullname = request.fullname();
@@ -73,6 +70,10 @@ public class User implements UserDetails {
         if (request.email() != null) {
             this.email = request.email();
         }
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 
     public void upgradeGuestToUser(UpgradeGuestToUserRequest request) {
