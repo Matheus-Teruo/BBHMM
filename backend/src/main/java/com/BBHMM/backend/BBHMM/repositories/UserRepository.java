@@ -54,4 +54,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         WHERE u.uuid = :uuid AND u.role = 'ROLE_USER'
     """)
     boolean existsByIdAndRoleUser(UUID uuid);
+
+    @Query("""
+        SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END
+        FROM User u
+        WHERE u.uuid = :uuid AND u.role = 'ROLE_GUEST'
+    """)
+    boolean existsByIdAndRoleGuest(UUID uuid);
 }

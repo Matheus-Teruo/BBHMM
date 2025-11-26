@@ -73,4 +73,15 @@ public class UserValidation {
             );
         }
     }
+
+    public void checkIsNotAGuest(User user) {
+        if (repository.existsByIdAndRoleGuest(user.getUuid())) {
+            throw new InvalidDatabaseInsertionException(
+                "Não pode convidar usuário",
+                "convidados só podem pertencer ao evento que foram criados",
+                "usuário",
+                Map.of("userField", user.getFullname())
+            );
+        }
+    }
 }

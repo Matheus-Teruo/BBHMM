@@ -128,6 +128,7 @@ public class UserService {
 
     public User createGuest(CreateGuestRequest request, User hostUser, String password) {
         validation.checkNameDuplication(request.guestName(), request.guestName(), null);
+        billValidation.checkUserParticipationInEvent(hostUser, request.eventUuid());
 
         User user = new User(request, password);
 

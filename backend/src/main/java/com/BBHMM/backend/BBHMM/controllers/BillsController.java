@@ -9,6 +9,7 @@ import com.BBHMM.backend.BBHMM.models.response.BillsResumeResponse;
 import com.BBHMM.backend.BBHMM.services.BillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class BillsController {
 
     private final BillService service;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/bills")
     public ResponseEntity<BillResponse> createBill(@RequestBody CreateBillRequest request) {
         var bill = service.createBill(request);
@@ -45,6 +47,7 @@ public class BillsController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/bills")
     public ResponseEntity<BillResponse> updateBill(@RequestBody UpdateBillRequest request) {
         var bill = service.updateBill(request);
@@ -52,6 +55,7 @@ public class BillsController {
         return ResponseEntity.ok(new BillResponse(bill));
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/bills/participants")
     public ResponseEntity<Void> updateBillParticipants(@RequestBody UpdateBillParticipantsRequest request) {
         service.updateBillParticipants(request);
@@ -59,6 +63,7 @@ public class BillsController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/bills/{billUuid}")
     public ResponseEntity<Void> deleteBill(@PathVariable UUID billUuid) {
         service.deleteBill(billUuid);

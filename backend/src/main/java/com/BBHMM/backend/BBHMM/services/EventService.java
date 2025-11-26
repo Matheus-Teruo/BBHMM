@@ -15,6 +15,8 @@ import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventRepository;
 import com.BBHMM.backend.BBHMM.services.validation.EventValidation;
+import com.BBHMM.backend.BBHMM.services.validation.UserValidation;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class EventService {
     private final EventValidation validation;
     private final EventInvitationRepository eventInvitationRepository;
     private final UserService userService;
+    private final UserValidation userValidation;
     
     @Transactional
     public Event createEvent(CreateEventRequest request, User user) {
@@ -73,6 +76,7 @@ public class EventService {
         User userInvited = userService.findUserByNameOrFullnameOrEmail(request.userfield());
         validation.checkDuplicationInvate(userInvited, event);
         validation.checkUserAlreadyInEvent(userInvited, event);
+        userValidation.checkIsNotAGuest(userInvited);
 
         EventInvitation eventInvitation = new EventInvitation(userInvited, userOwner, event);
         eventInvitationRepository.save(eventInvitation);
@@ -96,5 +100,11 @@ public class EventService {
     public Page<EventInvitation> listEventInvitation(Pageable pageable) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return eventInvitationRepository.findAllByUserInvitedUuid(userOwner.getUuid(), pageable);
+    }
+
+    public void addUser(UUID eventUuid, User guest) {
+        Event event = safeTakeEventByUuid(eventUuid);
+
+        event.addUser(guest);
     }
 }

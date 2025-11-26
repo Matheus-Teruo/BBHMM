@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,6 +29,7 @@ public class EventController {
     private final EventService service;
     private final UserService userService;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(@RequestBody CreateEventRequest request) {
         User userSec = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -48,12 +50,14 @@ public class EventController {
         return ResponseEntity.ok(new EventResponse(service.getEvent(eventUuid)));
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     public ResponseEntity<Page<EventResponse>> listEvents(@PageableDefault(size = 10) Pageable pageable) {
         var response = service.listEvent(pageable).map(EventResponse::new);
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping
     public ResponseEntity<EventResponse> updateEvent(@RequestBody UpdateEventRequest request) {
         var event = service.updateEvent(request);
