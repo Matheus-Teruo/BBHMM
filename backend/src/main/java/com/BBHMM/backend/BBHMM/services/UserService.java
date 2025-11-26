@@ -137,12 +137,12 @@ public class UserService {
     }
 
     @Transactional
-    public User updateGuestToUser(UpdateGuestToUserRequest request) {
+    public User upgradeGuestToUser(UpdateGuestToUserRequest request) {
         validation.checkNameDuplication(null, null, request.email());
         User guestUser = safeTakeUserByUuid(request.uuid());
         validation.checkAlreadyUser(guestUser);
 
-        guestUser.updateGuestToUser(request);
+        guestUser.upgradeGuestToUser(request);
         
         return guestUser;
     }

@@ -28,6 +28,7 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleEnum role;
 
@@ -74,7 +75,7 @@ public class User implements UserDetails {
         }
     }
 
-    public void updateGuestToUser(UpdateGuestToUserRequest request) {
+    public void upgradeGuestToUser(UpdateGuestToUserRequest request) {
         this.email = request.email();
         this.role = RoleEnum.ROLE_USER;
     }

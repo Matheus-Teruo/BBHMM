@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping
+    @PostMapping("/guest/create")
     public ResponseEntity<NewGuestResponse> createGuest(@RequestBody CreateGuestRequest request) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -56,9 +56,9 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('GUEST')")
-    @PostMapping
-    public ResponseEntity<UserResponse> updateGuestToUser(@RequestBody UpdateGuestToUserRequest request) {
-        User user = service.updateGuestToUser(request);
+    @PostMapping("/guest/upgrade")
+    public ResponseEntity<UserResponse> upgradeGuestToUser(@RequestBody UpdateGuestToUserRequest request) {
+        User user = service.upgradeGuestToUser(request);
 
         return ResponseEntity.ok(new UserResponse(user));
     }
