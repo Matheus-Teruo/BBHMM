@@ -3,7 +3,9 @@ package com.BBHMM.backend.BBHMM.services;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.User;
+import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
@@ -16,12 +18,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static final String NUMBERS = "0123456789";
 
     private final UserRepository repository;
     private final UserValidation validation;
@@ -99,9 +107,9 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(UpdateUserRequest request) {
+    public User updateUser(UpdateUserRequest request, User userSecurity) {
         var user = safeTakeUserByUuid(request.uuid());
-        validation.checkUserAuthentication(request.uuid(), user);
+        validation.checkUserAuthentication(request.uuid(), userSecurity);
         validation.checkNameDuplication(request.username(), request.fullname(), request.email());
 
         String newPassword = "";
@@ -116,5 +124,44 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public User createGuest(CreateGuestRequest request, User hostUser, String password) {
+        validation.checkNameDuplication(request.guestName(), request.guestName(), null);
+
+        User user = new User(request, password);
+
+        repository.save(user);
+        return user;
+    }
+
+    @Transactional
+    public User updateGuestToUser(UpdateGuestToUserRequest request) {
+        validation.checkNameDuplication(null, null, request.email());
+        User guestUser = safeTakeUserByUuid(request.uuid());
+        validation.checkAlreadyUser(guestUser);
+
+        guestUser.updateGuestToUser(request);
+        
+        return guestUser;
+    }
+
+    public String generatePassword() {
+        SecureRandom random = new SecureRandom();
+        List<Character> password = new ArrayList<>();
+
+        for (int i = 0; i < 8; i++) {
+            String all = LETTERS + NUMBERS;
+            password.add(all.charAt(random.nextInt(all.length())));
+        }
+
+        Collections.shuffle(password, random);
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : password) {
+            sb.append(c);
+        }
+
+        return sb.toString();
     }
 }

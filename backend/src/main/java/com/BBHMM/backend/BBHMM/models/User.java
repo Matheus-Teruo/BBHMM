@@ -1,8 +1,12 @@
 package com.BBHMM.backend.BBHMM.models;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 
 import jakarta.persistence.*;
@@ -24,6 +28,9 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Column(nullable = false)
+    private RoleEnum role;
+
     @Column(nullable = false, length = 100)
     private String fullname;
 
@@ -40,8 +47,16 @@ public class User implements UserDetails {
     public User(SignUpUserRequest request, String password) {
         this.username = request.username();
         this.password = password;
+        this.role = RoleEnum.ROLE_USER;
         this.fullname = request.fullname();
         this.email = request.email();
+    }
+
+    public User(CreateGuestRequest request, String password) {
+        this.username = request.guestName();
+        this.password = password;
+        this.role = RoleEnum.ROLE_GUEST;
+        this.fullname = request.guestName();
     }
 
     public void updateUser(UpdateUserRequest request, String password, boolean passwordFlag) {
@@ -59,9 +74,14 @@ public class User implements UserDetails {
         }
     }
 
+    public void updateGuestToUser(UpdateGuestToUserRequest request) {
+        this.email = request.email();
+        this.role = RoleEnum.ROLE_USER;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

@@ -1,0 +1,6 @@
+-- V5__Add_Role_To_Users.sql
+
+ALTER TABLE users
+ADD COLUMN role ENUM('ROLE_USER','ROLE_GUEST') 
+NOT NULL DEFAULT 'ROLE_USER'
+AFTER password;

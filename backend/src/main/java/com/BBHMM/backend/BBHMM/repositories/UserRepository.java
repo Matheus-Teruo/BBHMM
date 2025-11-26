@@ -47,4 +47,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByFullname(String fullname);
 
     boolean existsByEmail(String email);
+
+    @Query("""
+        SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END
+        FROM User u
+        WHERE u.uuid = :uuid AND u.role = 'ROLE_USER'
+    """)
+    boolean existsByIdAndRoleUser(UUID uuid);
 }
