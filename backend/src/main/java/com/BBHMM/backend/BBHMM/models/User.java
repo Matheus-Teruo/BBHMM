@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
-import com.BBHMM.backend.BBHMM.models.request.UpdateGuestToUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 
 import jakarta.persistence.*;
@@ -75,7 +75,7 @@ public class User implements UserDetails {
         }
     }
 
-    public void upgradeGuestToUser(UpdateGuestToUserRequest request) {
+    public void upgradeGuestToUser(UpgradeGuestToUserRequest request) {
         this.email = request.email();
         this.role = RoleEnum.ROLE_USER;
     }

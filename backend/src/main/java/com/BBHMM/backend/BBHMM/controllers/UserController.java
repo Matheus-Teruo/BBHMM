@@ -2,7 +2,7 @@ package com.BBHMM.backend.BBHMM.controllers;
 
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
-import com.BBHMM.backend.BBHMM.models.request.UpdateGuestToUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
@@ -57,7 +57,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('GUEST')")
     @PostMapping("/guest/upgrade")
-    public ResponseEntity<UserResponse> upgradeGuestToUser(@RequestBody UpdateGuestToUserRequest request) {
+    public ResponseEntity<UserResponse> upgradeGuestToUser(@RequestBody UpgradeGuestToUserRequest request) {
         User user = service.upgradeGuestToUser(request);
 
         return ResponseEntity.ok(new UserResponse(user));

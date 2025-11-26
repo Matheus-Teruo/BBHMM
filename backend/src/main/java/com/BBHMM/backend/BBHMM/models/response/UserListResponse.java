@@ -8,13 +8,15 @@ public record UserListResponse(
     UUID uuid,
     String firstname,
     String fullname,
+    String role,
     PixResponse pix
 ) {
     public UserListResponse(User user) {
         this(user.getUuid(),
             user.getFullname().trim().split("\\s+")[0],
             user.getFullname(),
-            new PixResponse(user.getPix())
+            user.getRole().toString(),
+            user.getPix() != null ? new PixResponse(user.getPix()) : null
         );
     }
 }

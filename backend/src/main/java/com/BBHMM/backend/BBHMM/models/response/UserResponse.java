@@ -7,6 +7,7 @@ import java.util.UUID;
 public record UserResponse(
     UUID uuid,
     String username,
+    String role,
     String fullname,
     String email,
     PixResponse pix
@@ -14,9 +15,10 @@ public record UserResponse(
     public UserResponse(User user) {
         this(user.getUuid(),
             user.getUsername(),
+            user.getRole().toString(),
             user.getFullname(),
             user.getEmail(),
-            new PixResponse(user.getPix())
+            user.getPix() != null ? new PixResponse(user.getPix()) : null
         );
     }
 }

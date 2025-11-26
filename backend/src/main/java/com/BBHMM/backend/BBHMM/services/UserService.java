@@ -5,7 +5,7 @@ import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
-import com.BBHMM.backend.BBHMM.models.request.UpdateGuestToUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
@@ -137,7 +137,7 @@ public class UserService {
     }
 
     @Transactional
-    public User upgradeGuestToUser(UpdateGuestToUserRequest request) {
+    public User upgradeGuestToUser(UpgradeGuestToUserRequest request) {
         validation.checkNameDuplication(null, null, request.email());
         User guestUser = safeTakeUserByUuid(request.uuid());
         validation.checkAlreadyUser(guestUser);
