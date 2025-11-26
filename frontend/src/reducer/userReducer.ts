@@ -84,7 +84,7 @@ export function userReducer(state: UserState, action: UserAction): UserState {
         username: action.payload.username,
         fullname: action.payload.fullname,
         email: action.payload.email,
-        pix: action.payload.pix,
+        pix: action.payload.pix ? action.payload.pix : initialPixState,
       };
     }
     case "RESET":
@@ -94,14 +94,14 @@ export function userReducer(state: UserState, action: UserAction): UserState {
   }
 }
 
-export const signupPayload = (s: UserState): SignupUser => {
+export const signupPayload = (s: UserState, pixFlag: boolean): SignupUser => {
   const { username, password, fullname, email, pix } = s;
   return {
     username,
     password,
     fullname,
     email,
-    pix: createPixPayload(pix),
+    pix: pixFlag ? createPixPayload(pix) : null,
   } as SignupUser;
 };
 

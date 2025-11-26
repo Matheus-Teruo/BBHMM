@@ -62,7 +62,12 @@ function SignUp() {
     if (state.password == state.confirmPassword) {
       setWaitingFetch(true);
       setTouched(false);
-      const user = await signupUser(signupPayload(state));
+      const user = await signupUser(
+        signupPayload(
+          state,
+          pixState.pixKey != "" || pixState.bankAccount != "",
+        ),
+      );
       if (user && !isMessage(user)) {
         addNotification({
           title: "Signup Success",
@@ -72,6 +77,7 @@ function SignUp() {
         login({
           uuid: user.uuid,
           firstName: user.fullname.split(" ")[0],
+          role: user.role,
         });
         dispatch({ type: "RESET" });
         navigate("/");
@@ -81,8 +87,8 @@ function SignUp() {
       }
     } else {
       addNotification({
-        title: "Error to Submit",
-        message: `password and password confirmation are not iqual`,
+        title: "Erro ao criar conta",
+        message: `Senha e confirmação de senha devem ser igual`,
         type: MessageType.WARNING,
       });
     }
@@ -185,6 +191,7 @@ function SignUp() {
         </div>
         <div>
           <h3>Pix</h3>
+          <p>caso queira cadastrar os dois campos devem ser preenchidos</p>
           <div className={styles.field}>
             <AuthInput
               value={pixState.pixKey}
@@ -199,7 +206,6 @@ function SignUp() {
               ComponentRejected={PixSVG}
               id="pixKey"
               placeholder="Chave Pix"
-              isRequired
               showStatus={touched}
               message={messageError["email"]}
             />
@@ -218,7 +224,6 @@ function SignUp() {
               ComponentRejected={BankSVG}
               id="bankAccount"
               placeholder="Nome do banco"
-              isRequired
               showStatus={touched}
               message={messageError["email"]}
             />

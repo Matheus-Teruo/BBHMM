@@ -5,7 +5,7 @@ export interface SignupUser {
   password: string;
   fullname: string;
   email: string;
-  pix: CreatePix;
+  pix?: CreatePix;
 }
 
 export interface LoginUser {
@@ -22,22 +22,35 @@ export interface UpdateUser {
   pix?: UpdatePix;
 }
 
+export interface CreateGuest {
+  guestName: string;
+  eventUuid: string;
+}
+
+export interface UpgradeGuestToUser {
+  uuid: string;
+  email: string;
+}
+
 export default interface User {
   uuid: string;
   username: string;
+  role: string;
   fullname: string;
   email: string;
-  pix: Pix;
+  pix?: Pix;
 }
 
 export interface UserResume {
   uuid: string;
   firstName: string;
+  role: string;
 }
 
 export interface UserList {
   uuid: string;
   firstname: string;
   fullname: string;
-  pix: Pix;
+  role: string;
+  pix?: Pix;
 }
