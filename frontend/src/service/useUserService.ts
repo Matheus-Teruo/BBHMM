@@ -1,9 +1,13 @@
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
 import User, {
+  CreateGuest,
+  Guest,
   LoginUser,
+  NewGuest,
   SignupUser,
   UpdateUser,
+  UpgradeGuestToUser,
   UserResume,
 } from "@data/User";
 import { useCallback } from "react";
@@ -51,6 +55,41 @@ const useUserService = () => {
     [api, safeRequest],
   );
 
+  const createGuest = useCallback(
+    async (guest: CreateGuest): Promise<NewGuest | Message | null> =>
+      safeRequest(() =>
+        api.post<NewGuest>("/users/guest", guest).then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
+  const loginGuest = useCallback(
+    async (guest: LoginUser): Promise<Guest | Message | null> =>
+      safeRequest(() =>
+        api.post<Guest>("/auth/login/guest", guest).then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
+  const getGuest = useCallback(
+    async (
+      guestUuid: string,
+      eventUuid: string,
+    ): Promise<NewGuest | Message | null> =>
+      api
+        .get<NewGuest>(`/users/guest/${guestUuid}/event/${eventUuid}`)
+        .then((res) => res.data),
+    [api],
+  );
+
+  const upgradeGuestToUser = useCallback(
+    async (guest: UpgradeGuestToUser): Promise<User | Message | null> =>
+      safeRequest(() =>
+        api.post<User>("/users/guest/upgrade", guest).then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
   return {
     signupUser,
     loginUser,
@@ -58,6 +97,10 @@ const useUserService = () => {
     logoutUser,
     getUser,
     updateUser,
+    createGuest,
+    loginGuest,
+    getGuest,
+    upgradeGuestToUser,
   };
 };
 

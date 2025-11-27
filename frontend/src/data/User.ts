@@ -1,3 +1,4 @@
+import Event from "./Event";
 import Pix, { CreatePix, UpdatePix } from "./Pix";
 
 export interface SignupUser {
@@ -29,13 +30,14 @@ export interface CreateGuest {
 
 export interface UpgradeGuestToUser {
   uuid: string;
+  password: string;
   email: string;
 }
 
 export default interface User {
   uuid: string;
   username: string;
-  role: string;
+  role: Role;
   fullname: string;
   email: string;
   pix?: Pix;
@@ -44,13 +46,31 @@ export default interface User {
 export interface UserResume {
   uuid: string;
   firstName: string;
-  role: string;
+  role: Role;
 }
 
 export interface UserList {
   uuid: string;
   firstname: string;
   fullname: string;
-  role: string;
+  role: Role;
   pix?: Pix;
+}
+
+export interface Guest {
+  uuid: string;
+  username: string;
+  event: Event;
+}
+
+export interface NewGuest {
+  uuid: string;
+  username: string;
+  fullname: string;
+  token: string;
+}
+
+export enum Role {
+  USER = "usuário",
+  GUEST = "convidado",
 }

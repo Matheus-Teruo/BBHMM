@@ -2,16 +2,17 @@ import { UserResume } from "@data/User";
 import React, { useCallback, useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
 import useUserService from "@service/useUserService";
+import Event from "@data/Event";
 
-const LOCAL_STORAGE_KEY = "loggedInUser";
+const LOCAL_STORAGE_KEY_EVENT = "selectedEvent";
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserResume | null | "unlogged">(null);
+  const [event, setEvent] = useState<Event | null>(null);
   const { checkUser, logoutUser } = useUserService();
 
   const login = (user: UserResume) => {
     setUser(user);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
   };
 
   const checkLogged = useCallback(async () => {
@@ -25,16 +26,30 @@ function UserProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       setUser("unlogged");
       console.log(error);
-      // TODO: verificar o que fazer com as response do axios
     }
   }, [checkUser]);
 
   const logout = async () => {
     if (user) {
       setUser("unlogged");
+      setEvent(null);
+      localStorage.removeItem(LOCAL_STORAGE_KEY_EVENT);
       await logoutUser();
     }
   };
+
+  const selectEvent = (event: Event) => {
+    setEvent(event);
+    localStorage.setItem(LOCAL_STORAGE_KEY_EVENT, JSON.stringify(event));
+  };
+
+  useEffect(() => {
+    const eventStorage = localStorage.getItem(LOCAL_STORAGE_KEY_EVENT);
+    if (eventStorage) {
+      const event: Event = JSON.parse(eventStorage);
+      setEvent(event);
+    }
+  }, []);
 
   useEffect(() => {
     checkLogged();
@@ -44,8 +59,9 @@ function UserProvider({ children }: { children: React.ReactNode }) {
     <UserContext.Provider
       value={{
         user,
+        event,
+        selectEvent,
         login,
-        checkLogged,
         logout,
       }}
     >

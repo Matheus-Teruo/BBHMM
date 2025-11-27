@@ -17,7 +17,7 @@ function EventPage() {
   const [eventForm, setEventForm] = useState<null | "Create" | "Update">(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | undefined>();
   const { getEvents } = useEventService();
-  const { user } = useUserContext();
+  const { user, selectEvent } = useUserContext();
   const navigate = useNavigate();
 
   const fetchEvent = useCallback(async () => {
@@ -40,9 +40,9 @@ function EventPage() {
     setEventForm("Update");
   }
 
-  const handleSelectEvent = (eventUUID: string) => {
-    navigate(`/event/${eventUUID}/bills`);
-    localStorage.setItem("evento", eventUUID);
+  const handleSelectEvent = (event: Event) => {
+    selectEvent(event);
+    navigate(`/event/${event.uuid}/bills`);
   };
 
   return (
@@ -56,7 +56,7 @@ function EventPage() {
       <ul className={styles.list}>
         {events.map((event) => (
           <li key={event.uuid} className={styles.eventCard}>
-            <div onClick={() => handleSelectEvent(event.uuid)}>
+            <div onClick={() => handleSelectEvent(event)}>
               <h3 className={styles.eventTitle}>{event.eventName}</h3>
               <p className={styles.eventDescription}>{event.description}</p>
               <p className={styles.eventDate}>{event.eventDate}</p>

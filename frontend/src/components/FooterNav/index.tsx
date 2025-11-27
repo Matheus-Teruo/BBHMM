@@ -1,34 +1,27 @@
+import { useUserContext } from "@context/UserContext/useUserContext";
 import styles from "./FooterNav.module.scss";
-import { useEffect, useState } from "react";
 import { Link, matchPath, Outlet } from "react-router-dom";
 
 function FooterNav() {
-  const [eventUUID, setEventUUID] = useState<string>();
-
-  useEffect(() => {
-    const valorSalvo = localStorage.getItem("evento");
-    if (valorSalvo) {
-      setEventUUID(valorSalvo);
-    }
-  }, []);
+  const { event } = useUserContext();
 
   return (
     <>
       <Outlet />
       <div className={styles.footer}>
-        {eventUUID && (
+        {event && (
           <ul className={styles.subNavigate}>
             <li
               className={`${matchPath({ path: "/event/:eventUUID/bills", end: true }, location.pathname) && styles.selected}`}
             >
-              <Link to={`/event/${eventUUID}/bills`}>
+              <Link to={`/event/${event.uuid}/bills`}>
                 <h3>Contas</h3>
               </Link>
             </li>
             <li
               className={`${matchPath({ path: "/event/:eventUUID/payment", end: true }, location.pathname) && styles.selected}`}
             >
-              <Link to={`/event/${eventUUID}/payment`}>
+              <Link to={`/event/${event.uuid}/payment`}>
                 <h3>Pagamento</h3>
               </Link>
             </li>

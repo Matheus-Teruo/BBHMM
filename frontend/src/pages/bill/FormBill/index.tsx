@@ -100,7 +100,7 @@ function FormBill({
   return (
     <>
       <div className={styles.modal}>
-        <h2>{`${form === "Create" ? "Cria uma conta" : "Edita conta "}${form === "Update" && initialValue?.billName}`}</h2>
+        <h2>{`${form === "Create" ? "Criar uma conta" : "Editar conta "}${form === "Update" && initialValue?.billName}`}</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
             value={state.name}

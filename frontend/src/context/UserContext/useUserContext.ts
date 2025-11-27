@@ -1,10 +1,12 @@
+import Event from "@data/Event";
 import { UserResume } from "@data/User";
 import { useContext, createContext } from "react";
 
 interface UserContextType {
   user: UserResume | null | "unlogged";
+  event: Event | null;
+  selectEvent: (eventUuid: Event) => void;
   login: (user: UserResume) => void;
-  checkLogged: () => void;
   logout: () => void;
 }
 
