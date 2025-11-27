@@ -21,6 +21,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -56,9 +57,13 @@ public class EventService {
         );
     }
 
-    public Page<Event> listEvent(Pageable pageable) {
+    public Page<Event> pageEvent(Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return repository.findAllbyUser(pageable, user.getUuid());
+    }
+
+    public List<Event> listEvent(User user) {
+        return repository.findAllbyUserList(user.getUuid());
     }
 
     @Transactional

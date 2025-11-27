@@ -8,7 +8,7 @@ public record NewGuestResponse(
     UUID uuid,
     String username,
     String fullname,
-    String password
+    String token
 ) {
     public NewGuestResponse(User user, String password) {
         this(

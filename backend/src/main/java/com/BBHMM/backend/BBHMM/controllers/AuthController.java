@@ -1,11 +1,14 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
 import com.BBHMM.backend.BBHMM.config.security.TokenServiceConfig;
+import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.LoginUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
+import com.BBHMM.backend.BBHMM.models.response.GuestResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResumeResponse;
+import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,6 +34,7 @@ import java.net.URI;
 public class AuthController {
 
     private final UserService service;
+    private final EventService eventService;
     private final AuthenticationManager manager;
     private final TokenServiceConfig tokenService;
 
@@ -71,6 +77,23 @@ public class AuthController {
         response.addCookie(createCookie(tokenJWT, 24));
 
         return ResponseEntity.ok(new UserResumeResponse((User) authentication.getPrincipal()));
+    }
+
+    @PreAuthorize("hasRole('GUEST')")
+    @PostMapping("/login/guest")
+    public ResponseEntity<GuestResponse> loginGuest(
+        @RequestBody @Valid
+        LoginUserRequest request,
+        HttpServletResponse response) {
+        var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
+        var authentication = manager.authenticate(authenticationToken);
+
+        var tokenJWT = tokenService.generateToken((User) authentication.getPrincipal());
+
+        response.addCookie(createCookie(tokenJWT, 24));
+        List<Event> events = eventService.listEvent((User) authentication.getPrincipal());
+
+        return ResponseEntity.ok(new GuestResponse((User) authentication.getPrincipal(), events.getFirst()));
     }
 
     @GetMapping("/check")

@@ -50,10 +50,9 @@ public class EventController {
         return ResponseEntity.ok(new EventResponse(service.getEvent(eventUuid)));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @GetMapping
     public ResponseEntity<Page<EventResponse>> listEvents(@PageableDefault(size = 10) Pageable pageable) {
-        var response = service.listEvent(pageable).map(EventResponse::new);
+        var response = service.pageEvent(pageable).map(EventResponse::new);
         return ResponseEntity.ok(response);
     }
 
