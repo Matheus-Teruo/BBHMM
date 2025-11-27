@@ -3,7 +3,7 @@ package com.BBHMM.backend.BBHMM.controllers;
 import com.BBHMM.backend.BBHMM.config.security.TokenServiceConfig;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.LoginUserRequest;
-import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResumeResponse;
 import com.BBHMM.backend.BBHMM.services.UserService;
@@ -38,7 +38,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(
         @RequestBody @Valid
-        SignUpUserRequest request,
+        SignupUserRequest request,
         HttpServletResponse response) {
         var user = service.createUser(request);
 

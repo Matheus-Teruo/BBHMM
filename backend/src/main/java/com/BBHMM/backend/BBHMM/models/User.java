@@ -5,7 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
-import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 
@@ -45,7 +45,7 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "users")
     private Set<Event> events = new HashSet<>();
 
-    public User(SignUpUserRequest request, String password) {
+    public User(SignupUserRequest request, String password) {
         this.username = request.username();
         this.password = password;
         this.role = RoleEnum.ROLE_USER;
@@ -76,7 +76,8 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public void upgradeGuestToUser(UpgradeGuestToUserRequest request) {
+    public void upgradeGuestToUser(UpgradeGuestToUserRequest request, String password) {
+        this.password = password;
         this.email = request.email();
         this.role = RoleEnum.ROLE_USER;
     }

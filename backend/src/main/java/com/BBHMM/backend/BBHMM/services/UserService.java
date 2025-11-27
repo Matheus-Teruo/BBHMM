@@ -4,7 +4,7 @@ import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
-import com.BBHMM.backend.BBHMM.models.request.SignUpUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
@@ -37,7 +37,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createUser(SignUpUserRequest request) {
+    public User createUser(SignupUserRequest request) {
         validation.checkNameDuplication(request.username(), request.fullname(), request.email());
         User user = new User(
             request,
@@ -152,7 +152,7 @@ public class UserService {
         validation.checkNameDuplication(null, null, request.email());
         User guest = safeTakeUserByUuid(request.uuid());
 
-        guest.upgradeGuestToUser(request);
+        guest.upgradeGuestToUser(request, passwordEncoder.encode(request.password()));
         
         return guest;
     }
