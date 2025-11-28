@@ -78,12 +78,12 @@ public class BillService {
     public Bill updateBill(UpdateBillRequest request) {
         var bill = safeTakeBillByUuid(request.uuid());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        validation.checkUserParticipationInEvent(user, bill.getEvent().getUuid());
+        validation.checkUserParticipationInEvent(user, bill.getEventUuid());
 
         bill.update(request);
         if (request.listPartUuids() != null) {
-            validation.checkUsersParticipationInEvent(bill.getEvent().getUuid(), request.listPartUuids());
-            updateParticipants(bill, request.listPartUuids(), request.value(), bill.getPayer().getUuid());
+            validation.checkUsersParticipationInEvent(bill.getEventUuid(), request.listPartUuids());
+            updateParticipants(bill, request.listPartUuids(), request.value());
         }
 
         return bill;
@@ -94,8 +94,8 @@ public class BillService {
         var bill = safeTakeBillByUuid(request.uuid());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User partUser = userService.safeTakeUserByUuid(request.partUuid());
-        validation.checkUserParticipationInEvent(user, bill.getEvent().getUuid());
-        validation.checkUserParticipationInEvent(partUser, bill.getEvent().getUuid());
+        validation.checkUserParticipationInEvent(user, bill.getEventUuid());
+        validation.checkUserParticipationInEvent(partUser, bill.getEventUuid());
 
         boolean plus = true;
         switch (request.type()) {
@@ -106,47 +106,47 @@ public class BillService {
                 plus = false;
                 break;
             case "reset":
-                reversePaidValue(bill.getParticipants(), bill, bill.getPayer().getUuid());
+                reversePaidValue(bill.getParticipants(), bill);
                 bill.getParticipants().removeAll(bill.getParticipants());
                 return;
             case "all":
-                reversePaidValue(bill.getParticipants(), bill, bill.getPayer().getUuid());
+                reversePaidValue(bill.getParticipants(), bill);
                 bill.getParticipants().removeAll(bill.getParticipants());
-                updateParticipants(bill, bill.getEvent().getUsers().stream().map(User::getUuid).toList(), bill.getValue(), bill.getPayer().getUuid());
+                updateParticipants(bill, bill.getEvent().getUsers().stream().map(User::getUuid).toList(), bill.getValue());
                 return;
             default:
                 return;
         }
 
-        updateParticipants(bill, partUser, plus, bill.getValue(), bill.getPayer().getUuid());
+        updateParticipants(bill, partUser, plus, bill.getValue());
     }
 
     @Transactional
     public void deleteBill(UUID billUuid) {
         var bill = safeTakeBillByUuid(billUuid);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        validation.checkUserParticipationInEvent(user, bill.getEvent().getUuid());
+        validation.checkUserParticipationInEvent(user, bill.getEventUuid());
 
         List<Participants> currentParticipants = bill.getParticipants();
 
-        reversePaidValue(currentParticipants, bill, bill.getPayer().getUuid());
+        reversePaidValue(currentParticipants, bill);
 
         repository.delete(bill);
     }
 
     @Transactional
-    private void updateParticipants(Bill bill, List<UUID> listPartUuids, BigDecimal value, UUID ownerUuid) {
+    private void updateParticipants(Bill bill, List<UUID> listPartUuids, BigDecimal value) {
         List<Participants> currentParticipants = bill.getParticipants();
 
-        reversePaidValue(currentParticipants, bill, ownerUuid);
+        reversePaidValue(currentParticipants, bill);
 
         Set<UUID> newUuids = new HashSet<>(listPartUuids);
         Set<UUID> currentUuids = currentParticipants.stream()
-                .map(p -> p.getUser().getUuid())
+                .map(p -> p.getUserUuid())
                 .collect(Collectors.toSet());
 
         List<Participants> toRemove = currentParticipants.stream()
-                .filter(p -> !newUuids.contains(p.getUser().getUuid()))
+                .filter(p -> !newUuids.contains(p.getUserUuid()))
                 .toList();
 
         currentParticipants.removeAll(toRemove);
@@ -164,21 +164,21 @@ public class BillService {
 
         BigDecimal share = value.divide(BigDecimal.valueOf(currentParticipants.size()), RoundingMode.HALF_UP);
 
-        updatePaidValue(currentParticipants, bill, share, ownerUuid);
+        updatePaidValue(currentParticipants, bill, share);
 
         bill.setParticipants(currentParticipants);
     }
 
     @Transactional
-    private void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value, UUID ownerUuid) {
+    private void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value) {
 
         List<Participants> currentParticipants = bill.getParticipants();
 
-        reversePaidValue(currentParticipants, bill, ownerUuid);
+        reversePaidValue(currentParticipants, bill);
 
         if (add) {
             boolean alreadyExists = currentParticipants.stream()
-                    .anyMatch(p -> p.getUser().getUuid().equals(participant.getUuid()));
+                    .anyMatch(p -> p.getUserUuid().equals(participant.getUuid()));
 
             if (!alreadyExists) {
                 Participants newParticipant = new Participants(participant, bill);
@@ -186,7 +186,7 @@ public class BillService {
             }
 
         } else {
-            currentParticipants.removeIf(p -> p.getUser().getUuid().equals(participant.getUuid()));
+            currentParticipants.removeIf(p -> p.getUserUuid().equals(participant.getUuid()));
         }
 
         if (currentParticipants.isEmpty()) {
@@ -199,19 +199,19 @@ public class BillService {
                 RoundingMode.HALF_UP
         );
 
-        updatePaidValue(currentParticipants, bill, share, ownerUuid);
+        updatePaidValue(currentParticipants, bill, share);
 
         bill.setParticipants(currentParticipants);
     }
 
     @Transactional
-    private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal share, UUID ownerUuid) {
+    private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal share) {
         for (Participants participation : currentParticipants) {
             participation.setValue(share);
             BigDecimal userDebit = share;
-            List<Bill> userBills = repository.findBillsByPayerUuidAndNotPaid(ownerUuid, bill.getEvent().getUuid());
+            List<Bill> userBills = repository.findBillsByPayerUuidAndNotPaid(participation.getUserUuid(), bill.getEventUuid());
             for (Bill userBill : userBills) {
-                BigDecimal debtBill = userBill.getValue().subtract(userBill.getDebitAmount());
+                BigDecimal debtBill = userBill.getRemainingBalance();
                 if (userDebit.compareTo(debtBill) < 0) {
                     participation.completeParticipation();
                     userBill.addToDebit(userDebit);
@@ -234,10 +234,10 @@ public class BillService {
     }
 
     @Transactional
-    private void reversePaidValue(List<Participants> removedParticipants, Bill bill, UUID ownerUuid) {
+    private void reversePaidValue(List<Participants> removedParticipants, Bill bill) {
         for (Participants participation : removedParticipants) {
             BigDecimal undoPaidValue = participation.getPaidValue();
-            List<Bill> userBills = repository.findBillsByPayerUuidAndPaid(ownerUuid, bill.getEvent().getUuid());
+            List<Bill> userBills = repository.findBillsByPayerUuidAndPaid(participation.getUserUuid(), bill.getEventUuid());
             for (Bill userBill : userBills) {
                 BigDecimal undoDebtBill = userBill.getDebitAmount();
                 if (undoPaidValue.compareTo(undoDebtBill) < 0) {

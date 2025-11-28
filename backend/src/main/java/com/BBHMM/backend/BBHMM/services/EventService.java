@@ -107,6 +107,7 @@ public class EventService {
         return eventInvitationRepository.findAllByUserInvitedUuid(userOwner.getUuid(), pageable);
     }
 
+    @Transactional
     public void addUser(UUID eventUuid, User guest) {
         Event event = safeTakeEventByUuid(eventUuid);
 
