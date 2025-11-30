@@ -12,7 +12,7 @@ import { EditSVG } from "@/assets/svg";
 import { isSuccess } from "@/util/requestHelper";
 import usePaymentService from "@service/usePaymentService";
 import { DebitTotal } from "@data/Payment";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 function BillPage() {
   const [bills, setBills] = useState<BillResume[]>([]);
@@ -28,6 +28,7 @@ function BillPage() {
   const { getDebitTotal } = usePaymentService();
   const { user } = useUserContext();
   const navigate = useNavigate();
+  const location = useLocation();
   const { eventUUID } = useParams();
 
   const fetchUsers = useCallback(async () => {
@@ -55,7 +56,7 @@ function BillPage() {
         setDebitTotal(paymentResponse);
       }
     }
-  }, [eventUUID, listBills]);
+  }, [eventUUID, getDebitTotal]);
 
   useEffect(() => {
     if (isUserLogged(user)) {
@@ -66,6 +67,13 @@ function BillPage() {
       navigate("/auth/login");
     }
   }, [user, fetchBill]);
+
+  useEffect(() => {
+    if (location.state?.onCreated) {
+      fetchUsers();
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state]);
 
   const handleCheckBill = async (
     value: boolean,
@@ -84,6 +92,28 @@ function BillPage() {
     }
   };
 
+  function handleInvite() {
+    navigate(`/invites/new/${eventUUID}`, {
+      state: {
+        backgroundLocation: {
+          pathname: location.pathname,
+          search: location.search,
+        },
+      },
+    });
+  }
+
+  function addGuest() {
+    navigate("/auth/guest/new/", {
+      state: {
+        backgroundLocation: {
+          pathname: location.pathname,
+          search: location.search,
+        },
+      },
+    });
+  }
+
   function updateBill(bill: BillResume) {
     setSelectedBill(bill);
     setBillForm("Update");
@@ -95,20 +125,8 @@ function BillPage() {
       <div className={styles.top}>
         <div className={styles.actions}>
           <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
-          <Button
-            onClick={() =>
-              navigate(`/invites/new/${eventUUID}`, {
-                state: {
-                  backgroundLocation: {
-                    pathname: location.pathname,
-                    search: location.search,
-                  },
-                },
-              })
-            }
-          >
-            Convidar
-          </Button>
+          <Button onClick={() => handleInvite()}>Convidar</Button>
+          <Button onClick={() => addGuest()}>Criar Convidado</Button>
         </div>
         <div className={styles.total}>
           <p>Total:</p>

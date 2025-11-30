@@ -10,24 +10,31 @@ import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
+import { useUserContext } from "@context/UserContext/useUserContext";
 import { CreateGuest } from "@data/User";
 import useUserService from "@service/useUserService";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-interface CreateGuestFormProps {
-  eventUuid?: string;
-  onChange: () => void;
-}
-
-function CreateGuestForm({ eventUuid, onChange }: CreateGuestFormProps) {
+function CreateGuestForm() {
   const [guestName, setGuestName] = useState<string>("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { createGuest } = useUserService();
+  const { event } = useUserContext();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { backgroundLocation } = location.state as {
+    username: string;
+    token: string;
+    backgroundLocation?: {
+      pathname: string;
+      search: string;
+    };
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +43,7 @@ function CreateGuestForm({ eventUuid, onChange }: CreateGuestFormProps) {
     setMessageError({});
     const guest = await createGuest({
       guestName: guestName,
-      eventUuid: eventUuid,
+      eventUuid: event?.uuid,
     } as CreateGuest);
     if (guest && !isMessage(guest)) {
       addNotification({
@@ -45,22 +52,18 @@ function CreateGuestForm({ eventUuid, onChange }: CreateGuestFormProps) {
         type: MessageType.OK,
       });
       setGuestName("");
-      navigate(`/user/guest/info`, {
+      navigate(`/auth/guest/info`, {
         state: {
           username: guest.username,
           token: guest.token,
-          backgroundLocation: {
-            pathname: location.pathname,
-            search: location.search,
-          },
+          backgroundLocation: backgroundLocation,
+          onCreated: true,
         },
       });
-      onChange();
     } else if (guest) {
       const message = guest;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
-
     setTouched(true);
     setWaitingFetch(false);
   };
@@ -89,7 +92,7 @@ function CreateGuestForm({ eventUuid, onChange }: CreateGuestFormProps) {
           </Button>
         </form>
       </div>
-      <GlassBackground onClick={onChange} />
+      <GlassBackground onClick={() => navigate(-1)} />
     </>
   );
 }

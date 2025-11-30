@@ -70,8 +70,8 @@ function SignUp() {
       );
       if (user && !isMessage(user)) {
         addNotification({
-          title: "Signup Success",
-          message: `Create user ${user.fullname} and logged`,
+          title: "Conta criada com sucesso",
+          message: `Usuário: ${user.fullname} criado.`,
           type: MessageType.OK,
         });
         login({
