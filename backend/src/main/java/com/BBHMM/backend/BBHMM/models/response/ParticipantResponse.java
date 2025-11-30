@@ -17,7 +17,7 @@ public record ParticipantResponse(
             participants.getValue(),
             participants.getPaidValue(),
             participants.getPaid(),
-            participants.getUuid()
+            participants.getUserUuid()
         );
     }
 }
