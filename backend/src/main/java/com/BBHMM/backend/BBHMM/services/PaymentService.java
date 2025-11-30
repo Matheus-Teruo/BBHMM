@@ -131,7 +131,7 @@ public class PaymentService {
         return payments;
     }
 
-    private void addTotal(Map<UUID, BigDecimal> mapa, UUID userUuid, BigDecimal value) {
-        mapa.merge(userUuid, value, BigDecimal::add);
+    private void addTotal(Map<UUID, BigDecimal> map, UUID userUuid, BigDecimal value) {
+        map.merge(userUuid, value, BigDecimal::add);
     }
 }

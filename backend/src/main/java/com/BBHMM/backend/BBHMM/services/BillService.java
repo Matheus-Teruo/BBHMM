@@ -134,7 +134,6 @@ public class BillService {
         repository.delete(bill);
     }
 
-    @Transactional
     private void updateParticipants(Bill bill, List<UUID> listPartUuids, BigDecimal value) {
         List<Participants> currentParticipants = bill.getParticipants();
 
@@ -169,7 +168,6 @@ public class BillService {
         bill.setParticipants(currentParticipants);
     }
 
-    @Transactional
     private void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value) {
 
         List<Participants> currentParticipants = bill.getParticipants();
@@ -204,7 +202,6 @@ public class BillService {
         bill.setParticipants(currentParticipants);
     }
 
-    @Transactional
     private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal share) {
         for (Participants participation : currentParticipants) {
             participation.setValue(share);
@@ -233,7 +230,6 @@ public class BillService {
         }
     }
 
-    @Transactional
     private void reversePaidValue(List<Participants> removedParticipants, Bill bill) {
         for (Participants participation : removedParticipants) {
             BigDecimal undoPaidValue = participation.getPaidValue();

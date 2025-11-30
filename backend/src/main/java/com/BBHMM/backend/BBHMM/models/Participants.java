@@ -17,12 +17,8 @@ public class Participants {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
 
-    @Column(name = "uuid_user", insertable = false, updatable = false)
+    @Column(name = "uuid_user", nullable = false)
     private UUID userUuid;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uuid_user", nullable = false)
-    private User user;
 
     @Column(name = "uuid_bill", insertable = false, updatable = false)
     private UUID billUuid;
@@ -44,13 +40,13 @@ public class Participants {
     private Boolean paid = false;
 
     public Participants(User user, Bill bill) {
-        this.user = user;
+        this.userUuid = user.getUuid();
         this.bill = bill;
         this.paid = false;
     }
 
     public Participants(PayBillRequest request, User user, Bill bill) {
-        this.user = user;
+        this.userUuid = user.getUuid();
         this.bill = bill;
         this.value = request.value();
         this.paidValue = request.value();
