@@ -91,8 +91,14 @@ function PaymentForm() {
             showStatus={touched}
             message={messageError["name"]}
           />
+          {receiver.pix && (
+            <>
+              <p>Chave Pix: {receiver.pix.pixKey}</p>
+              <p>Conta do banco: {receiver.pix.bankAccount}</p>
+            </>
+          )}
           <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
-            <p>Criar</p>
+            <p>Pagar</p>
             <CheckSVG />
           </Button>
         </form>

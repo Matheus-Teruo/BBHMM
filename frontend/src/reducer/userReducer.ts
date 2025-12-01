@@ -22,6 +22,14 @@ type UserState = {
   pix: CreatePix | UpdatePix;
 };
 
+export type UpdateUserField =
+  | "username"
+  | "fullname"
+  | "password"
+  | "email"
+  | "pix"
+  | "";
+
 type UserAction =
   | { type: "SET_USERNAME"; payload: string }
   | { type: "SET_FULLNAME"; payload: string }
@@ -94,8 +102,11 @@ export function userReducer(state: UserState, action: UserAction): UserState {
   }
 }
 
-export const signupPayload = (s: UserState, pixFlag: boolean): SignupUser => {
-  const { username, password, fullname, email, pix } = s;
+export const signupPayload = (
+  state: UserState,
+  pixFlag: boolean,
+): SignupUser => {
+  const { username, password, fullname, email, pix } = state;
   return {
     username,
     password,
@@ -105,27 +116,28 @@ export const signupPayload = (s: UserState, pixFlag: boolean): SignupUser => {
   } as SignupUser;
 };
 
-export const loginPayload = (s: UserState): LoginUser => {
-  const { username, password } = s;
+export const loginPayload = (state: UserState): LoginUser => {
+  const { username, password } = state;
   return { username, password } as LoginUser;
 };
 
-export const updateUserPayload = (s: UserState): UpdateUser => {
+export const updateUserPayload = (
+  state: UserState,
+  field: UpdateUserField,
+): UpdateUser => {
   const payload: Partial<UpdateUser> = {
-    uuid: s.uuid,
-    username: s.username,
-    password: s.password,
-    fullname: s.fullname,
-    email: s.email,
-    pix: updatePixPayload(s.pix),
+    uuid: state.uuid,
   };
 
-  Object.keys(payload).forEach((key) => {
-    const k = key as keyof typeof payload;
-    if (payload[k] === "" || payload[k] === undefined) {
-      delete payload[k];
-    }
-  });
+  if (!field) {
+    return payload as UpdateUser;
+  }
+
+  if (field === "pix") {
+    payload.pix = updatePixPayload(state.pix);
+  } else {
+    payload[field] = state[field];
+  }
 
   return payload as UpdateUser;
 };

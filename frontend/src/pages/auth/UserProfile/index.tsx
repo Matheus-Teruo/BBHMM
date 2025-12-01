@@ -1,5 +1,6 @@
 import styles from "./UserProfile.module.scss";
 import {
+  BankSVG,
   CheckSVG,
   EmailSVG,
   FaceFrownSVG,
@@ -7,6 +8,7 @@ import {
   FaceSmileSVG,
   LockPadCloseSVG,
   LockPadOpenSVG,
+  PixSVG,
   UserCheckSVG,
   UserSVG,
   UserXSVG,
@@ -23,8 +25,10 @@ import {
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import User from "@data/User";
+import { initialPixState, pixReducer } from "@reducer/pixReducer";
 import {
   initialUserState,
+  UpdateUserField,
   updateUserPayload,
   userReducer,
 } from "@reducer/userReducer";
@@ -34,13 +38,10 @@ import { useNavigate } from "react-router-dom";
 
 function UserProfile() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
-  const [update, setUpdate] = useState<
-    "username" | "fullname" | "password" | "email" | ""
-  >("");
+  const [pixState, pixDispatch] = useReducer(pixReducer, initialPixState);
+  const [update, setUpdate] = useState<UpdateUserField>("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
-  const [waitingFetch, setWaitingFetch] = useState<
-    "username" | "fullname" | "password" | "email" | ""
-  >("");
+  const [waitingFetch, setWaitingFetch] = useState<UpdateUserField>("");
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { user, logout } = useUserContext();
@@ -61,11 +62,18 @@ function UserProfile() {
     fetchUser();
   }, [user, getUser]);
 
+  useEffect(() => {
+    dispatch({
+      type: "SET_PIX",
+      payload: pixState,
+    });
+  }, [pixState]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch(update);
     setTouched(false);
-    const user = await updateUser(updateUserPayload(state));
+    const user = await updateUser(updateUserPayload(state, update));
     if (user && !isMessage<User>(user)) {
       addNotification({
         title: "Sucesso na atualização",
@@ -82,9 +90,7 @@ function UserProfile() {
     setWaitingFetch("");
   };
 
-  const handleUpdate = (
-    value: "username" | "fullname" | "password" | "email" | "",
-  ) => {
+  const handleUpdate = (value: UpdateUserField) => {
     setTouched(false);
     setUpdate(value);
   };
@@ -210,6 +216,73 @@ function UserProfile() {
             <Button
               type={ButtonHTMLType.Submit}
               loading={waitingFetch === "email"}
+            >
+              <CheckSVG />
+            </Button>
+          </div>
+        )}
+      </div>
+      <div className={styles.field}>
+        <p className={styles.title}>Pix</p>
+        {update !== "pix" ? (
+          <div className={styles.value} onClick={() => handleUpdate("pix")}>
+            <PixSVG />
+            <p>{pixState.pixKey}</p>
+          </div>
+        ) : (
+          <div className={styles.update}>
+            <AuthInput
+              value={pixState.pixKey}
+              onChange={(e) =>
+                pixDispatch({ type: "SET_PIX_KEY", payload: e.target.value })
+              }
+              ComponentUntouched={PixSVG}
+              ComponentAccepted={PixSVG}
+              ComponentRejected={PixSVG}
+              id="pixKey"
+              placeholder="Chave Pix"
+              isRequired
+              showStatus={touched}
+              message={messageError["pixKey"]}
+            />
+          </div>
+        )}
+      </div>
+      <div className={styles.field}>
+        <p className={styles.title}>Conta do Banco</p>
+        {update !== "pix" ? (
+          <div className={styles.value} onClick={() => handleUpdate("pix")}>
+            <BankSVG />
+            <p>{pixState.bankAccount}</p>
+          </div>
+        ) : (
+          <div className={styles.update}>
+            <AuthInput
+              value={pixState.bankAccount}
+              onChange={(e) =>
+                pixDispatch({
+                  type: "SET_BANK_ACCOUNT",
+                  payload: e.target.value,
+                })
+              }
+              ComponentUntouched={BankSVG}
+              ComponentAccepted={BankSVG}
+              ComponentRejected={BankSVG}
+              id="bankAccount"
+              placeholder="Nome do Banco"
+              isRequired
+              showStatus={touched}
+              message={messageError["bankAccount"]}
+            />
+            <Button
+              className={styles.buttonCancel}
+              onClick={() => handleUpdate("")}
+            >
+              <XSVG />
+            </Button>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "pix"}
             >
               <CheckSVG />
             </Button>
