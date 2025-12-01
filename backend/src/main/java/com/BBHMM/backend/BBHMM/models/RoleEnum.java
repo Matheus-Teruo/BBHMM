@@ -25,7 +25,7 @@ public enum RoleEnum {
         return this.userRoleLower;
     }
 
-    public boolean isNotAdmin() {
+    public boolean isUser() {
         return !this.typeBoolean;
     }
 }

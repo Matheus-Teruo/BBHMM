@@ -64,7 +64,6 @@ public class AuthController {
         return ResponseEntity.created(location).body(new UserResponse(user));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @PostMapping("/login")
     public ResponseEntity<UserResumeResponse> login(
         @RequestBody @Valid
@@ -80,7 +79,6 @@ public class AuthController {
         return ResponseEntity.ok(new UserResumeResponse((User) authentication.getPrincipal()));
     }
 
-    @PreAuthorize("hasRole('GUEST')")
     @PostMapping("/login/guest")
     public ResponseEntity<GuestResponse> loginGuest(
         @RequestBody @Valid
