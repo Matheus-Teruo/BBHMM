@@ -64,6 +64,7 @@ public class AuthController {
         return ResponseEntity.created(location).body(new UserResponse(user));
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/login")
     public ResponseEntity<UserResumeResponse> login(
         @RequestBody @Valid

@@ -34,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok(new UserResponse(user));
     }
 
-    @PreAuthorize("hasRole(USER)")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping
     public ResponseEntity<UserResponse> updateUser(@RequestBody UpdateUserRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
