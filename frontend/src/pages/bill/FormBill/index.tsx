@@ -129,7 +129,7 @@ function FormBill({
             onChange={(e) =>
               dispatch({
                 type: "SET_VALUE",
-                payload: parseFloat(e.target.value),
+                payload: e.target.value,
               })
             }
             id="billValue"

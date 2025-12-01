@@ -14,7 +14,7 @@ export type BillAction =
   | { type: "SET_UUID"; payload: string }
   | { type: "SET_NAME"; payload: string }
   | { type: "SET_DESCRIPTION"; payload: string }
-  | { type: "SET_VALUE"; payload: number }
+  | { type: "SET_VALUE"; payload: string }
   | { type: "SET_EVENT_UUID"; payload: string }
   | { type: "SET_PAYER_UUID"; payload: string }
   | { type: "SET_BILL"; payload: Bill }
@@ -50,10 +50,10 @@ export function billReducer(state: BillState, action: BillAction): BillState {
       return { ...state, description: action.payload };
     }
     case "SET_VALUE": {
-      if (action.payload < 0) {
-        return state;
-      }
-      return { ...state, value: action.payload };
+      const rawValue = action.payload.replace(/[^0-9]/g, "");
+      if (!rawValue) return { ...state, value: 0 };
+      const numericValue = Math.max(parseFloat(rawValue) / 100, 0);
+      return { ...state, value: numericValue };
     }
     case "SET_EVENT_UUID": {
       if (!regexUuid.test(action.payload)) {

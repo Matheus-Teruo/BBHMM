@@ -13,6 +13,7 @@ import InviteUserForm from "./pages/invitation/InviteUserForm";
 import GuestRedirect from "./pages/guest/GuestRedirect";
 import GuestInfo from "./pages/guest/GuestInfo";
 import CreateGuestForm from "./pages/guest/CreateGuestForm";
+import PaymentForm from "./pages/payment/PaymentForm";
 
 function AppRouter() {
   const location = useLocation();
@@ -45,6 +46,7 @@ function AppRouter() {
       </Routes>
       {backgroundLocation && (
         <Routes>
+          <Route path="/event/paymnent/new" element={<PaymentForm />} />
           <Route path="/invites/new/:eventUUID" element={<InviteUserForm />} />
           <Route path="/auth/guest/new" element={<CreateGuestForm />} />
           <Route path="/auth/guest/info" element={<GuestInfo />} />

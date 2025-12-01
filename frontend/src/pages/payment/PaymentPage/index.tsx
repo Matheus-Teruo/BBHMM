@@ -47,6 +47,19 @@ function PaymentPage() {
     }
   }, [eventUUID, getPayment]);
 
+  function handlePayment(payerUuid: string, receiverUuid: string) {
+    navigate("/event/paymnent/new", {
+      state: {
+        payerUuid: payerUuid,
+        receiverUuid: receiverUuid,
+        backgroundLocation: {
+          pathname: location.pathname,
+          search: location.search,
+        },
+      },
+    });
+  }
+
   useEffect(() => {
     if (isUserLogged(user)) {
       fetchPayment();
@@ -61,7 +74,12 @@ function PaymentPage() {
       <h2 className={styles.title}>Pagamento</h2>
       <ul className={styles.list}>
         {payments.map((payment) => (
-          <li key={payment.userToReceiveUuid + "-payment"}>
+          <li
+            key={payment.userToReceiveUuid + "-payment"}
+            onClick={() =>
+              handlePayment(payment.userToPayUuid, payment.userToReceiveUuid)
+            }
+          >
             <p>{users[payment.userToPayUuid]}</p>
             <ArrowRightSVG />
             <p>Paga R${payment.value.toFixed(2)}</p>
@@ -70,7 +88,15 @@ function PaymentPage() {
           </li>
         ))}
         {receivings.map((receiving) => (
-          <li key={receiving.userToPayUuid + "-receiving"}>
+          <li
+            key={receiving.userToPayUuid + "-receiving"}
+            onClick={() =>
+              handlePayment(
+                receiving.userToPayUuid,
+                receiving.userToReceiveUuid,
+              )
+            }
+          >
             <p>{users[receiving.userToReceiveUuid]}</p>
             <ArrowLeftSVG />
             <p>Paga R${receiving.value.toFixed(2)}</p>
