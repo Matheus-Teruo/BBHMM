@@ -125,7 +125,7 @@ function FormBill({
             message={messageError["description"]}
           />
           <GeneralInput
-            value={state.value}
+            value={state.value.toFixed(2)}
             onChange={(e) =>
               dispatch({
                 type: "SET_VALUE",

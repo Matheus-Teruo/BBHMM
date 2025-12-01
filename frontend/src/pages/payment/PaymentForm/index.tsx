@@ -10,6 +10,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import { UserList } from "@data/User";
 import { initialPaymentState, paymentReducer } from "@reducer/paymentReducer";
 import usePaymentService from "@service/usePaymentService";
 import { useEffect, useReducer, useState } from "react";
@@ -26,9 +27,10 @@ function PaymentForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { payerUuid, receiverUuid } = location.state as {
-    payerUuid: string;
-    receiverUuid: string;
+  const { payer, receiver, value } = location.state as {
+    payer: UserList;
+    receiver: UserList;
+    value: number;
     backgroundLocation?: {
       pathname: string;
       search: string;
@@ -58,10 +60,11 @@ function PaymentForm() {
   };
 
   useEffect(() => {
-    if (payerUuid) dispatch({ type: "SET_PAYER_UUID", payload: payerUuid });
-    if (receiverUuid)
-      dispatch({ type: "SET_RECEIVER_UUID", payload: receiverUuid });
-  }, [payerUuid, receiverUuid]);
+    if (payer) dispatch({ type: "SET_PAYER_UUID", payload: payer.uuid });
+    if (receiver)
+      dispatch({ type: "SET_RECEIVER_UUID", payload: receiver.uuid });
+    if (value) dispatch({ type: "SET_VALUE", payload: value.toString() });
+  }, [payer, receiver, value]);
 
   useEffect(() => {
     if (event) dispatch({ type: "SET_EVENT_UUID", payload: event.uuid });
@@ -70,11 +73,12 @@ function PaymentForm() {
   return (
     <>
       <div className={styles.modal}>
-        <h2>Criar Convidado</h2>
+        <h2>Fazer pagamento</h2>
         <form onSubmit={handleSubmit}>
+          <p>{receiver.firstname} vai receber:</p>
           <GeneralInput
             type="number"
-            value={state.value}
+            value={state.value.toFixed(2)}
             onChange={(e) =>
               dispatch({
                 type: "SET_VALUE",

@@ -3,6 +3,7 @@ import { ArrowLeftSVG, ArrowRightSVG } from "@/assets/svg";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import Payment from "@data/Payment";
+import { UserList } from "@data/User";
 import useEventService from "@service/useEventService";
 import usePaymentService from "@service/usePaymentService";
 import { useCallback, useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function PaymentPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [receivings, setReceivings] = useState<Payment[]>([]);
-  const [users, setUsers] = useState<Record<string, string>>({});
+  const [users, setUsers] = useState<Record<string, UserList>>({});
   const { getPayment, getReceiving } = usePaymentService();
   const { listUserFromEvent } = useEventService();
   const { user } = useUserContext();
@@ -22,12 +23,12 @@ function PaymentPage() {
     if (eventUUID) {
       const usersResponse = await listUserFromEvent(eventUUID);
       if (usersResponse) {
-        const usersRecord: Record<string, string> = usersResponse.reduce(
+        const usersRecord: Record<string, UserList> = usersResponse.reduce(
           (acc, user) => {
-            acc[user.uuid] = user.firstname;
+            acc[user.uuid] = user;
             return acc;
           },
-          {} as Record<string, string>,
+          {} as Record<string, UserList>,
         );
         setUsers(usersRecord);
       }
@@ -47,11 +48,12 @@ function PaymentPage() {
     }
   }, [eventUUID, getPayment]);
 
-  function handlePayment(payerUuid: string, receiverUuid: string) {
+  function handlePayment(payer: UserList, receiver: UserList, value: number) {
     navigate("/event/paymnent/new", {
       state: {
-        payerUuid: payerUuid,
-        receiverUuid: receiverUuid,
+        payer: payer,
+        receiver: receiver,
+        value: value.toFixed(2),
         backgroundLocation: {
           pathname: location.pathname,
           search: location.search,
@@ -77,14 +79,18 @@ function PaymentPage() {
           <li
             key={payment.userToReceiveUuid + "-payment"}
             onClick={() =>
-              handlePayment(payment.userToPayUuid, payment.userToReceiveUuid)
+              handlePayment(
+                users[payment.userToPayUuid],
+                users[payment.userToReceiveUuid],
+                payment.value,
+              )
             }
           >
-            <p>{users[payment.userToPayUuid]}</p>
+            <p>{users[payment.userToPayUuid].firstname}</p>
             <ArrowRightSVG />
             <p>Paga R${payment.value.toFixed(2)}</p>
             <ArrowRightSVG />
-            <p>{users[payment.userToReceiveUuid]}</p>
+            <p>{users[payment.userToReceiveUuid].firstname}</p>
           </li>
         ))}
         {receivings.map((receiving) => (
@@ -92,16 +98,17 @@ function PaymentPage() {
             key={receiving.userToPayUuid + "-receiving"}
             onClick={() =>
               handlePayment(
-                receiving.userToPayUuid,
-                receiving.userToReceiveUuid,
+                users[receiving.userToPayUuid],
+                users[receiving.userToReceiveUuid],
+                receiving.value,
               )
             }
           >
-            <p>{users[receiving.userToReceiveUuid]}</p>
+            <p>{users[receiving.userToReceiveUuid].firstname}</p>
             <ArrowLeftSVG />
             <p>Paga R${receiving.value.toFixed(2)}</p>
             <ArrowLeftSVG />
-            <p>{users[receiving.userToPayUuid]}</p>
+            <p>{users[receiving.userToPayUuid].firstname}</p>
           </li>
         ))}
       </ul>
