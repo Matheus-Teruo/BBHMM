@@ -76,10 +76,17 @@ public class PaymentService {
         var user = userService.safeTakeUserByUuid(userOwner.getUuid());
         var event = eventService.safeTakeEventByUuid(request.eventuUuid());
         billValidation.checkUserParticipationInEvent(user, event.getUuid());
+        List<Bill> receiverBills = billRepository.findBillsByPayerUuidAndNotPaid(request.userToReceiveUuid(), event.getUuid());
+        List<Participants> payerParticipants = billRepository.findUnpaidParticipantsByUser(request.userToPayUuid(), event.getUuid());
+        billValidation.checkValueOfPaymentMatches(receiverBills, request.value(), payerParticipants);
 
         Bill bill = new Bill(request, event, user);
         Participants participants = new Participants(request, user, bill);
         bill.addParticipant(participants);
+
+        payOffBills(receiverBills, request.value());
+        payOffParticipants(payerParticipants, request.value());
+
         billRepository.save(bill);
     }
 
@@ -133,5 +140,41 @@ public class PaymentService {
 
     private void addTotal(Map<UUID, BigDecimal> map, UUID userUuid, BigDecimal value) {
         map.merge(userUuid, value, BigDecimal::add);
+    }
+
+    private void payOffBills(List<Bill> receiverBills, BigDecimal value) {
+        BigDecimal remaining = value;
+
+        for (Bill bill : receiverBills) {
+            if (remaining.compareTo(BigDecimal.ZERO) == 0) break;
+
+            BigDecimal debt = bill.getRemainingBalance();
+
+            if (remaining.compareTo(debt) < 0) {
+                bill.addToDebit(remaining);
+                remaining = BigDecimal.ZERO;
+            } else {
+                bill.completeBill();
+                remaining = remaining.subtract(debt);
+            }
+        }
+    }
+
+    private void payOffParticipants(List<Participants> payerParticipants, BigDecimal value) {
+        BigDecimal userDebit = value;
+
+        for (Participants participant : payerParticipants) {
+            if (userDebit.compareTo(BigDecimal.ZERO) == 0) break;
+
+            BigDecimal participantDebt = participant.getRemainingBalance();
+
+            if (userDebit.compareTo(participantDebt) < 0) {
+                participant.addPaidValue(userDebit);
+                userDebit = BigDecimal.ZERO;
+            } else {
+                participant.completeParticipation();
+                userDebit = userDebit.subtract(participantDebt);
+            }
+        }
     }
 }
