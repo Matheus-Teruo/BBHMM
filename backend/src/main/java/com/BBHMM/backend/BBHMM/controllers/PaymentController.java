@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.PayBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.DebitTotalResponse;
+import com.BBHMM.backend.BBHMM.models.response.PaymentDetailsResponse;
 import com.BBHMM.backend.BBHMM.models.response.PaymentResponse;
 import com.BBHMM.backend.BBHMM.services.PaymentService;
 
@@ -58,5 +59,12 @@ public class PaymentController {
 
         service.payOffDebit(request, userOwner);
         return ResponseEntity.noContent().build();
-    } 
+    }
+
+    @GetMapping("/{eventUuid}/payment/list")
+    public ResponseEntity<List<PaymentDetailsResponse>> listOfPayrollPerUser(@PathVariable UUID eventUuid) {
+        User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ResponseEntity.ok(service.listOfPayrollPerUser(eventUuid, userOwner));
+    }
 }

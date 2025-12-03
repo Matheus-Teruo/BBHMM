@@ -16,6 +16,7 @@ import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.UserBalance;
 import com.BBHMM.backend.BBHMM.models.request.PayBillRequest;
+import com.BBHMM.backend.BBHMM.models.response.PaymentDetailsResponse;
 import com.BBHMM.backend.BBHMM.models.response.PaymentResponse;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
@@ -88,6 +89,23 @@ public class PaymentService {
         payOffParticipants(payerParticipants, request.value());
 
         billRepository.save(bill);
+    }
+
+    public List<PaymentDetailsResponse> listOfPayrollPerUser(UUID eventUuid, User user) {
+        List<Bill> bills = billRepository.findPaymentByUserAndEventUuid(user.getUuid(), eventUuid);
+
+        return bills.stream()
+        .map(bill -> {
+            var participant = bill.getParticipants().getFirst();
+            return new PaymentDetailsResponse(
+                bill.getUuid(),
+                bill.getPayerUuid(),
+                bill.getValue(),
+                bill.getDebitAmount(),
+                bill.getPaid(),
+                participant.getUserUuid()
+            );
+        }).toList();
     }
 
     private List<PaymentResponse> resolvePayment(UUID eventUuid) {

@@ -16,24 +16,34 @@ public interface BillRepository extends JpaRepository<Bill, UUID>{
     @Query("SELECT b FROM Bill b WHERE b.uuid = :uuid")
     Optional<Bill> findByUuid(UUID uuid);
 
-    @Query("SELECT b FROM Bill b WHERE b.event.uuid = :eventUuid AND b.type = com.BBHMM.backend.BBHMM.models.BillType.BILL")
+    @Query("SELECT b FROM Bill b WHERE b.eventUuid = :eventUuid AND b.type = com.BBHMM.backend.BBHMM.models.BillType.BILL")
     List<Bill> findBillsByEventUuid(UUID eventUuid);
 
-    @Query("SELECT b FROM Bill b WHERE b.event.uuid = :eventUuid AND b.paid = false")
+    @Query("SELECT b FROM Bill b WHERE b.eventUuid = :eventUuid AND b.paid = false")
     List<Bill> findBillsByEventUuidAndNotPaid(UUID eventUuid);
 
-    @Query("SELECT b FROM Bill b WHERE b.payer.uuid = :payerUuid AND b.event.uuid = :eventUuid AND b.paid = false")
+    @Query("SELECT b FROM Bill b WHERE b.payerUuid = :payerUuid AND b.eventUuid = :eventUuid AND b.paid = false")
     List<Bill> findBillsByPayerUuidAndNotPaid(UUID payerUuid, UUID eventUuid);
 
-    @Query("SELECT b FROM Bill b WHERE b.payer.uuid = :payerUuid AND b.event.uuid = :eventUuid AND b.debitAmount > 0")
+    @Query("SELECT b FROM Bill b WHERE b.payerUuid = :payerUuid AND b.eventUuid = :eventUuid AND b.debitAmount > 0")
     List<Bill> findBillsByPayerUuidAndPaid(UUID payerUuid, UUID eventUuid);
 
-    @Query("SELECT p FROM Participants p WHERE p.paid = false AND p.userUuid = :partUuid AND p.bill.event.uuid = :eventUuid")
+    @Query("""
+    SELECT DISTINCT b
+    FROM Bill b
+    LEFT JOIN b.participants p
+    WHERE (b.payerUuid = :userUuid OR p.userUuid = :userUuid)
+        AND b.eventUuid = :eventUuid
+        AND b.type = com.BBHMM.backend.BBHMM.models.BillType.PAYMENT
+    """)
+    List<Bill> findPaymentByUserAndEventUuid(UUID userUuid, UUID eventUuid);
+
+    @Query("SELECT p FROM Participants p WHERE p.paid = false AND p.userUuid = :partUuid AND p.bill.eventUuid = :eventUuid")
     List<Participants> findUnpaidParticipantsByUser(UUID partUuid, UUID eventUuid);
 
-    @Query("SELECT p FROM Participants p WHERE p.bill.event.uuid = :eventUuid AND p.bill.type = com.BBHMM.backend.BBHMM.models.BillType.BILL")
+    @Query("SELECT p FROM Participants p WHERE p.bill.eventUuid = :eventUuid AND p.bill.type = com.BBHMM.backend.BBHMM.models.BillType.BILL")
     List<Participants> findParticipantsByEventUuid(UUID eventUuid);
 
-    @Query("SELECT p FROM Participants p WHERE p.paid = false AND p.bill.event.uuid = :eventUuid")
+    @Query("SELECT p FROM Participants p WHERE p.paid = false AND p.bill.eventUuid = :eventUuid")
     List<Participants> findUnpaidParticipants(UUID eventUuid);
 }
