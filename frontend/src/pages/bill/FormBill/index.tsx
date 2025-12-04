@@ -157,8 +157,9 @@ function FormBill({
           ) : (
             <p>
               {
-                userList.filter((userPayer) => userPayer.uuid === state.uuid)[0]
-                  .fullname
+                userList.filter(
+                  (userPayer) => userPayer.uuid === state.payerUuid,
+                )[0]?.fullname
               }
             </p>
           )}
