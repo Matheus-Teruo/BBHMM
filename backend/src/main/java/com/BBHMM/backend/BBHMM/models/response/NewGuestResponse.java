@@ -15,7 +15,7 @@ public record NewGuestResponse(
             user.getUuid(),
             user.getUsername(),
             user.getFullname(),
-            user.getPassword()
+            password
         );
     }
 }
