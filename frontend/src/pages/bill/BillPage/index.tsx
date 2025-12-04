@@ -213,6 +213,7 @@ function BillPage() {
             fetchPayment();
             return setBillForm(null);
           }}
+          userList={users}
         />
       )}
     </div>

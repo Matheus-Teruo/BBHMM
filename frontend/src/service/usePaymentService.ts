@@ -1,6 +1,6 @@
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
-import Payment, { DebitTotal, PayBill } from "@data/Payment";
+import Payment, { DebitTotal, PayBill, PaymentDetails } from "@data/Payment";
 import { useCallback } from "react";
 import { useSafeRequest } from "./useHandleRequest";
 
@@ -38,11 +38,20 @@ const usePaymentService = () => {
     [api, safeRequest],
   );
 
+  const listPayroll = useCallback(
+    async (eventUuid: string): Promise<PaymentDetails[] | null> =>
+      api
+        .get<PaymentDetails[]>(`/events/${eventUuid}/payment/list`)
+        .then((res) => res.data),
+    [api],
+  );
+
   return {
     getDebitTotal,
     getPayment,
     getReceiving,
     makePayment,
+    listPayroll,
   };
 };
 

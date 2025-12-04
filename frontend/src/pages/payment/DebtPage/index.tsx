@@ -9,7 +9,7 @@ import usePaymentService from "@service/usePaymentService";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-function PaymentPage() {
+function DebtPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [receivings, setReceivings] = useState<Payment[]>([]);
   const [users, setUsers] = useState<Record<string, UserList>>({});
@@ -46,7 +46,7 @@ function PaymentPage() {
         setReceivings(receivingResponse);
       }
     }
-  }, [eventUUID, getPayment]);
+  }, [eventUUID, getPayment, getReceiving]);
 
   function handlePayment(payer: UserList, receiver: UserList, value: number) {
     navigate("/event/paymnent/new", {
@@ -73,7 +73,7 @@ function PaymentPage() {
 
   return (
     <div className={styles.body}>
-      <h2 className={styles.title}>Pagamento</h2>
+      <h2 className={styles.title}>Dividas</h2>
       <ul className={styles.list}>
         {payments.map((payment) => (
           <li
@@ -116,4 +116,4 @@ function PaymentPage() {
   );
 }
 
-export default PaymentPage;
+export default DebtPage;

@@ -19,9 +19,9 @@ function FooterNav() {
               </Link>
             </li>
             <li
-              className={`${matchPath({ path: "/event/:eventUUID/payment", end: true }, location.pathname) && styles.selected}`}
+              className={`${matchPath({ path: "/event/:eventUUID/debt", end: true }, location.pathname) && styles.selected}`}
             >
-              <Link to={`/event/${event.uuid}/payment`}>
+              <Link to={`/event/${event.uuid}/debt`}>
                 <h3>Pagamento</h3>
               </Link>
             </li>

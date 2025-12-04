@@ -1,0 +1,17 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+@use "@styles/animation" as *;
+
+.header {
+  padding: 12px;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  background-color: wheat;
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+}

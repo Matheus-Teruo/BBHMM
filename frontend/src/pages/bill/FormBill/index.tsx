@@ -4,6 +4,7 @@ import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
+import UserSelect from "@/components/util/UserSelect";
 import { isUserLogged } from "@/util/checkAuthentication";
 import {
   isMessage,
@@ -12,6 +13,7 @@ import {
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume } from "@data/Bills";
+import { UserList } from "@data/User";
 import {
   billReducer,
   createBillPayload,
@@ -26,6 +28,7 @@ interface NewBillProps {
   initialValue?: BillResume;
   eventUuid?: string;
   onChange: () => void;
+  userList: UserList[];
 }
 
 function FormBill({
@@ -33,6 +36,7 @@ function FormBill({
   initialValue,
   eventUuid,
   onChange,
+  userList = [],
 }: NewBillProps) {
   const [state, dispatch] = useReducer(billReducer, initialBillState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
@@ -139,6 +143,25 @@ function FormBill({
             showStatus={touched}
             message={messageError["value"]}
           />
+          <p>Quem pagou a conta</p>
+          {form === "Create" ? (
+            <UserSelect
+              value={state.payerUuid}
+              onChange={(event) =>
+                dispatch({
+                  type: "SET_PAYER_UUID",
+                  payload: event.target.value,
+                })
+              }
+            />
+          ) : (
+            <p>
+              {
+                userList.filter((userPayer) => userPayer.uuid === state.uuid)[0]
+                  .fullname
+              }
+            </p>
+          )}
           <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
             <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
             <CheckSVG />

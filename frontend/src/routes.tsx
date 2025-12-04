@@ -6,7 +6,8 @@ import EventPage from "./pages/event/EventPage";
 import BillPage from "./pages/bill/BillPage";
 import NotificationManager from "./components/NotificationManager";
 import UserProfile from "./pages/auth/UserProfile";
-import PaymentPage from "./pages/payment/PaymentPage";
+import DebtPage from "./pages/payment/DebtPage";
+import PayrollPage from "./pages/payment/PayrollPage";
 import FooterNav from "./components/FooterNav";
 import EventInvitationPage from "./pages/invitation/EventInvitationPage";
 import InviteUserForm from "./pages/invitation/InviteUserForm";
@@ -14,6 +15,7 @@ import GuestRedirect from "./pages/guest/GuestRedirect";
 import GuestInfo from "./pages/guest/GuestInfo";
 import CreateGuestForm from "./pages/guest/CreateGuestForm";
 import PaymentForm from "./pages/payment/PaymentForm";
+import PaymentHeader from "./pages/payment/PaymentHeader";
 
 function AppRouter() {
   const location = useLocation();
@@ -28,7 +30,10 @@ function AppRouter() {
           <Route path="" element={<EventPage />} />
           <Route path="event">
             <Route path=":eventUUID/bills" element={<BillPage />} />
-            <Route path=":eventUUID/payment" element={<PaymentPage />} />
+            <Route path="" element={<PaymentHeader />}>
+              <Route path=":eventUUID/debt" element={<DebtPage />} />
+              <Route path=":eventUUID/payroll" element={<PayrollPage />} />
+            </Route>
           </Route>
           <Route path="invites" element={<EventInvitationPage />} />
           <Route path="auth" element={<AuthMain />}>
