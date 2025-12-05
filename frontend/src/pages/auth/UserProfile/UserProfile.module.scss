@@ -42,6 +42,7 @@
         padding: 2px 10px;
         margin-left: 4px;
         background-color: $color-secundary-1;
+        box-shadow: 1px 2px 4px 0px $color-shadow-2;
       }
     }
 
@@ -53,6 +54,7 @@
     .buttonFooter {
       padding: 6px 15px;
       background-color: $color-secundary-1;
+      box-shadow: 1px 2px 4px 0px $color-shadow-2;
     }
 
     .valuePassword {
@@ -67,6 +69,7 @@
         padding: 2px 10px;
         margin-left: 4px;
         background-color: $color-secundary-1;
+        box-shadow: 1px 2px 4px 0px $color-shadow-2;
       }
     }
 
@@ -83,7 +86,7 @@
     box-sizing: border-box;
     border-radius: $border-radius;
     width: 100%;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1) inset;
+    box-shadow: 0px 2px 6px $color-shadow-2 inset;
 
     .subTitle {
       color: $color-gray-700;
