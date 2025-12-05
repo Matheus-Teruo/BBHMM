@@ -16,7 +16,7 @@
     .linkLogo {
       display: flex;
       align-items: center;
-      margin: 2px 6px;
+      margin: 8px 6px;
 
       img {
         width: 64px;
@@ -41,6 +41,7 @@
     @media (max-width: $mobile) {
       width: 95vw;
       margin: 25px 0;
+      padding: 12px 8px;
       color: $color-gray-700;
     }
 

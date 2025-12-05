@@ -222,72 +222,75 @@ function UserProfile() {
           </div>
         )}
       </div>
-      <div className={styles.field}>
-        <p className={styles.title}>Pix</p>
-        {update !== "pix" ? (
-          <div className={styles.value} onClick={() => handleUpdate("pix")}>
-            <PixSVG />
-            <p>{pixState.pixKey}</p>
-          </div>
-        ) : (
-          <div className={styles.update}>
-            <AuthInput
-              value={pixState.pixKey}
-              onChange={(e) =>
-                pixDispatch({ type: "SET_PIX_KEY", payload: e.target.value })
-              }
-              ComponentUntouched={PixSVG}
-              ComponentAccepted={PixSVG}
-              ComponentRejected={PixSVG}
-              id="pixKey"
-              placeholder="Chave Pix"
-              isRequired
-              showStatus={touched}
-              message={messageError["pixKey"]}
-            />
-          </div>
-        )}
-      </div>
-      <div className={styles.field}>
-        <p className={styles.title}>Conta do Banco</p>
-        {update !== "pix" ? (
-          <div className={styles.value} onClick={() => handleUpdate("pix")}>
-            <BankSVG />
-            <p>{pixState.bankAccount}</p>
-          </div>
-        ) : (
-          <div className={styles.update}>
-            <AuthInput
-              value={pixState.bankAccount}
-              onChange={(e) =>
-                pixDispatch({
-                  type: "SET_BANK_ACCOUNT",
-                  payload: e.target.value,
-                })
-              }
-              ComponentUntouched={BankSVG}
-              ComponentAccepted={BankSVG}
-              ComponentRejected={BankSVG}
-              id="bankAccount"
-              placeholder="Nome do Banco"
-              isRequired
-              showStatus={touched}
-              message={messageError["bankAccount"]}
-            />
-            <Button
-              className={styles.buttonCancel}
-              onClick={() => handleUpdate("")}
-            >
-              <XSVG />
-            </Button>
-            <Button
-              type={ButtonHTMLType.Submit}
-              loading={waitingFetch === "pix"}
-            >
-              <CheckSVG />
-            </Button>
-          </div>
-        )}
+      <div className={styles.subForm}>
+        <h3 className={styles.subTitle}>Pix</h3>
+        <div className={styles.field}>
+          <p className={styles.title}>Chave Pix</p>
+          {update !== "pix" ? (
+            <div className={styles.value} onClick={() => handleUpdate("pix")}>
+              <PixSVG />
+              <p>{pixState.pixKey}</p>
+            </div>
+          ) : (
+            <div className={styles.update}>
+              <AuthInput
+                value={pixState.pixKey}
+                onChange={(e) =>
+                  pixDispatch({ type: "SET_PIX_KEY", payload: e.target.value })
+                }
+                ComponentUntouched={PixSVG}
+                ComponentAccepted={PixSVG}
+                ComponentRejected={PixSVG}
+                id="pixKey"
+                placeholder="Chave Pix"
+                isRequired
+                showStatus={touched}
+                message={messageError["pixKey"]}
+              />
+            </div>
+          )}
+        </div>
+        <div className={styles.field}>
+          <p className={styles.title}>Conta do Banco</p>
+          {update !== "pix" ? (
+            <div className={styles.value} onClick={() => handleUpdate("pix")}>
+              <BankSVG />
+              <p>{pixState.bankAccount}</p>
+            </div>
+          ) : (
+            <div className={styles.update}>
+              <AuthInput
+                value={pixState.bankAccount}
+                onChange={(e) =>
+                  pixDispatch({
+                    type: "SET_BANK_ACCOUNT",
+                    payload: e.target.value,
+                  })
+                }
+                ComponentUntouched={BankSVG}
+                ComponentAccepted={BankSVG}
+                ComponentRejected={BankSVG}
+                id="bankAccount"
+                placeholder="Nome do Banco"
+                isRequired
+                showStatus={touched}
+                message={messageError["bankAccount"]}
+              />
+              <Button
+                className={styles.buttonCancel}
+                onClick={() => handleUpdate("")}
+              >
+                <XSVG />
+              </Button>
+              <Button
+                type={ButtonHTMLType.Submit}
+                loading={waitingFetch === "pix"}
+              >
+                <CheckSVG />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
       <div className={styles.field}>
         {update !== "password" ? (

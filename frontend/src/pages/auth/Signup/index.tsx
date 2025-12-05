@@ -189,44 +189,48 @@ function SignUp() {
             message={messageError["email"]}
           />
         </div>
-        <div>
-          <h3>Pix</h3>
-          <p>caso queira cadastrar os dois campos devem ser preenchidos</p>
-          <div className={styles.field}>
-            <AuthInput
-              value={pixState.pixKey}
-              onChange={(e) =>
-                pixDispatch({
-                  type: "SET_PIX_KEY",
-                  payload: e.target.value,
-                })
-              }
-              ComponentUntouched={PixSVG}
-              ComponentAccepted={PixSVG}
-              ComponentRejected={PixSVG}
-              id="pixKey"
-              placeholder="Chave Pix"
-              showStatus={touched}
-              message={messageError["email"]}
-            />
-          </div>
-          <div className={styles.field}>
-            <AuthInput
-              value={pixState.bankAccount}
-              onChange={(e) =>
-                pixDispatch({
-                  type: "SET_BANK_ACCOUNT",
-                  payload: e.target.value,
-                })
-              }
-              ComponentUntouched={BankSVG}
-              ComponentAccepted={BankSVG}
-              ComponentRejected={BankSVG}
-              id="bankAccount"
-              placeholder="Nome do banco"
-              showStatus={touched}
-              message={messageError["email"]}
-            />
+        <div className={styles.subBlock}>
+          <h3 className={styles.subTitle}>Pix</h3>
+          <p className={styles.text}>
+            caso queira cadastrar os dois campos devem ser preenchidos
+          </p>
+          <div className={styles.subForm}>
+            <div className={styles.field}>
+              <AuthInput
+                value={pixState.pixKey}
+                onChange={(e) =>
+                  pixDispatch({
+                    type: "SET_PIX_KEY",
+                    payload: e.target.value,
+                  })
+                }
+                ComponentUntouched={PixSVG}
+                ComponentAccepted={PixSVG}
+                ComponentRejected={PixSVG}
+                id="pixKey"
+                placeholder="Chave Pix"
+                showStatus={touched}
+                message={messageError["email"]}
+              />
+            </div>
+            <div className={styles.field}>
+              <AuthInput
+                value={pixState.bankAccount}
+                onChange={(e) =>
+                  pixDispatch({
+                    type: "SET_BANK_ACCOUNT",
+                    payload: e.target.value,
+                  })
+                }
+                ComponentUntouched={BankSVG}
+                ComponentAccepted={BankSVG}
+                ComponentRejected={BankSVG}
+                id="bankAccount"
+                placeholder="Nome do banco"
+                showStatus={touched}
+                message={messageError["email"]}
+              />
+            </div>
           </div>
         </div>
         <div className={styles.button}>
