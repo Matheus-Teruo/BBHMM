@@ -1,6 +1,7 @@
 import { useUserContext } from "@context/UserContext/useUserContext";
 import styles from "./FooterNav.module.scss";
 import { Link, matchPath, Outlet } from "react-router-dom";
+import { CalendarSVG, InboxSVG, UserSVG } from "@/assets/svg";
 
 function FooterNav() {
   const { event } = useUserContext();
@@ -32,6 +33,7 @@ function FooterNav() {
             className={`${matchPath({ path: "/", end: true }, location.pathname) && styles.selected}`}
           >
             <Link to="/">
+              <CalendarSVG />
               <h3>Eventos</h3>
             </Link>
           </li>
@@ -39,6 +41,7 @@ function FooterNav() {
             className={`${matchPath({ path: "/invites", end: true }, location.pathname) && styles.selected}`}
           >
             <Link to="/invites">
+              <InboxSVG />
               <h3>Convites</h3>
             </Link>
           </li>
@@ -46,6 +49,7 @@ function FooterNav() {
             className={`${matchPath({ path: "/auth/user", end: true }, location.pathname) && styles.selected}`}
           >
             <Link to="/auth/user">
+              <UserSVG />
               <h3>Usuário</h3>
             </Link>
           </li>

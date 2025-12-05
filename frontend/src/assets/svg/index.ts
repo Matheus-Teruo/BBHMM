@@ -2,6 +2,7 @@ import AlertCircleSVG from "./components/AlertCircleSVG";
 import ArrowLeftSVG from "./components/ArrowLeftSVG";
 import ArrowRightSVG from "./components/ArrowRightSVG";
 import BankSVG from "./components/BankSVG";
+import CalendarSVG from "./components/CalendarSVG";
 import CameraSVG from "./components/CameraSVG";
 import CheckCircleSVG from "./components/CheckCircleSVG";
 import CheckSVG from "./components/CheckSVG";
@@ -19,6 +20,7 @@ import GlobeSVG from "./components/GlobeSVG";
 import GridSVG from "./components/GridSVG";
 import HistorySVG from "./components/HistorySVG";
 import ImageSVG from "./components/ImageSVG";
+import InboxSVG from "./components/InboxSVG";
 import InfoSVG from "./components/InfoSVG";
 import KeySVG from "./components/KeySVG";
 import ListSVG from "./components/ListSVG";
@@ -44,6 +46,7 @@ export {
   ArrowLeftSVG,
   ArrowRightSVG,
   BankSVG,
+  CalendarSVG,
   CameraSVG,
   CheckCircleSVG,
   CheckSVG,
@@ -61,6 +64,7 @@ export {
   GridSVG,
   HistorySVG,
   ImageSVG,
+  InboxSVG,
   InfoSVG,
   KeySVG,
   ListSVG,
