@@ -1,5 +1,5 @@
 import styles from "./FormBill.module.scss";
-import { CheckSVG } from "@/assets/svg";
+import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
@@ -39,11 +39,14 @@ function FormBill({
   userList = [],
 }: NewBillProps) {
   const [state, dispatch] = useReducer(billReducer, initialBillState);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
-  const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<
+    "create/update" | "delete" | ""
+  >("");
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const { getBill, createBill, updateBill } = useBillsService();
+  const { getBill, createBill, updateBill, deleteBill } = useBillsService();
   const { user } = useUserContext();
 
   const requestBill = async () => {
@@ -65,7 +68,7 @@ function FormBill({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
+    setWaitingFetch("create/update");
     setTouched(false);
     setMessageError({});
     if (form === "Create") {
@@ -98,7 +101,23 @@ function FormBill({
       }
     }
     setTouched(true);
-    setWaitingFetch(false);
+    setWaitingFetch("");
+  };
+
+  const handleDeleteSubmit = async () => {
+    if (state.uuid != "") {
+      setWaitingFetch("delete");
+      await deleteBill(state.uuid);
+      addNotification({
+        title: "Conta deletado",
+        message: `Conta ${state.name} excluida.`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      setConfirmDelete(false);
+      onChange();
+    }
+    setWaitingFetch("");
   };
 
   return (
@@ -163,10 +182,36 @@ function FormBill({
               }
             </p>
           )}
-          <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
-            <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
-            <CheckSVG />
-          </Button>
+          <div>
+            {form === "Update" && !confirmDelete && (
+              <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+            )}
+            {confirmDelete && (
+              <div className={styles.deleteBody}>
+                <span>Excluir?</span>
+                <Button
+                  className={styles.buttonCancelDelete}
+                  onClick={() => setConfirmDelete(false)}
+                >
+                  <XSVG size={16} />
+                </Button>
+                <Button
+                  className={styles.buttonConfirmDelete}
+                  onClick={handleDeleteSubmit}
+                  loading={waitingFetch === "delete"}
+                >
+                  <CheckSVG size={16} />
+                </Button>
+              </div>
+            )}
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "create/update"}
+            >
+              <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
+              <CheckSVG />
+            </Button>
+          </div>
         </form>
       </div>
       <GlassBackground onClick={onChange} />

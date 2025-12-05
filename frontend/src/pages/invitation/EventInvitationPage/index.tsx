@@ -51,6 +51,7 @@ function EventInvitationPage() {
         message: `Convite para evento ${invitation.eventName} aceito, veja a lista de eventos que participa`,
         type: MessageType.OK,
       });
+      fetchEventInvitations();
     }
   };
 
