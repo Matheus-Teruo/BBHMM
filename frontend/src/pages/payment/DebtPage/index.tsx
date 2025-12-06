@@ -1,4 +1,4 @@
-import styles from "./PaymentPage.module.scss";
+import styles from "./DebtPage.module.scss";
 import { ArrowLeftSVG, ArrowRightSVG } from "@/assets/svg";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
@@ -74,6 +74,9 @@ function DebtPage() {
   return (
     <div className={styles.body}>
       <h2 className={styles.title}>Dividas</h2>
+      <p className={styles.subTitle}>
+        Selecione um item para realizar um pagamento
+      </p>
       <ul className={styles.list}>
         {payments.map((payment) => (
           <li
@@ -86,11 +89,11 @@ function DebtPage() {
               )
             }
           >
-            <p>{users[payment.userToPayUuid].firstname}</p>
+            <p>{users[payment.userToPayUuid]?.firstname}</p>
             <ArrowRightSVG />
             <p>Paga R${payment.value.toFixed(2)}</p>
             <ArrowRightSVG />
-            <p>{users[payment.userToReceiveUuid].firstname}</p>
+            <p>{users[payment.userToReceiveUuid]?.firstname}</p>
           </li>
         ))}
         {receivings.map((receiving) => (
@@ -104,11 +107,11 @@ function DebtPage() {
               )
             }
           >
-            <p>{users[receiving.userToReceiveUuid].firstname}</p>
+            <p>{users[receiving.userToReceiveUuid]?.firstname}</p>
             <ArrowLeftSVG />
             <p>Paga R${receiving.value.toFixed(2)}</p>
             <ArrowLeftSVG />
-            <p>{users[receiving.userToPayUuid].firstname}</p>
+            <p>{users[receiving.userToPayUuid]?.firstname}</p>
           </li>
         ))}
       </ul>

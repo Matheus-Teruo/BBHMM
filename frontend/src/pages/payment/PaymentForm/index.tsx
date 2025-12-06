@@ -75,7 +75,9 @@ function PaymentForm() {
       <div className={styles.modal}>
         <h2>Fazer pagamento</h2>
         <form onSubmit={handleSubmit}>
-          <p>{receiver.firstname} vai receber:</p>
+          <p>
+            <span>{receiver.firstname}</span> vai receber:
+          </p>
           <GeneralInput
             type="number"
             value={state.value.toFixed(2)}
@@ -91,6 +93,9 @@ function PaymentForm() {
             showStatus={touched}
             message={messageError["name"]}
           />
+          <p>
+            Pago por <span>{payer.firstname}</span>
+          </p>
           {receiver.pix && (
             <>
               <p>Chave Pix: {receiver.pix.pixKey}</p>

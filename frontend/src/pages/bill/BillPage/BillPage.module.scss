@@ -3,9 +3,9 @@
 
 .body {
   padding: 24px;
-  height: calc(100vh - 24px);
-  max-width: 1100px;
   margin: 0 auto;
+  height: calc(100vh - 36px);
+  max-width: $desktop_md;
   background-color: wheat;
 
   @media (max-width: $mobile) {
@@ -43,6 +43,10 @@
         background-color: $color-secundary-1;
         box-shadow: 1px 2px 4px 0px $color-shadow-2;
         border-radius: $border-radius;
+
+        @media (max-width: $mobile) {
+          padding: 6px 12px;
+        }
       }
     }
 
@@ -70,9 +74,6 @@
   }
 
   .list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
     width: 100%;
     display: grid;
 
@@ -84,10 +85,10 @@
     .row {
       display: grid;
       grid-template-columns:
-        minmax(70px, 1fr) /* Nome */
+        minmax(70px, 120px) /* Nome */
         80px /* Valor */
-        repeat(auto-fit, minmax(20px, 30px)) /* Usuários */
-        120px; /* Ações */
+        repeat(auto-fit, 30px) /* Usuários */
+        90px; /* Ações */
 
       grid-auto-flow: column;
       grid-auto-columns: 80px;
@@ -125,9 +126,10 @@
         width: 80px;
       }
 
-      .user {
+      .userHeader {
         width: 20px;
         writing-mode: vertical-rl;
+        transform: rotate(-30deg);
 
         input {
           width: 18px;
@@ -137,14 +139,16 @@
       }
 
       .actions {
-        width: 120px;
-        flex: 0 0 80px;
+        display: flex;
+        align-items: center;
         justify-content: center;
+        width: 90px;
 
         button {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 3px;
+          background-color: $color-secundary-1;
         }
       }
     }

@@ -171,7 +171,7 @@ function BillPage() {
             {users.map((user) => (
               <p
                 key={user.uuid}
-                className={`${styles.cell} ${styles.user}`}
+                className={`${styles.cell} ${styles.userHeader}`}
                 onClick={() => handleUser(user)}
               >
                 {user.firstname}

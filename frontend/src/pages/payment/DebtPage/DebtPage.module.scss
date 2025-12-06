@@ -4,9 +4,9 @@
 
 .body {
   padding: 24px;
+  margin: 0 auto;
   height: calc(100vh - 36px - 59px);
   max-width: $desktop_md;
-  margin: 0 auto;
   background-color: papayawhip;
 
   @media (max-width: $mobile) {
@@ -35,16 +35,6 @@
         2fr
         30px
         3fr;
-
-      .value {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-
-        p {
-          text-align: start;
-        }
-      }
 
       :last-child {
         text-align: end;

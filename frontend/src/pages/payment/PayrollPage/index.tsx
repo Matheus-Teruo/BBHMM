@@ -55,17 +55,23 @@ function PayrollPage() {
   return (
     <div className={styles.body}>
       <h2 className={styles.title}>Pagamentos</h2>
+      <p className={styles.subTitle}>Items já pagos</p>
+      <p className={styles.subTitle}>
+        Caso tenha alterações pode existir valor sobressalente
+      </p>
       <ul className={styles.list}>
         {payroll.map((pay) => (
           <li key={pay.billUuid}>
-            <p>{users[pay.userToPayUuid].firstname}</p>
+            <p>{users[pay.userToPayUuid]?.firstname}</p>
             <ArrowRightSVG />
-            <p>Pago R${pay.value.toFixed(2)}</p>
-            {!pay.paid && (
-              <p>Valor sobressalente:{pay.value - pay.paidValue}</p>
-            )}
+            <div className={styles.value}>
+              <p>Pago R${pay.value.toFixed(2)}</p>
+              {!pay.paid && (
+                <p>Sobra R${(pay.value - pay.paidValue).toFixed(2)}</p>
+              )}
+            </div>
             <ArrowRightSVG />
-            <p>{users[pay.userToReceiveUuid].firstname}</p>
+            <p>{users[pay.userToReceiveUuid]?.firstname}</p>
           </li>
         ))}
       </ul>
