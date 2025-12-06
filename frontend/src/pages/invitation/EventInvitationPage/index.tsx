@@ -77,18 +77,26 @@ function EventInvitationPage() {
       <ul className={styles.list}>
         {invites.map((invite) => (
           <li key={invite.uuid} className={styles.eventCard}>
-            <p className={styles.eventTitle}>{invite.eventName}</p>
-            <p className={styles.eventDescription}>{invite.description}</p>
-            <p className={styles.eventDate}>{invite.eventDate}</p>
-            <p className={styles.ownerUser}>{invite.ownerUser.firstName}</p>
-            <Button onClick={() => handleInvitation(invite.uuid, true)}>
-              <p>Aceitar</p>
-              <CheckCircleSVG />
-            </Button>
-            <Button onClick={() => handleInvitation(invite.uuid, false)}>
-              <p>Recusar</p>
-              <XCircleSVG />
-            </Button>
+            <div className={styles.fields}>
+              <p className={styles.eventTitle}>{invite.eventName}</p>
+              <p className={styles.eventDescription}>{invite.description}</p>
+            </div>
+            <div className={styles.fields}>
+              <p className={styles.eventDate}>{invite.eventDate}</p>
+              <p className={styles.ownerUser}>
+                Anfitrião: {invite.ownerUser.firstname}
+              </p>
+            </div>
+            <div className={styles.action}>
+              <Button onClick={() => handleInvitation(invite.uuid, false)}>
+                <p>Recusar</p>
+                <XCircleSVG />
+              </Button>
+              <Button onClick={() => handleInvitation(invite.uuid, true)}>
+                <p>Aceitar</p>
+                <CheckCircleSVG />
+              </Button>
+            </div>
           </li>
         ))}
       </ul>

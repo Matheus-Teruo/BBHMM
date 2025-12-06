@@ -45,7 +45,7 @@ export default interface User {
 
 export interface UserResume {
   uuid: string;
-  firstName: string;
+  firstname: string;
   role: Role;
 }
 

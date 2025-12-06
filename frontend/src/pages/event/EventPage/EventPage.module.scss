@@ -1,9 +1,16 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
 .body {
   padding: 24px;
   max-width: 1000px;
   height: calc(100vh - 24px);
   margin: 0 auto;
   background-color: papayawhip;
+
+  @media (max-width: $mobile) {
+    padding: 18px 12px;
+  }
 
   .title {
     font-size: 26px;
@@ -14,13 +21,22 @@
   .header {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
+
+    button {
+      padding: 6px 15px;
+      margin-left: 4px;
+      background-color: $color-secundary-1;
+      box-shadow: 1px 2px 4px 0px $color-shadow-2;
+      border-radius: $border-radius;
+    }
   }
 
   .list {
     list-style: none;
     padding: 0;
     margin: 0;
+    margin-bottom: 8px;
     display: grid;
     gap: 16px;
 
@@ -64,6 +80,10 @@
         font-weight: 500;
         cursor: pointer;
         width: fit-content;
+
+        @media (max-width: $mobile) {
+          gap: 5px;
+        }
 
         &:hover {
           text-decoration: underline;

@@ -7,6 +7,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1 {
+  @media (max-width: 768px) {
+    font-size: small;
+  }
+}
+
+h2 {
+  @media (max-width: 768px) {
+    font-size: smaller;
+  }
+}
+
+h3 {
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+}
+
+svg {
+  @media (max-width: 768px) {
+    weight: 20px;
+    height: 20px;
+  }
+}
+
 code {
   font-family:
     source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;

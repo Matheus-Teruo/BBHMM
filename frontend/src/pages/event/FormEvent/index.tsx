@@ -116,7 +116,7 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
             showStatus={touched}
             message={messageError["eventDate"]}
           />
-          <div>
+          <div className={styles.footer}>
             <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
               <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
               <CheckSVG />

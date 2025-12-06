@@ -31,6 +31,10 @@
 
     h3 {
       padding: 0px 4px;
+
+      @media (max-width: $mobile) {
+        padding: 0px 2px;
+      }
     }
   }
 
