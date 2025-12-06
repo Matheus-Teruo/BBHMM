@@ -123,7 +123,7 @@ function FormBill({
   return (
     <>
       <div className={styles.modal}>
-        <h2>{`${form === "Create" ? "Criar uma conta" : "Editar conta "}${form === "Update" && initialValue?.billName}`}</h2>
+        <h2>{`${form === "Create" ? "Criar uma conta" : "Editar conta "}${form === "Update" ? initialValue?.billName : ""}`}</h2>
         <form onSubmit={handleSubmit}>
           <GeneralInput
             value={state.name}
@@ -174,7 +174,7 @@ function FormBill({
               }
             />
           ) : (
-            <p>
+            <p className={styles.owner}>
               {
                 userList.filter(
                   (userPayer) => userPayer.uuid === state.payerUuid,
@@ -182,9 +182,11 @@ function FormBill({
               }
             </p>
           )}
-          <div>
-            {form === "Update" && !confirmDelete && (
+          <div className={styles.footer}>
+            {form === "Update" && !confirmDelete ? (
               <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+            ) : (
+              <div />
             )}
             {confirmDelete && (
               <div className={styles.deleteBody}>

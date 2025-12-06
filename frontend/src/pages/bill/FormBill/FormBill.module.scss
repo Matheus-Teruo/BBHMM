@@ -32,12 +32,31 @@
     flex-direction: column;
     gap: 16px;
 
-    button {
-      margin-top: 12px;
-      align-self: flex-end;
+    .owner {
       display: flex;
       align-items: center;
-      gap: 6px;
+      padding: 0px 8px;
+      height: 32px;
+      border-radius: $border-radius;
+      box-shadow: 1px 1px 2px 0px $color-shadow-2 inset;
+    }
+
+    .footer {
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        padding: 6px 10px;
+        margin-left: 4px;
+        gap: 4px;
+        background-color: $color-secundary-1;
+        box-shadow: 1px 2px 4px 0px $color-shadow-2;
+
+        p {
+          padding: 2px 0;
+        }
+      }
     }
   }
 }

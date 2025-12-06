@@ -37,7 +37,7 @@ function InviteUserForm() {
       if (invitation && !isMessage(invitation)) {
         addNotification({
           title: "Convite enviado",
-          message: `Convite enviado para ${invitation.ownerUser.firstName}`,
+          message: `Convite enviado para ${invitation.ownerUser.firstname}`,
           type: MessageType.OK,
         });
         setUserfield("");
@@ -71,10 +71,12 @@ function InviteUserForm() {
             showStatus={touched}
             message={messageError["userfield"]}
           />
-          <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
-            <p>Convidar</p>
-            <CheckSVG />
-          </Button>
+          <div className={styles.footer}>
+            <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
+              <p>Convidar</p>
+              <CheckSVG />
+            </Button>
+          </div>
         </form>
       </div>
       <GlassBackground onClick={() => navigate(-1)} />

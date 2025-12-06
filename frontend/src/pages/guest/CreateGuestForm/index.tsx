@@ -86,10 +86,12 @@ function CreateGuestForm() {
             showStatus={touched}
             message={messageError["name"]}
           />
-          <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
-            <p>Criar</p>
-            <CheckSVG />
-          </Button>
+          <div className={styles.footer}>
+            <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
+              <p>Criar</p>
+              <CheckSVG />
+            </Button>
+          </div>
         </form>
       </div>
       <GlassBackground onClick={() => navigate(-1)} />
