@@ -12,6 +12,12 @@
     padding: 18px 12px;
   }
 
+  p {
+    @media (max-width: $mobile) {
+      font-size: 0.8rem;
+    }
+  }
+
   .title {
     font-size: 26px;
     font-weight: 700;
@@ -41,6 +47,7 @@
     }
 
     .total {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -58,60 +65,69 @@
   }
 
   .tableWrapper {
+    width: 100%;
     overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
   }
 
   .list {
-    min-width: 900px;
     list-style: none;
-    margin: 0;
     padding: 0;
+    margin: 0;
+    width: 100%;
+    display: grid;
+
+    .header {
+      font-weight: bold;
+      background: $color-gray-100;
+    }
 
     .row {
-      display: flex;
-      border-bottom: 1px solid #e5e7eb;
+      display: grid;
+      grid-template-columns:
+        minmax(70px, 1fr) /* Nome */
+        80px /* Valor */
+        repeat(auto-fit, minmax(20px, 30px)) /* Usuários */
+        120px; /* Ações */
 
-      &:last-child {
-        border-bottom: none;
-      }
+      grid-auto-flow: column;
+      grid-auto-columns: 80px;
 
-      &:not(.header):hover {
-        background: #f9fafb;
-      }
-
-      &.header {
-        background: #f3f4f6;
-        font-weight: 600;
-      }
+      align-items: center;
+      border-bottom: 1px solid $color-gray-600;
+      padding: 8px 0;
 
       .cell {
-        padding: 12px;
-        font-size: 14px;
+        padding: 6px;
         display: flex;
         align-items: center;
-        border-right: 1px solid #e5e7eb;
-        min-height: 48px;
+        justify-content: center;
+        box-sizing: border-box;
 
-        &:last-child {
-          border-right: none;
+        &.name {
+          justify-content: flex-start;
+        }
+        &.value {
+          justify-content: center;
+        }
+        &.user {
+          justify-content: center;
+        }
+        &.actions {
+          justify-content: flex-end;
         }
       }
 
       .name {
-        width: 220px;
-        min-width: 220px;
+        min-width: 70px;
       }
 
       .value {
-        width: 50px;
-        min-width: 120px;
+        width: 80px;
       }
 
       .user {
-        width: 80px;
-        justify-content: center;
+        width: 20px;
+        writing-mode: vertical-rl;
 
         input {
           width: 18px;
@@ -121,9 +137,7 @@
       }
 
       .actions {
-        width: 60px;
-        min-width: 60px;
-        max-width: 60px;
+        width: 120px;
         flex: 0 0 80px;
         justify-content: center;
 

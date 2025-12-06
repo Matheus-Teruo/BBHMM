@@ -148,9 +148,15 @@ function BillPage() {
       <h2 className={styles.title}>Contas</h2>
       <div className={styles.top}>
         <div className={styles.actions}>
-          <Button onClick={() => setBillForm("Create")}>Nova conta</Button>
-          <Button onClick={() => handleInvite()}>Convidar</Button>
-          <Button onClick={() => addGuest()}>Criar Convidado</Button>
+          <Button onClick={() => setBillForm("Create")}>
+            <p>Nova conta</p>
+          </Button>
+          <Button onClick={() => handleInvite()}>
+            <p>Convidar</p>
+          </Button>
+          <Button onClick={() => addGuest()}>
+            <p>Criar Convidado</p>
+          </Button>
         </div>
         <div className={styles.total}>
           <p>Total:</p>
@@ -160,7 +166,7 @@ function BillPage() {
       <div className={styles.tableWrapper}>
         <ul className={styles.list}>
           <li className={`${styles.row} ${styles.header}`}>
-            <p className={`${styles.cell} ${styles.name}`}>Nome</p>
+            <p className={`${styles.cell} ${styles.name}`}>Conta</p>
             <p className={`${styles.cell} ${styles.value}`}>Valor</p>
             {users.map((user) => (
               <p
@@ -171,7 +177,9 @@ function BillPage() {
                 {user.firstname}
               </p>
             ))}
-            <div />
+            <div className={`${styles.cell} ${styles.actions}`}>
+              <p className={`${styles.cell} ${styles.actions}`}>Editar</p>
+            </div>
           </li>
           {bills.map((bill) => (
             <li key={bill.uuid} className={styles.row}>
@@ -194,7 +202,10 @@ function BillPage() {
                 </div>
               ))}
               <div className={`${styles.cell} ${styles.actions}`}>
-                <Button onClick={() => updateBill(bill)}>
+                <Button
+                  className={`${styles.cell} ${styles.actions}`}
+                  onClick={() => updateBill(bill)}
+                >
                   <p>Editar</p>
                   <EditSVG />
                 </Button>
