@@ -25,7 +25,7 @@ function GuestRedirect() {
       if (guestResponse && !isMessage(guestResponse)) {
         login({
           uuid: guestResponse.uuid,
-          firstName: guestResponse.username,
+          firstname: guestResponse.username,
           role: Role.GUEST,
         });
         navigate(`/event/${guestResponse.event.uuid}/bills`);

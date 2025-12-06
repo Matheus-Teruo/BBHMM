@@ -76,7 +76,7 @@ function SignUp() {
         });
         login({
           uuid: user.uuid,
-          firstName: user.fullname.split(" ")[0],
+          firstname: user.fullname.split(" ")[0],
           role: user.role,
         });
         dispatch({ type: "RESET" });
