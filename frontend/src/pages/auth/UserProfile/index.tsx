@@ -54,6 +54,9 @@ function UserProfile() {
         const userResponse = await getUser(user.uuid);
         if (userResponse) {
           dispatch({ type: "SET_USER", payload: userResponse });
+          if (userResponse.pix) {
+            pixDispatch({ type: "SET_PIX", payload: userResponse.pix });
+          }
         }
       } else if (isUserUnlogged(user)) {
         navigate("/auth/login");

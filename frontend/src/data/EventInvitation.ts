@@ -5,6 +5,7 @@ export default interface EventInvitation {
   eventName: string;
   description: string;
   eventDate: string;
+  accepted: boolean | null;
   invitedUserUuid: string;
   ownerUser: UserResume;
 }

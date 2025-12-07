@@ -41,6 +41,7 @@ const useEventInvitationService = () => {
 
   const listEventInvitations = useCallback(
     async (
+      accepted?: boolean,
       page?: number,
       size?: number,
       sort?: string,
@@ -48,7 +49,7 @@ const useEventInvitationService = () => {
       api
         .get<
           PaginatedResponse<EventInvitation>
-        >("/events/invitations", { params: { page, size, sort } })
+        >("/events/invitations", { params: { accepted, page, size, sort } })
         .then((res) => res.data),
     [api, safeRequest],
   );

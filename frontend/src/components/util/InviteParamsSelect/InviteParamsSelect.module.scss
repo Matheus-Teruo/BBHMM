@@ -1,0 +1,51 @@
+@use "@styles/variables" as *;
+
+.radio {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  justify-content: space-between;
+  padding: 12px 3px;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .selected {
+    background-color: $color-secundary-2;
+    box-shadow: none;
+    box-shadow: $color-shadow-1 0 2px 4px inset;
+  }
+
+  label {
+    display: flex;
+    justify-content: center;
+    padding: 4px;
+    margin: 0 3px;
+    background-color: $color-secundary-1;
+    border-radius: $border-radius;
+    box-shadow: $color-shadow-1 0 2px 4px;
+
+    span {
+      font-weight: 500;
+      user-select: none;
+      white-space: nowrap;
+      color: $color-font-2;
+    }
+  }
+
+  input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+  }
+}

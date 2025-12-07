@@ -1,9 +1,10 @@
 import { regexLeterNumberSpace, regexText } from "@/util/regex";
-import { CreatePix, UpdatePix } from "@data/Pix";
+import Pix, { CreatePix, UpdatePix } from "@data/Pix";
 
 type PixAction =
   | { type: "SET_PIX_KEY"; payload: string }
   | { type: "SET_BANK_ACCOUNT"; payload: string }
+  | { type: "SET_PIX"; payload: Pix }
   | { type: "RESET" };
 
 export const initialPixState: CreatePix = {
@@ -24,6 +25,12 @@ export function pixReducer(state: CreatePix, action: PixAction): CreatePix {
         return state;
       }
       return { ...state, bankAccount: action.payload };
+    }
+    case "SET_PIX": {
+      return {
+        pixKey: action.payload.pixKey,
+        bankAccount: action.payload.bankAccount,
+      };
     }
     case "RESET":
       return initialPixState;

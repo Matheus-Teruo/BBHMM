@@ -42,10 +42,10 @@ function GuestRedirect() {
   }, []);
 
   return (
-    <div>
+    <>
       <h1>Bem vindo(a)</h1>
       <h2>{guestName}</h2>
-    </div>
+    </>
   );
 }
 
