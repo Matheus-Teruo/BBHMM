@@ -135,6 +135,15 @@ function BillPage() {
         }
       }
     } else if (user.role == Role.USER) {
+      navigate("/auth/user/info", {
+        state: {
+          user: user,
+          backgroundLocation: {
+            pathname: location.pathname,
+            search: location.search,
+          },
+        },
+      });
     }
   }
 

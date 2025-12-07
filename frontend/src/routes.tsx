@@ -16,6 +16,7 @@ import GuestInfo from "./pages/guest/GuestInfo";
 import CreateGuestForm from "./pages/guest/CreateGuestForm";
 import PaymentForm from "./pages/payment/PaymentForm";
 import PaymentHeader from "./pages/payment/PaymentHeader";
+import UserInfo from "./pages/auth/UserInfo";
 
 function AppRouter() {
   const location = useLocation();
@@ -55,6 +56,7 @@ function AppRouter() {
           <Route path="/invites/new/:eventUUID" element={<InviteUserForm />} />
           <Route path="/auth/guest/new" element={<CreateGuestForm />} />
           <Route path="/auth/guest/info" element={<GuestInfo />} />
+          <Route path="/auth/user/info" element={<UserInfo />} />
         </Routes>
       )}
     </>

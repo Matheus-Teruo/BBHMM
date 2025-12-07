@@ -48,8 +48,8 @@ function EventInvitationPage() {
     if (invitation && !isMessage(invitation)) {
       addNotification({
         title: `Convite ${accept ? "Aceito" : "Recusado"}`,
-        message: `Convite para evento ${invitation.eventName} aceito, veja a lista de eventos que participa`,
-        type: MessageType.OK,
+        message: `Convite para evento ${invitation.eventName} ${accept ? "Aceito" : "Recusado"} ${accept ? ", veja a lista de eventos que participa" : ""}`,
+        type: accept ? MessageType.OK : MessageType.INFO,
       });
       fetchEventInvitations();
     }
