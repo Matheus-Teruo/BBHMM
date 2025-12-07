@@ -102,9 +102,9 @@ public class EventService {
         return eventInvitation;
     }
 
-    public Page<EventInvitation> listEventInvitation(Pageable pageable) {
+    public Page<EventInvitation> listEventInvitation(Boolean accepted, Pageable pageable) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return eventInvitationRepository.findAllByUserInvitedUuid(userOwner.getUuid(), pageable);
+        return eventInvitationRepository.findAllByUserInvitedUuid(userOwner.getUuid(), accepted, pageable);
     }
 
     @Transactional

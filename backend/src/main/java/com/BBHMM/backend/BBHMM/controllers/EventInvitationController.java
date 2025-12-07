@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
@@ -52,9 +53,10 @@ public class EventInvitationController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/invitations")
     public ResponseEntity<Page<EventInvitationResponse>> listEventInvitation(
+        @RequestParam(required = false) Boolean accepted,
         @PageableDefault(size = 10) Pageable pageable
     ) {
-        var response = eventService.listEventInvitation(pageable).map(EventInvitationResponse::new);
+        var response = eventService.listEventInvitation(accepted, pageable).map(EventInvitationResponse::new);
         
         return ResponseEntity.ok(response);
     }

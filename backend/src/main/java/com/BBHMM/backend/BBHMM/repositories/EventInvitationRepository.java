@@ -20,8 +20,12 @@ public interface EventInvitationRepository extends JpaRepository<EventInvitation
     JOIN FETCH ei.userInvited
     JOIN FETCH ei.userOwner
     WHERE ei.userInvited.uuid = :userUuid
+    AND (
+        (:accepted IS NULL AND ei.accepted IS NULL)
+        OR (ei.accepted = :accepted)
+    )
     """)
-    Page<EventInvitation> findAllByUserInvitedUuid(UUID userUuid, Pageable pageable);
+    Page<EventInvitation> findAllByUserInvitedUuid(UUID userUuid, Boolean accepted, Pageable pageable);
 
     boolean existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(UUID userUuid, UUID eventUuid);
 }
