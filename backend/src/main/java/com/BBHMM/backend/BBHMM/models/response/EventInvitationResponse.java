@@ -12,15 +12,17 @@ public record EventInvitationResponse(
     String eventName,
     String description,
     LocalDate eventDate,
+    Boolean accepted,
     UUID invitedUserUuid,
     UserResumeResponse ownerUser
 ) {
-    public EventInvitationResponse(UUID uuid, Event event, User invitedUser, User ownerUser) {
+    public EventInvitationResponse(UUID uuid, Event event, Boolean accepted, User invitedUser, User ownerUser) {
         this(
             uuid,
             event.getEventName(),
             event.getDescription(),
             event.getEventDate(),
+            accepted,
             invitedUser.getUuid(),
             new UserResumeResponse(ownerUser)
         );
@@ -32,6 +34,7 @@ public record EventInvitationResponse(
             eventInvitation.getEvent().getEventName(),
             eventInvitation.getEvent().getDescription(),
             eventInvitation.getEvent().getEventDate(),
+            eventInvitation.getAccepted(),
             eventInvitation.getUserInvited().getUuid(),
             new UserResumeResponse(eventInvitation.getUserOwner())
         );

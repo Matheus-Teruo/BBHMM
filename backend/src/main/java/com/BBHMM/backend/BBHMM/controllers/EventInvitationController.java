@@ -36,7 +36,7 @@ public class EventInvitationController {
         ) {
         EventInvitation eventInvitation = eventService.userEventInvitation(request);
         
-        return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(request.eventUuid()), eventInvitation.getUserInvited(), eventInvitation.getUserOwner()));
+        return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(request.eventUuid()), eventInvitation.getAccepted(), eventInvitation.getUserInvited(), eventInvitation.getUserOwner()));
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -47,7 +47,7 @@ public class EventInvitationController {
         EventInvitation eventInvitation = eventService.acceptedEventInvitation(request);
         User invitedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return ResponseEntity.ok(new EventInvitationResponse(request.uuid(), eventInvitation.getEvent(), invitedUser, eventInvitation.getUserOwner()));
+        return ResponseEntity.ok(new EventInvitationResponse(request.uuid(), eventInvitation.getEvent(), eventInvitation.getAccepted(), invitedUser, eventInvitation.getUserOwner()));
     }
 
     @PreAuthorize("hasRole('USER')")
