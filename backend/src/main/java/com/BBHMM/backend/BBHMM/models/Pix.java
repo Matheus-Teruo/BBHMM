@@ -33,12 +33,13 @@ public class Pix {
         this.user = user;
     }
 
-    public void update(UpdatePixRequest request) {
+    public Pix(UpdatePixRequest request, User user) {
         if (request.pixKey() != null) {
             this.pixKey = request.pixKey();
         }
         if (request.bankAccount() != null) {
             this.bankAccount = request.bankAccount();
         }
+        this.user = user;
     }
 }

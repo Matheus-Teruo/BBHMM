@@ -121,7 +121,7 @@ public class UserService {
         user.updateUser(request);
         if (newPasswordFlag) user.updatePassword(passwordEncoder.encode(newPassword));
         if (request.pix() != null) {
-            user.getPix().update(request.pix());
+            user.setPix(new Pix(request.pix(), user));
         }
 
         return user;
