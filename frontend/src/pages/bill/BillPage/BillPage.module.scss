@@ -6,7 +6,8 @@
   margin: 0 auto;
   height: calc(100vh - 36px);
   max-width: $desktop_md;
-  background-color: wheat;
+  background-color: $color-primary-1;
+  box-sizing: border-box;
 
   @media (max-width: $mobile) {
     padding: 18px 12px;
@@ -58,7 +59,7 @@
 
       p:first-child {
         font-size: 14px;
-        color: white;
+        color: $color-gray-800;
       }
 
       p:last-child {
@@ -79,7 +80,7 @@
 
     .header {
       font-weight: bold;
-      background: $color-gray-100;
+      background: $color-secundary-1;
     }
 
     .row {

@@ -9,7 +9,8 @@
   padding: 12px;
   max-width: $desktop_md;
   gap: 12px;
-  background-color: wheat;
+  background-color: $color-primary-2;
+  box-sizing: border-box;
 
   h2 {
     font-size: 26px;

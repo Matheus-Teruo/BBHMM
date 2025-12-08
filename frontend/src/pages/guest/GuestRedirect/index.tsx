@@ -1,3 +1,4 @@
+import styles from "./GuestRedirect.module.scss";
 import { isUserLogged } from "@/util/checkAuthentication";
 import { isMessage } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
@@ -42,10 +43,10 @@ function GuestRedirect() {
   }, []);
 
   return (
-    <>
+    <div className={styles.body}>
       <h1>Bem vindo(a)</h1>
       <h2>{guestName}</h2>
-    </>
+    </div>
   );
 }
 
