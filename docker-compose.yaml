@@ -15,6 +15,7 @@ services:
       - private
     depends_on:
       - db
+      - mailhog
   db:
     container_name: bbhmm_database
     image: mysql
@@ -35,6 +36,14 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: BBHMM_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - private
   frontend:
     container_name: bbhmm_frontend
     build:
