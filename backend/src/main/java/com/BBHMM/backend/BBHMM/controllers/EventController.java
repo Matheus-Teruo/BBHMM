@@ -64,6 +64,15 @@ public class EventController {
         return ResponseEntity.ok(new EventResponse(event));
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/{eventUuid}")
+    public ResponseEntity<Void> finishEvent(@PathVariable UUID eventUuid) {
+        User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.finishEvent(eventUuid, userSecurity);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{eventUuid}/users")
     public ResponseEntity<List<UserListResponse>> listUsersFromEvent(@PathVariable UUID eventUuid) {
         var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(UserListResponse::new).toList();

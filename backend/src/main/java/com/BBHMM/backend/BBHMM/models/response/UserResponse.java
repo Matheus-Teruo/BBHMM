@@ -10,6 +10,7 @@ public record UserResponse(
     String role,
     String fullname,
     String email,
+    boolean emailVerified,
     PixResponse pix
 ) {
     public UserResponse(User user) {
@@ -18,6 +19,7 @@ public record UserResponse(
             user.getRole().toString(),
             user.getFullname(),
             user.getEmail(),
+            user.isEmailVerified(),
             user.getPix() != null ? new PixResponse(user.getPix()) : null
         );
     }

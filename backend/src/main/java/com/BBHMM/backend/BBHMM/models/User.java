@@ -32,6 +32,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private RoleEnum role;
 
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
+
     @Column(nullable = false, length = 100)
     private String fullname;
 
@@ -49,6 +52,7 @@ public class User implements UserDetails {
         this.username = request.username();
         this.password = password;
         this.role = RoleEnum.ROLE_USER;
+        this.emailVerified = false;
         this.fullname = request.fullname();
         this.email = request.email();
     }
@@ -57,6 +61,7 @@ public class User implements UserDetails {
         this.username = request.guestName();
         this.password = password;
         this.role = RoleEnum.ROLE_GUEST;
+        this.emailVerified = false;
         this.fullname = request.guestName();
     }
 

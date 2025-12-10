@@ -9,6 +9,7 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateBillParticipantsRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,6 +38,7 @@ public class BillService {
         var user = userService.safeTakeUserByUuid(request.payerUuid());
         var event = eventService.safeTakeEventByUuid(request.eventUuid());
         validation.checkUserParticipationInEvent(user, event.getUuid());
+        validation.checkEventFinished(event);
 
         var bill = new Bill(request, event, user);
         repository.save(bill);
@@ -79,6 +81,7 @@ public class BillService {
         var bill = safeTakeBillByUuid(request.uuid());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         validation.checkUserParticipationInEvent(user, bill.getEventUuid());
+        validation.checkEventFinished(bill.getEvent());
 
         bill.update(request);
         if (request.listPartUuids() != null) {
@@ -96,6 +99,7 @@ public class BillService {
         User partUser = userService.safeTakeUserByUuid(request.partUuid());
         validation.checkUserParticipationInEvent(user, bill.getEventUuid());
         validation.checkUserParticipationInEvent(partUser, bill.getEventUuid());
+        validation.checkEventFinished(bill.getEvent());
 
         boolean plus = true;
         switch (request.type()) {
@@ -126,6 +130,7 @@ public class BillService {
         var bill = safeTakeBillByUuid(billUuid);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         validation.checkUserParticipationInEvent(user, bill.getEventUuid());
+        validation.checkEventFinished(bill.getEvent());
 
         List<Participants> currentParticipants = bill.getParticipants();
 

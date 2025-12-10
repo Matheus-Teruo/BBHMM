@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionException;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
+import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
@@ -88,6 +89,17 @@ public class BillValidation {
                     "value",
                     value.toString()
                 )
+            );
+        }
+    }
+
+    public void checkEventFinished(Event event) {
+        if (event.isFinished()) {
+            throw new InvalidDatabaseQueryException(
+                "Evento finalizado",
+                "evento não pode ser modificado, pois já foi finalizado",
+                "Finalizado",
+                event.getEventName()
             );
         }
     }

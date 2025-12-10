@@ -1,6 +1,7 @@
 package com.BBHMM.backend.BBHMM.services;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
+import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
@@ -127,9 +128,10 @@ public class UserService {
         return user;
     }
 
-    public User createGuest(CreateGuestRequest request, User hostUser, String password) {
+    public User createGuest(CreateGuestRequest request, User hostUser, String password, Event event) {
         validation.checkNameDuplication(request.guestName(), request.guestName(), null);
         billValidation.checkUserParticipationInEvent(hostUser, request.eventUuid());
+        billValidation.checkEventFinished(event);
 
         User guest = new User(request, passwordEncoder.encode(password));
 

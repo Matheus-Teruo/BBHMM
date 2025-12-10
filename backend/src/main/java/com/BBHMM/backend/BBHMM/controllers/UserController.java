@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
+import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
@@ -49,7 +50,8 @@ public class UserController {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         String password = service.generatePassword();
-        User user = service.createGuest(request, hostUser, password);
+        Event event = eventService.safeTakeEventByUuid(request.eventUuid());
+        User user = service.createGuest(request, hostUser, password, event);
         eventService.addUser(request.eventUuid(), user);
 
         return ResponseEntity.ok(new NewGuestResponse(user, password));
