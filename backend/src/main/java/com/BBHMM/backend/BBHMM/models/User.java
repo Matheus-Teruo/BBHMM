@@ -74,6 +74,7 @@ public class User implements UserDetails {
         }
         if (request.email() != null) {
             this.email = request.email();
+            this.emailVerified = false;
         }
     }
 

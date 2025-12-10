@@ -22,6 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,9 +60,9 @@ public class EventService {
         );
     }
 
-    public Page<Event> pageEvent(Pageable pageable) {
+    public Page<Event> pageEvent(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return repository.findAllbyUser(pageable, user.getUuid());
+        return repository.findAllbyUser(eventName, eventDate, finished, pageable, user.getUuid());
     }
 
     public List<Event> listEvent(User user) {
