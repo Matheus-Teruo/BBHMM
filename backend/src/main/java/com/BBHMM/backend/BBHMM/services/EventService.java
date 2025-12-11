@@ -14,6 +14,7 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
 import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventRepository;
+import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
 import com.BBHMM.backend.BBHMM.services.validation.EventValidation;
 import com.BBHMM.backend.BBHMM.services.validation.UserValidation;
 
@@ -21,6 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +33,7 @@ public class EventService {
     private final EventRepository repository;
     private final EventValidation validation;
     private final EventInvitationRepository eventInvitationRepository;
+    private final BillValidation billValidation;
     private final UserService userService;
     private final UserValidation userValidation;
     
@@ -57,9 +60,9 @@ public class EventService {
         );
     }
 
-    public Page<Event> pageEvent(Pageable pageable) {
+    public Page<Event> pageEvent(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return repository.findAllbyUser(pageable, user.getUuid());
+        return repository.findAllbyUser(eventName, eventDate, finished, pageable, user.getUuid());
     }
 
     public List<Event> listEvent(User user) {
@@ -82,6 +85,7 @@ public class EventService {
         validation.checkDuplicationInvate(userInvited, event);
         validation.checkUserAlreadyInEvent(userInvited, event);
         userValidation.checkIsNotAGuest(userInvited);
+        billValidation.checkEventFinished(event);
 
         EventInvitation eventInvitation = new EventInvitation(userInvited, userOwner, event);
         eventInvitationRepository.save(eventInvitation);
@@ -112,5 +116,14 @@ public class EventService {
         Event event = safeTakeEventByUuid(eventUuid);
 
         event.addUser(guest);
+    }
+
+    @Transactional
+    public void finishEvent(UUID eventUuid, User user) {
+        Event event = safeTakeEventByUuid(eventUuid);
+        validation.checkEventAvaliableToFinish(event);
+        billValidation.checkUserParticipationInEvent(user, eventUuid);
+
+        event.setFinished(true);
     }
 }

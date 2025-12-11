@@ -40,6 +40,7 @@ export default interface User {
   role: Role;
   fullname: string;
   email: string;
+  emailVerified: boolean;
   pix?: Pix;
 }
 

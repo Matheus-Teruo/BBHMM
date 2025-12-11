@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +18,15 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT e FROM Event e WHERE e.uuid = :uuid")
     Optional<Event> findByUuid(UUID uuid);
 
-    @Query("SELECT e FROM Event e JOIN e.users u WHERE u.uuid = :userUuid")
-    Page<Event> findAllbyUser(Pageable pageable, UUID userUuid);
+    @Query("""
+        SELECT e FROM Event e 
+        JOIN e.users u 
+        WHERE u.uuid = :userUuid 
+        AND (:eventName IS NULL OR LOWER(e.eventName) LIKE LOWER(CONCAT('%', :eventName, '%')))
+        AND (:eventDate IS NULL OR e.eventDate >= :eventDate)
+        AND (:finished IS NULL OR e.finished = :finished)
+    """)
+    Page<Event> findAllbyUser(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable, UUID userUuid);
 
     @Query("SELECT e FROM Event e JOIN e.users u WHERE u.uuid = :userUuid")
     List<Event> findAllbyUserList(UUID userUuid);

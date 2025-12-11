@@ -9,13 +9,15 @@ public record EventResponse(
     UUID uuid,
     String eventName,
     String description,
-    LocalDate eventDate
+    LocalDate eventDate,
+    boolean finished
 ) {
     public EventResponse(Event event) {
         this(event.getUuid(),
             event.getEventName(),
             event.getDescription(),
-            event.getEventDate()
+            event.getEventDate(),
+            event.isFinished()
         );
     }
 }

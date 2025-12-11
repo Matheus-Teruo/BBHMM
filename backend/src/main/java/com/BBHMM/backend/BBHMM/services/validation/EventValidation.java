@@ -6,6 +6,7 @@ import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
 import com.BBHMM.backend.BBHMM.models.User;
+import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class EventValidation {
 
     private final EventRepository repository;
     private final EventInvitationRepository eventInvitationRepository;
+    private final BillRepository billRepository;
 
     public void checkDuplicationInvate(User invitedUser, Event event) {
         if (eventInvitationRepository.existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(invitedUser.getUuid(), event.getUuid())) {
@@ -58,6 +60,17 @@ public class EventValidation {
                 "convite não pertence ao usuário",
                 "Convite de Evento",
                 userInvited.getFullname().split(" ")[0]
+            );
+        }
+    }
+
+    public void checkEventAvaliableToFinish(Event event) {
+        if (!billRepository.findBillsByEventUuidAndNotPaid(event.getUuid()).isEmpty()) {
+            throw new InvalidDatabaseQueryException(
+                "Evento não pode ser finalizado",
+                "evento não ser finalizado pois ainda tem conta ativa",
+                "Finalização",
+                event.getEventName()
             );
         }
     }

@@ -10,9 +10,14 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 import FormEvent from "../FormEvent";
 import { EditSVG } from "@/assets/svg";
 import { useNavigate } from "react-router-dom";
+import SearchFilter from "@/components/util/SearchFilter";
+import GeneralInput from "@/components/util/GeneralInput";
 
 function EventPage() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [filter, setFilter] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<string>("");
+  const [finishedFilter, setFinishedFilter] = useState<boolean>(false);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [eventForm, setEventForm] = useState<null | "Create" | "Update">(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | undefined>();
@@ -21,11 +26,16 @@ function EventPage() {
   const navigate = useNavigate();
 
   const fetchEvent = useCallback(async () => {
-    const eventResponse = await getEvents(page.number);
+    const eventResponse = await getEvents(
+      filter,
+      dateFilter,
+      finishedFilter,
+      page.number,
+    );
     if (eventResponse) {
       setEvents(eventResponse.content);
     }
-  }, [page.number, setEvents]);
+  }, [filter, dateFilter, finishedFilter, page.number, setEvents]);
 
   useEffect(() => {
     if (isUserLogged(user)) {
@@ -34,6 +44,12 @@ function EventPage() {
       navigate("/auth/login");
     }
   }, [user, fetchEvent]);
+
+  const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
+    setEvents([]);
+    setFilter(event.target.value);
+  };
 
   function updateEvent(event: Event) {
     setSelectedEvent(event);
@@ -48,6 +64,27 @@ function EventPage() {
   return (
     <div className={styles.body}>
       <h2 className={styles.title}>Eventos</h2>
+      <div className={styles.filterHeader}>
+        <SearchFilter value={filter} onChange={handleFilter} />
+        <div className={styles.filters}>
+          <GeneralInput
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            id="eventDate"
+            placeholder="Dia do evento"
+            type="date"
+          />
+          <div className={styles.finishedFilter}>
+            <input
+              type="checkbox"
+              id="finishedEvent"
+              checked={finishedFilter}
+              onChange={(e) => setFinishedFilter(e.target.checked)}
+            />
+            <p>Eventos finalizados</p>
+          </div>
+        </div>
+      </div>
       <div className={styles.header}>
         <Button onClick={() => setEventForm("Create")}>
           Criar Novo Evento
@@ -55,7 +92,10 @@ function EventPage() {
       </div>
       <ul className={styles.list}>
         {events.map((event) => (
-          <li key={event.uuid} className={styles.eventCard}>
+          <li
+            key={event.uuid}
+            className={`${styles.eventCard} ${event.finished ? styles.eventFinished : ""}`}
+          >
             <div onClick={() => handleSelectEvent(event)}>
               <h3 className={styles.eventTitle}>{event.eventName}</h3>
               <p className={styles.eventDescription}>{event.description}</p>

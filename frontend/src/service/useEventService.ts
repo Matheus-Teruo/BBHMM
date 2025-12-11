@@ -26,14 +26,24 @@ const useEventService = () => {
 
   const getEvents = useCallback(
     async (
+      eventName?: string,
+      eventDate?: string,
+      finished?: boolean,
       page?: number,
       size?: number,
       sort?: string,
     ): Promise<PaginatedResponse<Event> | null> =>
       api
-        .get<
-          PaginatedResponse<Event>
-        >("/events", { params: { page, size, sort } })
+        .get<PaginatedResponse<Event>>("/events", {
+          params: {
+            eventName: eventName != "" ? eventName : undefined,
+            eventDate: eventDate != "" ? eventDate : undefined,
+            finished: finished ? undefined : finished,
+            page,
+            size,
+            sort,
+          },
+        })
         .then((res) => res.data),
     [api, safeRequest],
   );
@@ -42,6 +52,14 @@ const useEventService = () => {
     async (event: UpdateEvent): Promise<Event | Message | null> =>
       safeRequest(() =>
         api.put<Event>("/events", event).then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
+  const finishEvent = useCallback(
+    async (eventUuid: string): Promise<void | Message | null> =>
+      safeRequest(() =>
+        api.delete<void>(`/events/${eventUuid}`).then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -57,6 +75,7 @@ const useEventService = () => {
     getEvent,
     getEvents,
     updateEvent,
+    finishEvent,
     listUserFromEvent,
   };
 };

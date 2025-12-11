@@ -13,11 +13,11 @@ public record UpdateEventRequest(
     UUID uuid,
 
     @Size(min = 3, message = "Nome do evento pelomenos 3 caractéres")
-    @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "Nome do evento não pode ter alguns caracteres especiais")
+    @Pattern(regexp = "^[\\p{L}\\p{N}:!\\-]*$", message = "Nome do evento não pode ter alguns caracteres especiais")
     String eventName,
 
     @Size(min = 3, message = "A decrição precisa pelomenos 3 caractéres")
-    @Pattern(regexp = "^[\\p{L}\\p{N} ]*$", message = "A decrição só deve conter letras, numeros e espaço")
+    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A decrição só deve conter letras, numeros e espaço")
     String description,
 
     LocalDate eventDate

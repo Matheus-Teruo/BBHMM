@@ -18,6 +18,7 @@ import com.BBHMM.backend.BBHMM.services.UserService;
 import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,8 +52,13 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponse>> listEvents(@PageableDefault(size = 10) Pageable pageable) {
-        var response = service.pageEvent(pageable).map(EventResponse::new);
+    public ResponseEntity<Page<EventResponse>> listEvents(
+        @RequestParam(required = false) String eventName,
+        @RequestParam(required = false) LocalDate eventDate,
+        @RequestParam(required = false) Boolean finished,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        var response = service.pageEvent(eventName, eventDate, finished, pageable).map(EventResponse::new);
         return ResponseEntity.ok(response);
     }
 
@@ -62,6 +68,15 @@ public class EventController {
         var event = service.updateEvent(request);
 
         return ResponseEntity.ok(new EventResponse(event));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/{eventUuid}")
+    public ResponseEntity<Void> finishEvent(@PathVariable UUID eventUuid) {
+        User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.finishEvent(eventUuid, userSecurity);
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{eventUuid}/users")

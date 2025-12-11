@@ -19,6 +19,7 @@ type UserState = {
   confirmPassword: string;
   fullname: string;
   email: string;
+  emailVerified: boolean;
   pix: CreatePix | UpdatePix;
 };
 
@@ -47,6 +48,7 @@ export const initialUserState: UserState = {
   password: "",
   confirmPassword: "",
   email: "",
+  emailVerified: true,
   pix: initialPixState,
 };
 
@@ -92,6 +94,7 @@ export function userReducer(state: UserState, action: UserAction): UserState {
         username: action.payload.username,
         fullname: action.payload.fullname,
         email: action.payload.email,
+        emailVerified: action.payload.emailVerified,
         pix: action.payload.pix ? action.payload.pix : initialPixState,
       };
     }

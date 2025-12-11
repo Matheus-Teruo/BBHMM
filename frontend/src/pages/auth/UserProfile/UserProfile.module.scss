@@ -23,8 +23,16 @@
     .value {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       padding: 4px;
       margin: 0 2px;
+
+      .mailVerified {
+        color: $color-accepted
+      }
+      .mailUnverified {
+        color: $color-unaccepted
+      }
 
       @media (max-width: $mobile) {
         padding: 5px 4px 6px;

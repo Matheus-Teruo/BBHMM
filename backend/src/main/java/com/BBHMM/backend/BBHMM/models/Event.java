@@ -24,7 +24,10 @@ public class Event {
     private String description;
 
     @Column(name = "event_date")
-    private LocalDate eventDate; 
+    private LocalDate eventDate;
+
+    @Setter
+    private boolean finished = false;
 
     @ManyToMany
     @JoinTable(
@@ -45,6 +48,7 @@ public class Event {
         this.description = request.description();
         this.users.add(user);
         this.eventDate = request.eventDate();
+        this.finished = false;
     }
 
     public void update(UpdateEventRequest request) {

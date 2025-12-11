@@ -28,10 +28,12 @@ interface NewEventProps {
 function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
   const [state, dispatch] = useReducer(eventReducer, initialEventState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
-  const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<
+    "Create|Update" | "Finish" | ""
+  >("");
   const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const { createEvent, updateEvent } = useEventService();
+  const { createEvent, updateEvent, finishEvent } = useEventService();
 
   useEffect(() => {
     if (form === "Update") {
@@ -41,7 +43,7 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
+    setWaitingFetch("Create|Update");
     setTouched(false);
     setMessageError({});
     if (form === "Create") {
@@ -74,7 +76,28 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
       }
     }
     setTouched(true);
-    setWaitingFetch(false);
+    setWaitingFetch("");
+  };
+
+  const handleDelete = async () => {
+    setWaitingFetch("Finish");
+    setTouched(false);
+    setMessageError({});
+    const event = await finishEvent(state.uuid);
+    if (event && !isMessage(event)) {
+      addNotification({
+        title: "Evento Finalizado",
+        message: `Evento ${state.eventName} finalizado, não podendo ser mais editado`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      onChange();
+    } else if (event) {
+      const message = event;
+      if (message.invalidFields) setMessageError(message.invalidFields);
+    }
+    setTouched(true);
+    setWaitingFetch("");
   };
 
   return (
@@ -117,7 +140,21 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
             message={messageError["eventDate"]}
           />
           <div className={styles.footer}>
-            <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
+            {form === "Update" ? (
+              <Button
+                onClick={() => handleDelete()}
+                loading={waitingFetch === "Finish"}
+              >
+                <p>Finalizar</p>
+                <CheckSVG />
+              </Button>
+            ) : (
+              <div />
+            )}
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "Create|Update"}
+            >
               <p>{form === "Create" ? "Criar" : "Atualizar"}</p>
               <CheckSVG />
             </Button>

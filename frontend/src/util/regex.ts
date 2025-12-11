@@ -5,6 +5,6 @@ export const regexLeterNumber = /^[\p{L}\p{N}]*$/u;
 export const regexLeterSpace = /^[\p{L} ]*$/u;
 export const regexPassword = /[\w@#$%^&+=!]*$/u;
 export const regexEmail = /^[\p{L}\p{N} @.-]*$/u;
-export const regexText = /^[\p{L}\p{N} /:;,.!()@?\\-]*$/u;
+export const regexText = /^[\p{L}\p{N} /:;,.!()?%\\-]*$/u;
 export const regexDate =
   /^(?:\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])|)$/;
