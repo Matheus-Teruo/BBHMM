@@ -1,4 +1,4 @@
-import { regexDate, regexLeterNumberSpace, regexUuid } from "@/util/regex";
+import { regexDate, regexText, regexUuid } from "@/util/regex";
 import Event, { CreateEvent, UpdateEvent } from "@data/Event";
 
 interface EventState {
@@ -35,13 +35,13 @@ export function eventReducer(
       return { ...state, uuid: action.payload };
     }
     case "SET_EVENT_NAME": {
-      if (!regexLeterNumberSpace.test(action.payload)) {
+      if (!regexText.test(action.payload)) {
         return state;
       }
       return { ...state, eventName: action.payload };
     }
     case "SET_DESCRIPTION": {
-      if (!regexLeterNumberSpace.test(action.payload)) {
+      if (!regexText.test(action.payload)) {
         return state;
       }
       return { ...state, description: action.payload };

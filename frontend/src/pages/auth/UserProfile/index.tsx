@@ -1,6 +1,8 @@
 import styles from "./UserProfile.module.scss";
 import {
+  AlertCircleSVG,
   BankSVG,
+  CheckCircleSVG,
   CheckSVG,
   EmailSVG,
   FaceFrownSVG,
@@ -193,6 +195,17 @@ function UserProfile() {
           <div className={styles.value} onClick={() => handleUpdate("email")}>
             <EmailSVG />
             <p>{state.email}</p>
+            {state.emailVerified ? (
+              <>
+                <CheckCircleSVG className={styles.mailVerified} />
+                <p className={styles.mailVerified}>Validado</p>
+              </>
+            ) : (
+              <>
+                <AlertCircleSVG className={styles.mailUnverified} />
+                <p className={styles.mailUnverified}>Confirmação pendente</p>
+              </>
+            )}
           </div>
         ) : (
           <div className={styles.update}>

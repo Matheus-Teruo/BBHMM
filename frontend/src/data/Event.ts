@@ -16,4 +16,5 @@ export default interface Event {
   eventName: string;
   description: string;
   eventDate: string;
+  finished: boolean;
 }

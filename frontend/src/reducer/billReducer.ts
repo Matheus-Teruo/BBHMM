@@ -1,4 +1,4 @@
-import { regexLeterNumberSpace, regexUuid } from "@/util/regex";
+import { regexText, regexUuid } from "@/util/regex";
 import Bill, { CreateBill, UpdateBill } from "@data/Bills";
 
 interface BillState {
@@ -38,13 +38,13 @@ export function billReducer(state: BillState, action: BillAction): BillState {
       return { ...state, uuid: action.payload };
     }
     case "SET_NAME": {
-      if (!regexLeterNumberSpace.test(action.payload)) {
+      if (!regexText.test(action.payload)) {
         return state;
       }
       return { ...state, name: action.payload };
     }
     case "SET_DESCRIPTION": {
-      if (!regexLeterNumberSpace.test(action.payload)) {
+      if (!regexText.test(action.payload)) {
         return state;
       }
       return { ...state, description: action.payload };
