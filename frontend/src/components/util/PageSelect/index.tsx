@@ -21,7 +21,7 @@ function PageSelect({ value, max, dispatch, className }: PageSelectProps) {
     }
   };
   return (
-    <div className={`${styles.body} ${className}`}>
+    <div className={`${styles.body} ${className ? className : ""}`}>
       <Button
         onClick={() =>
           dispatch({ type: "SET_PAGE_NUMBER", payload: value - 1 })
