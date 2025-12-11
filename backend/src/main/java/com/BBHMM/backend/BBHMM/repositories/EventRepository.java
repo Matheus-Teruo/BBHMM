@@ -24,7 +24,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
         WHERE u.uuid = :userUuid 
         AND (:eventName IS NULL OR LOWER(e.eventName) LIKE LOWER(CONCAT('%', :eventName, '%')))
         AND (:eventDate IS NULL OR e.eventDate >= :eventDate)
-        AND (:eventDate IS NULL OR e.finished = :finished)
+        AND (:finished IS NULL OR e.finished = :finished)
     """)
     Page<Event> findAllbyUser(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable, UUID userUuid);
 
