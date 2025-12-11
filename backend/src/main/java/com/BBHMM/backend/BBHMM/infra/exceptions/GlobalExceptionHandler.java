@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     error.put("errorType","Componentem não existente");
     error.put("entity", ex.getEntityName());
     error.put("invalidValue", ex.getInvalidValue());
-    error.put("error", ex.getMessage());
+    error.put("error",  ex.getError());
     error.put("message", ex.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
