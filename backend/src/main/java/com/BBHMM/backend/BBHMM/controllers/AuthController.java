@@ -128,9 +128,9 @@ public class AuthController {
 
         var tokenJWT = tokenService.generateToken((User) authentication.getPrincipal());
 
-        response.addCookie(createCookie(tokenJWT, 0.4f));
+        response.addCookie(createCookie(tokenJWT, 0.25f));
 
-        return ResponseEntity.ok(new UserResumeResponse((User) authentication.getPrincipal()));
+        return ResponseEntity.ok(new UserResumeResponse(user));
     }
 
     private Cookie createCookie(String tokenJWT, float hours) {

@@ -3,6 +3,8 @@ package com.BBHMM.backend.BBHMM.services;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.Pix;
+import com.BBHMM.backend.BBHMM.models.Token;
+import com.BBHMM.backend.BBHMM.models.TokenType;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CheckResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
@@ -36,6 +38,7 @@ public class UserService {
     private static final String NUMBERS = "0123456789";
 
     private final EmailService emailService;
+    private final TokenService tokenService;
     private final UserRepository repository;
     private final UserValidation validation;
     private final BillValidation billValidation;
@@ -103,6 +106,16 @@ public class UserService {
                 ));
     }
 
+    private User findUserByEmail(String email) {
+        return repository.findByEmail(email)
+                    .orElseThrow(() -> new InvalidDatabaseQueryException(
+                            "Usuário não encontrado",
+                            "email não condiz com nenhum usuário",
+                            "email",
+                            email
+                    ));
+    }
+
     public List<User> findParticipantsByEventUuid(UUID eventUuid) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         billValidation.checkUserParticipationInEvent(user, eventUuid);
@@ -137,13 +150,13 @@ public class UserService {
         validation.checkUserEmailValidation(userSecurity, false);
         User user = safeTakeUserByUuid(userSecurity.getUuid());
         user.setEmailVerified(true);
-        // TODO: Generate and manage token (token Service and Repository)
+        Token token = tokenService.createToken(null, user);
 
-        emailService.sendValidationEmail(user, "TOKEN");
+        emailService.sendValidationEmail(user, token.getToken());
     }
 
     public void confirmEmail(EmailTokenRequest request, User userSecurity) {
-        // TODO: Validate and manage token (token Service and Repository)
+        tokenService.validateToken(TokenType.CONFIRM_EMAIL, request.token(), userSecurity.getUuid());
         validation.checkUserEmailValidation(userSecurity, false);
 
         User user = safeTakeUserByUuid(userSecurity.getUuid());
@@ -151,23 +164,16 @@ public class UserService {
     }
 
     public void resetPassword(ResetPasswordRequest request) {
-        User user = repository.findByEmail(request.email())
-                    .orElseThrow(() -> new InvalidDatabaseQueryException(
-                            "Usuário não encontrado",
-                            "email não condiz com nenhum usuário",
-                            "email",
-                            request.email()
-                    ));
-        // TODO: Generate Token (token Service and Repository)
+        User user = findUserByEmail(request.email());
+        Token token = tokenService.createToken(TokenType.RESET_PASSWORD, user);
 
-        emailService.sendPasswordResetEmail(user, "TOKEN");
+        emailService.sendPasswordResetEmail(user, token.getToken());
     }
 
     public User checkResetPassword(CheckResetPasswordRequest request) {
-        // TODO: Validate and manage token (token Service and Repository)
-
-        // TODO: take user by uuid from token
-        return user; 
+        User user = findUserByEmail(request.email());
+        tokenService.validateToken(TokenType.RESET_PASSWORD, request.token().toString(), user.getUuid());
+        return user;
     }
 
     public User createGuest(CreateGuestRequest request, User hostUser, String password, Event event) {

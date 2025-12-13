@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public record EmailTokenRequest(
     @NotBlank(message = "Token é necessário")
-    String email
+    String token
 ) {
 }

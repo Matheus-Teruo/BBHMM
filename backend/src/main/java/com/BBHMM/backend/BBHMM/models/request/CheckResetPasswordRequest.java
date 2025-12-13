@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Pattern;
 public record CheckResetPasswordRequest(
     @NotBlank(message = "Email é necessário")
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Formato de e-mail inválido")
-    String fullname,
+    String email,
 
     @NotNull(message = "Token é necessário")
     UUID token
