@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record UpdateBillRequest(
-
     @NotNull(message = "ID é necessário")
     UUID uuid,
     

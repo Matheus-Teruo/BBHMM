@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record CreateBillRequest(
-
     @NotBlank(message = "Nome da conta deve existir")   
     @Size(min = 3, message = "Nome da conta pelomenos 3 caractéres")
     @Pattern(regexp = "^[\\p{L}\\p{N}:!\\-]*$", message = "Nome da conta não pode ter alguns caracteres especiais")
