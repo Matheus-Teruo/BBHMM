@@ -46,10 +46,10 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/send-email")
-    public ResponseEntity<Void> sendEmail(@RequestBody UUID userUuid) {
+    @PostMapping("/verify-email")
+    public ResponseEntity<Void> verifyEmail(@RequestBody UUID userUuid) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        service.sendEmail(userUuid ,userSecurity);
+        service.verifyEmail(userUuid ,userSecurity);
 
         return ResponseEntity.noContent().build();
     }

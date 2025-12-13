@@ -145,7 +145,7 @@ public class UserService {
         return user;
     }
 
-    public void sendEmail(UUID userUuid, User userSecurity) {
+    public void verifyEmail(UUID userUuid, User userSecurity) {
         validation.checkUserAuthentication(userUuid, userSecurity);
         validation.checkUserEmailValidation(userSecurity, false);
         User user = safeTakeUserByUuid(userSecurity.getUuid());
