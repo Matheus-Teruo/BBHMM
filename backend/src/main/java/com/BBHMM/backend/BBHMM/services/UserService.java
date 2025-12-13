@@ -4,7 +4,10 @@ import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.User;
+import com.BBHMM.backend.BBHMM.models.request.CheckResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
+import com.BBHMM.backend.BBHMM.models.request.EmailTokenRequest;
+import com.BBHMM.backend.BBHMM.models.request.ResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
@@ -32,6 +35,7 @@ public class UserService {
     private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final String NUMBERS = "0123456789";
 
+    private final EmailService emailService;
     private final UserRepository repository;
     private final UserValidation validation;
     private final BillValidation billValidation;
@@ -75,7 +79,7 @@ public class UserService {
                     .orElseThrow(() -> new InvalidDatabaseQueryException(
                             "Usuário não encontrado",
                             "email não condiz com nenhum usuário",
-                            "userfield",
+                            "email",
                             userfield
                     ));
         }
@@ -85,7 +89,7 @@ public class UserService {
                     .orElseThrow(() -> new InvalidDatabaseQueryException(
                             "Usuário não encontrado",
                             "nome completo não condiz com nenhum usuário",
-                            "userfield",
+                            "nome completo",
                             userfield
                     ));
         }
@@ -94,7 +98,7 @@ public class UserService {
                 .orElseThrow(() -> new InvalidDatabaseQueryException(
                         "Usuário não encontrado",
                         "nome de usuário não condiz com nenhum usuário",
-                        "userfield",
+                        "nome de usuário",
                         userfield
                 ));
     }
@@ -126,6 +130,44 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public void sendEmail(UUID userUuid, User userSecurity) {
+        validation.checkUserAuthentication(userUuid, userSecurity);
+        validation.checkUserEmailValidation(userSecurity, false);
+        User user = safeTakeUserByUuid(userSecurity.getUuid());
+        user.setEmailVerified(true);
+        // TODO: Generate and manage token (token Service and Repository)
+
+        emailService.sendValidationEmail(user, "TOKEN");
+    }
+
+    public void confirmEmail(EmailTokenRequest request, User userSecurity) {
+        // TODO: Validate and manage token (token Service and Repository)
+        validation.checkUserEmailValidation(userSecurity, false);
+
+        User user = safeTakeUserByUuid(userSecurity.getUuid());
+        user.setEmailVerified(true);
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+        User user = repository.findByEmail(request.email())
+                    .orElseThrow(() -> new InvalidDatabaseQueryException(
+                            "Usuário não encontrado",
+                            "email não condiz com nenhum usuário",
+                            "email",
+                            request.email()
+                    ));
+        // TODO: Generate Token (token Service and Repository)
+
+        emailService.sendPasswordResetEmail(user, "TOKEN");
+    }
+
+    public User checkResetPassword(CheckResetPasswordRequest request) {
+        // TODO: Validate and manage token (token Service and Repository)
+
+        // TODO: take user by uuid from token
+        return user; 
     }
 
     public User createGuest(CreateGuestRequest request, User hostUser, String password, Event event) {

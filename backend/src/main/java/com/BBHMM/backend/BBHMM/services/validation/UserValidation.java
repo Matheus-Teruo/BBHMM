@@ -63,6 +63,17 @@ public class UserValidation {
         }
     }
 
+    public void checkUserEmailValidation(User user, boolean valid) {
+        if (user.isEmailVerified() ^ valid) {
+            throw new InvalidDatabaseQueryException(
+                valid ? "Usuário com email não validado" : "Usuário com email já validado",
+                valid ? "usuário já tem o email validado" : "Usuário ainda não tem o email validado",
+                "usuário",
+                user.getFullname().split(" ")[0]
+            );
+        }
+    }
+
     public void checkIsNotAGuest(User user) {
         if (repository.existsByIdAndRoleGuest(user.getUuid())) {
             throw new InvalidDatabaseInsertionException(

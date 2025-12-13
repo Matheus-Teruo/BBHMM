@@ -3,6 +3,7 @@ package com.BBHMM.backend.BBHMM.controllers;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
+import com.BBHMM.backend.BBHMM.models.request.EmailTokenRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
@@ -42,6 +43,24 @@ public class UserController {
         User user = service.updateUser(request, userSecurity);
 
         return ResponseEntity.ok(new UserResponse(user));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/send-email")
+    public ResponseEntity<Void> sendEmail(@RequestBody UUID userUuid) {
+        User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.sendEmail(userUuid ,userSecurity);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/confirm-email")
+    public ResponseEntity<Void> validateEmail(@RequestBody EmailTokenRequest request) {
+        User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.confirmEmail(request, userSecurity);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('USER')")

@@ -32,9 +32,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private RoleEnum role;
 
-    @Column(name = "email_verified", nullable = false)
-    private boolean emailVerified = false;
-
     @Column(nullable = false, length = 100)
     private String fullname;
 
@@ -44,6 +41,10 @@ public class User implements UserDetails {
 
     @Column(nullable = false, length = 255)
     private String email;
+
+    @Setter
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
 
     @ManyToMany(mappedBy = "users")
     private Set<Event> events = new HashSet<>();

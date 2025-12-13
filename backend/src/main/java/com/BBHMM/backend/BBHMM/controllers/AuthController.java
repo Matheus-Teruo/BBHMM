@@ -3,7 +3,9 @@ package com.BBHMM.backend.BBHMM.controllers;
 import com.BBHMM.backend.BBHMM.config.security.TokenServiceConfig;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
+import com.BBHMM.backend.BBHMM.models.request.CheckResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.LoginUserRequest;
+import com.BBHMM.backend.BBHMM.models.request.ResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.GuestResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
@@ -80,8 +82,7 @@ public class AuthController {
 
     @PostMapping("/login/guest")
     public ResponseEntity<GuestResponse> loginGuest(
-        @RequestBody @Valid
-        LoginUserRequest request,
+        @RequestBody @Valid LoginUserRequest request,
         HttpServletResponse response) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         var authentication = manager.authenticate(authenticationToken);
@@ -108,11 +109,35 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    private Cookie createCookie(String tokenJWT, int hours) {
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
+        service.resetPassword(request);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/check-reset-password")
+    public ResponseEntity<UserResumeResponse> checkResetPassword(
+        @RequestBody CheckResetPasswordRequest request,
+        HttpServletResponse response
+    ) {
+        User user = service.checkResetPassword(request);
+
+        var authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+        var authentication = manager.authenticate(authenticationToken);
+
+        var tokenJWT = tokenService.generateToken((User) authentication.getPrincipal());
+
+        response.addCookie(createCookie(tokenJWT, 0.4f));
+
+        return ResponseEntity.ok(new UserResumeResponse((User) authentication.getPrincipal()));
+    }
+
+    private Cookie createCookie(String tokenJWT, float hours) {
         Cookie authCookie = new Cookie("auth", tokenJWT);
         authCookie.setHttpOnly(true);
         authCookie.setPath("/");
-        authCookie.setMaxAge(60 * 60 * hours);
+        authCookie.setMaxAge((int) (60 * 60 * hours));
         if (activeProfile.equals("local")) {
             authCookie.setSecure(false);
             authCookie.setAttribute("SameSite", "Lax");
