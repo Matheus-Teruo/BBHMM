@@ -12,6 +12,8 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   const { checkUser, logoutUser } = useUserService();
 
   const login = (user: UserResume) => {
+    setEvent(null);
+    localStorage.removeItem(LOCAL_STORAGE_KEY_EVENT);
     setUser(user);
   };
 

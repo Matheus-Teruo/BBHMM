@@ -17,6 +17,7 @@ import CreateGuestForm from "./pages/guest/CreateGuestForm";
 import PaymentForm from "./pages/payment/PaymentForm";
 import PaymentHeader from "./pages/payment/PaymentHeader";
 import UserInfo from "./pages/auth/UserInfo";
+import EmailValidation from "./pages/auth/EmailValidation";
 
 function AppRouter() {
   const location = useLocation();
@@ -57,6 +58,10 @@ function AppRouter() {
           <Route path="/auth/guest/new" element={<CreateGuestForm />} />
           <Route path="/auth/guest/info" element={<GuestInfo />} />
           <Route path="/auth/user/info" element={<UserInfo />} />
+          <Route
+            path="/auth/user/mail-validation"
+            element={<EmailValidation />}
+          />
         </Routes>
       )}
     </>

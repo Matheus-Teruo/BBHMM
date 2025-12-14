@@ -105,6 +105,20 @@ function UserProfile() {
     navigate("/auth/login");
   };
 
+  function handleMail() {
+    if (user && user !== "unlogged") {
+      navigate("/auth/user/mail-validation", {
+        state: {
+          userUuid: user.uuid,
+          backgroundLocation: {
+            pathname: location.pathname,
+            search: location.search,
+          },
+        },
+      });
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <div className={styles.field}>
@@ -192,21 +206,28 @@ function UserProfile() {
       <div className={styles.field}>
         <p className={styles.title}>E-mail</p>
         {update !== "email" ? (
-          <div className={styles.value} onClick={() => handleUpdate("email")}>
-            <EmailSVG />
-            <p>{state.email}</p>
+          <>
+            <div className={styles.value} onClick={() => handleUpdate("email")}>
+              <EmailSVG />
+              <p>{state.email}</p>
+            </div>
             {state.emailVerified ? (
-              <>
+              <div className={styles.mailConfirmation}>
                 <CheckCircleSVG className={styles.mailVerified} />
-                <p className={styles.mailVerified}>Validado</p>
-              </>
+                <p className={styles.mailVerified}>Email validado</p>
+              </div>
             ) : (
-              <>
+              <div
+                className={styles.mailConfirmation}
+                onClick={() => handleMail()}
+              >
                 <AlertCircleSVG className={styles.mailUnverified} />
-                <p className={styles.mailUnverified}>Confirmação pendente</p>
-              </>
+                <p className={styles.mailUnverified}>
+                  Confirmação de email pendente
+                </p>
+              </div>
             )}
-          </div>
+          </>
         ) : (
           <div className={styles.update}>
             <AuthInput

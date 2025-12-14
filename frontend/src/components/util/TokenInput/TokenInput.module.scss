@@ -1,0 +1,63 @@
+@use "@styles/variables" as *;
+
+.inputGroup {
+  position: relative;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  gap: 6px;
+
+  input {
+    border: none;
+    padding: 0 8px;
+    width: 26px;
+    height: 42px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    background-color: $color-gray-000;
+    border-radius: $border-radius;
+  }
+
+  &.unfocOK {
+    border-color: $color-accepted;
+    transition: border-color 0.4s;
+
+    input {
+      color: $color-accepted;
+      transition: color 0.4s;
+    }
+  }
+
+  &.unfocNO {
+    border-color: $color-unaccepted;
+    transition: border-color 0.4s;
+
+    input {
+      color: $color-unaccepted;
+      transition: color 0.4s;
+    }
+  }
+
+  &:focus-within {
+    border-color: $color-gray-900;
+
+    input {
+      color: $color-gray-900;
+    }
+  }
+
+  .messageError {
+    z-index: 20;
+    font-size: 0.75rem;
+    position: absolute;
+    right: 6px;
+    top: 30px;
+    color: $color-primary-4;
+    background-color: $color-primary-1;
+    padding: 2px 5px;
+    max-width: 200px;
+    border-radius: $border-radius;
+  }
+}
