@@ -39,14 +39,15 @@ function EmailValidation() {
     setTouched(false);
     if (userUuid) {
       const response = await validateEmail({ token: value });
-      if (response && !isMessage<void>(response)) {
+      if (!isMessage(response)) {
         addNotification({
           title: "Email Confirmado",
-          message: `Confira seu email, possivelmente sua caixa de spam`,
+          message:
+            "Parabens, obrigado por confirmar o email, agora esse email está vinculado a está conta",
           type: MessageType.INFO,
         });
-        setTimer(WAIT_TIME);
-      } else if (response) {
+        closePopup();
+      } else if (isMessage(response)) {
         const message = response;
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
@@ -60,14 +61,14 @@ function EmailValidation() {
     setTouched(false);
     if (userUuid) {
       const response = await verifyEmail(userUuid);
-      if (response && !isMessage<void>(response)) {
+      if (!isMessage(response)) {
         addNotification({
           title: "Email enviado",
-          message: `Confira seu email, possivelmente sua caixa de spam`,
+          message: "Confira seu email, possivelmente sua caixa de spam",
           type: MessageType.INFO,
         });
         setTimer(WAIT_TIME);
-      } else if (response) {
+      } else if (isMessage(response)) {
         const message = response;
         if (message.invalidFields) setMessageError(message.invalidFields);
       }

@@ -210,7 +210,7 @@ function SignUp() {
                 id="pixKey"
                 placeholder="Chave Pix"
                 showStatus={touched}
-                message={messageError["email"]}
+                message={messageError["pixKey"]}
               />
             </div>
             <div className={styles.field}>
@@ -228,7 +228,7 @@ function SignUp() {
                 id="bankAccount"
                 placeholder="Nome do banco"
                 showStatus={touched}
-                message={messageError["email"]}
+                message={messageError["bankAccount"]}
               />
             </div>
           </div>

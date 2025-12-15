@@ -30,7 +30,7 @@ const useTokenService = () => {
     async (userUuid: string): Promise<void | Message | null> =>
       safeRequest(() =>
         api
-          .post<void>("/users/confirm-email", userUuid)
+          .post<void>("/users/verify-email", { userUuid: userUuid })
           .then((res) => res.data),
       ),
     [api, safeRequest],

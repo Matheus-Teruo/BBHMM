@@ -19,6 +19,7 @@ import PaymentHeader from "./pages/payment/PaymentHeader";
 import UserInfo from "./pages/auth/UserInfo";
 import EmailValidation from "./pages/auth/EmailValidation";
 import ForgotPasswordForm from "./pages/auth/ForgotPasswordForm";
+import ForgotPasswordRedirect from "./pages/auth/ForgotPasswordRedirect";
 
 function AppRouter() {
   const location = useLocation();
@@ -41,15 +42,19 @@ function AppRouter() {
           <Route path="invites" element={<EventInvitationPage />} />
           <Route path="auth" element={<AuthMain />}>
             <Route path="user" element={<UserProfile />} />
-            <Route
-              path="guest/:guestName/:password"
-              element={<GuestRedirect />}
-            />
           </Route>
         </Route>
         <Route path="/auth" element={<AuthMain />}>
           <Route path="signup" element={<Signup />} />
           <Route path="login" element={<Login />} />
+          <Route
+            path="user/reset-password/:email/:token"
+            element={<ForgotPasswordRedirect />}
+          />
+          <Route
+            path="guest/redirect/:guestName/:token"
+            element={<GuestRedirect />}
+          />
         </Route>
       </Routes>
       {backgroundLocation && (

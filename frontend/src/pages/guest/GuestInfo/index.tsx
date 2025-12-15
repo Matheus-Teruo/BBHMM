@@ -34,7 +34,7 @@ function GuestInfo() {
       <div className={styles.modal}>
         <h2>Convidado criado</h2>
         <p>Passe o seguinte link para o convidado acessar o evento</p>
-        <p>{`${window.location.origin}/auth/guest/${username}/${token}`}</p>
+        <p>{`${window.location.origin}/auth/guest/redirect/${username}/${token}`}</p>
       </div>
       <GlassBackground onClick={() => closePopup()} />
     </>
