@@ -48,6 +48,7 @@ export interface UserResume {
   uuid: string;
   firstname: string;
   role: Role;
+  emailVerified: boolean;
 }
 
 export interface UserList {

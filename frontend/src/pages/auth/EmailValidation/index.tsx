@@ -12,7 +12,7 @@ import {
 } from "@context/AlertContext/useAlertContext";
 import { timerFormater } from "@/util/timerFormater";
 
-const WAIT_TIME = 180;
+const WAIT_TIME = 120;
 
 function EmailValidation() {
   const [token, setToken] = useState<string>("");

@@ -85,7 +85,6 @@ function UserProfile() {
         message: `Atualização no usuário ${user.username}`,
         type: MessageType.OK,
       });
-      dispatch({ type: "RESET" });
       setUpdate("");
     } else if (user) {
       const message = user;

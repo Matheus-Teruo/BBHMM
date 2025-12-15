@@ -17,7 +17,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { UserResume } from "@data/User";
+import { Role, UserResume } from "@data/User";
 import {
   initialUserState,
   loginPayload,
@@ -55,6 +55,14 @@ function Login() {
         message: `Usuário ${state.username} loggado`,
         type: MessageType.OK,
       });
+      if (user.role === Role.USER && !user.emailVerified) {
+        addNotification({
+          title: "Valide seu email",
+          message:
+            "Sua conta não tem um email validado, Na tela de usuário valide seu email",
+          type: MessageType.WARNING,
+        });
+      }
       login(user);
       dispatch({ type: "RESET" });
       navigate("/");
