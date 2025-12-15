@@ -66,6 +66,17 @@ function Login() {
     setWaitingFetch(false);
   };
 
+  const handleForgotPassword = async () => {
+    navigate("/auth/forgot-password", {
+      state: {
+        backgroundLocation: {
+          pathname: location.pathname,
+          search: location.search,
+        },
+      },
+    });
+  };
+
   return (
     <>
       <h1 className={styles.title}>Entrar</h1>
@@ -109,10 +120,13 @@ function Login() {
         </div>
       </form>
       <div className={styles.footer}>
-        <p>Não esta cadastrado?</p>
-        <Link to="/auth/signup">
-          <span>Cadastre-se</span>
-        </Link>
+        <span onClick={() => handleForgotPassword()}>Esqueci minha senha</span>
+        <div className={styles.footerSignUp}>
+          <p>Não esta cadastrado?</p>
+          <Link to="/auth/signup">
+            <span>Cadastre-se</span>
+          </Link>
+        </div>
       </div>
     </>
   );

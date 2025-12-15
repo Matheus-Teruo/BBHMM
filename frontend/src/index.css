@@ -9,7 +9,7 @@ body {
 
 h1 {
   @media (max-width: 768px) {
-    font-size: small;
+    font-size: 1.8rem;
   }
 }
 

@@ -18,6 +18,7 @@ import PaymentForm from "./pages/payment/PaymentForm";
 import PaymentHeader from "./pages/payment/PaymentHeader";
 import UserInfo from "./pages/auth/UserInfo";
 import EmailValidation from "./pages/auth/EmailValidation";
+import ForgotPasswordForm from "./pages/auth/ForgotPasswordForm";
 
 function AppRouter() {
   const location = useLocation();
@@ -61,6 +62,10 @@ function AppRouter() {
           <Route
             path="/auth/user/mail-validation"
             element={<EmailValidation />}
+          />
+          <Route
+            path="/auth/forgot-password"
+            element={<ForgotPasswordForm />}
           />
         </Routes>
       )}
