@@ -4,6 +4,7 @@ import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.EmailTokenRequest;
+import com.BBHMM.backend.BBHMM.models.request.EmailValidaitonRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
@@ -47,9 +48,9 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/verify-email")
-    public ResponseEntity<Void> verifyEmail(@RequestBody UUID userUuid) {
+    public ResponseEntity<Void> verifyEmail(@RequestBody EmailValidaitonRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        service.verifyEmail(userUuid ,userSecurity);
+        service.verifyEmail(request ,userSecurity);
 
         return ResponseEntity.noContent().build();
     }

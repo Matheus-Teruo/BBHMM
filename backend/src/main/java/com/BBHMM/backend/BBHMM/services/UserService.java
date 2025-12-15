@@ -9,6 +9,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CheckResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.EmailTokenRequest;
+import com.BBHMM.backend.BBHMM.models.request.EmailValidaitonRequest;
 import com.BBHMM.backend.BBHMM.models.request.ResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
@@ -145,12 +146,11 @@ public class UserService {
         return user;
     }
 
-    public void verifyEmail(UUID userUuid, User userSecurity) {
-        validation.checkUserAuthentication(userUuid, userSecurity);
+    public void verifyEmail(EmailValidaitonRequest request, User userSecurity) {
+        validation.checkUserAuthentication(request.userUuid(), userSecurity);
         validation.checkUserEmailValidation(userSecurity, false);
-        User user = safeTakeUserByUuid(userSecurity.getUuid());
-        user.setEmailVerified(true);
-        Token token = tokenService.createToken(null, user);
+        User user = safeTakeUserByUuid(request.userUuid());
+        Token token = tokenService.createToken(TokenType.CONFIRM_EMAIL, user);
 
         emailService.sendValidationEmail(user, token.getToken());
     }

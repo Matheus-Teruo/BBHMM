@@ -64,7 +64,7 @@ public class EmailService {
             Context context = new Context();
             context.setVariable("userName", user.getFullname());
             
-            String resetLink = "http://" + domain + "/reset-password?token=" + resetToken; 
+            String resetLink = "http://" + domain + "/auth/user/reset-password/" + user.getEmail() + "/" + resetToken; 
             context.setVariable("resetLink", resetLink);
 
             String htmlContent = templateEngine.process("email-templates/reset-password-email", context);
