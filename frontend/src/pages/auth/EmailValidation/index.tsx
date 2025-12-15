@@ -25,8 +25,9 @@ function EmailValidation() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { userUuid, backgroundLocation } = location.state as {
+  const { userUuid, userMail, backgroundLocation } = location.state as {
     userUuid: string;
+    userMail: string;
     backgroundLocation?: {
       pathname: string;
       search: string;
@@ -114,7 +115,8 @@ function EmailValidation() {
       <div className={styles.modal}>
         <h2>Validação do email</h2>
         <div className={styles.tokenAction}>
-          <p>Digite o Token que foi enviado para seu email</p>
+          <p>Digite o Token que foi enviado para seu email:</p>
+          <span>{userMail}</span>
           <TokenInput
             id="tokenValue"
             value={token}

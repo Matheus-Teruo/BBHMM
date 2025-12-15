@@ -110,6 +110,7 @@ function UserProfile() {
       navigate("/auth/user/mail-validation", {
         state: {
           userUuid: user.uuid,
+          userMail: state.email,
           backgroundLocation: {
             pathname: location.pathname,
             search: location.search,
