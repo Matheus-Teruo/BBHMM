@@ -67,7 +67,7 @@ public class UserValidation {
         if (user.isEmailVerified() ^ valid) {
             throw new InvalidDatabaseQueryException(
                 valid ? "Usuário com email não validado" : "Usuário com email já validado",
-                valid ? "usuário já tem o email validado" : "Usuário ainda não tem o email validado",
+                valid ? "usuário ainda não tem o email validado" : "usuário já tem o email validado" ,
                 "usuário",
                 user.getFullname().split(" ")[0]
             );

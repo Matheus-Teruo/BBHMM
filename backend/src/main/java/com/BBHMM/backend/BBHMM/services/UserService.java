@@ -165,14 +165,17 @@ public class UserService {
 
     public void resetPassword(ResetPasswordRequest request) {
         User user = findUserByEmail(request.email());
+        validation.checkUserEmailValidation(user, true);
         Token token = tokenService.createToken(TokenType.RESET_PASSWORD, user);
 
         emailService.sendPasswordResetEmail(user, token.getToken());
     }
 
-    public User checkResetPassword(CheckResetPasswordRequest request) {
+    public User checkResetPassword(CheckResetPasswordRequest request, String password) {
         User user = findUserByEmail(request.email());
         tokenService.validateToken(TokenType.RESET_PASSWORD, request.token().toString(), user.getUuid());
+        user.updatePassword(passwordEncoder.encode(password));
+        repository.saveAndFlush(user);
         return user;
     }
 

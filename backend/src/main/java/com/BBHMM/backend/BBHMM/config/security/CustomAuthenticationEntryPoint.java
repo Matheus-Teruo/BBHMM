@@ -16,6 +16,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                         AuthenticationException authException) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Authentication required.\"}");
+        response.getWriter().write("{\"error\": \"Não autorizado\", \"message\": \"A autenticação é necessário.\"}");
     }
 }

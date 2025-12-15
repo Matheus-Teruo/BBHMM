@@ -121,9 +121,10 @@ public class AuthController {
         @RequestBody CheckResetPasswordRequest request,
         HttpServletResponse response
     ) {
-        User user = service.checkResetPassword(request);
+        String password = service.generatePassword();
+        User user = service.checkResetPassword(request, password);
 
-        var authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+        var authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), password);
         var authentication = manager.authenticate(authenticationToken);
 
         var tokenJWT = tokenService.generateToken((User) authentication.getPrincipal());
