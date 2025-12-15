@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tokens")
@@ -32,6 +33,9 @@ public class Token {
     
     @Column(name = "time_stamp", nullable = false, unique = true, length = 50)
     private LocalDateTime timestamp;
+
+    @Setter
+    private boolean valid;
     
     @ManyToOne
     @JoinColumn(name = "uuid_user", nullable = false)
@@ -41,6 +45,7 @@ public class Token {
         this.token = token;
         this.type = type;
         this.timestamp = LocalDateTime.now();
+        this.valid = true;
         this.user = user;
     }
 }

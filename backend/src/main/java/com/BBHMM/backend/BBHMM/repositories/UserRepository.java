@@ -3,7 +3,6 @@ package com.BBHMM.backend.BBHMM.repositories;
 import com.BBHMM.backend.BBHMM.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
@@ -37,10 +36,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         AND e.uuid = :eventUuid
         ) THEN TRUE ELSE FALSE END
     """)
-    boolean isUserParticipantInEvent(
-        @Param("userUuid") UUID userUuid,
-        @Param("eventUuid") UUID eventUuid
-    );
+    boolean isUserParticipantInEvent(UUID userUuid, UUID eventUuid);
 
     boolean existsByUsername(String username);
 

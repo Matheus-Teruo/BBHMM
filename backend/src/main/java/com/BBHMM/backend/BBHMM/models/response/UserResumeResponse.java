@@ -7,14 +7,16 @@ import com.BBHMM.backend.BBHMM.models.User;
 public record UserResumeResponse(
     UUID uuid,
     String firstname,
-    String role
+    String role,
+    boolean emailVerified 
 ) {
 
     public UserResumeResponse(User user) {
         this(
             user.getUuid(),
             user.getFullname().trim().split("\\s+")[0],
-            user.getRole().toString()
+            user.getRole().toString(),
+            user.isEmailVerified()
         );
     }
 }

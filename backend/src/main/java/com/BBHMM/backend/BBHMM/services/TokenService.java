@@ -2,6 +2,7 @@ package com.BBHMM.backend.BBHMM.services;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.TokenRespository;
 import com.BBHMM.backend.BBHMM.services.validation.TokenValidation;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,7 +24,10 @@ public class TokenService {
     private final TokenRespository respository;
     private final TokenValidation validation;
     
+    @Transactional
     public Token createToken(TokenType type, User user) {
+        LocalDateTime limitTime = LocalDateTime.now().minusMinutes(2);
+        validation.checkLastValidToken(user, type, limitTime);
         String tokenValue;
         switch (type) {
             case TokenType.CONFIRM_EMAIL:
@@ -36,6 +41,13 @@ public class TokenService {
             default:
                 tokenValue = "";
                 break;
+        }
+        
+        LocalDateTime rangeTimeForLast = LocalDateTime.now().minusMinutes(10);
+        Optional<Token> lastToken = respository.findLastValidByUserAndType(user.getUuid(), type, rangeTimeForLast);
+        if (lastToken.isPresent()) {
+            System.out.println(lastToken.get().getToken());
+            lastToken.get().setValid(false);
         }
         Token token = new Token(tokenValue, type, user);
         respository.save(token);

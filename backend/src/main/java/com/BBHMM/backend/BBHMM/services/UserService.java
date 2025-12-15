@@ -155,6 +155,7 @@ public class UserService {
         emailService.sendValidationEmail(user, token.getToken());
     }
 
+    @Transactional
     public void confirmEmail(EmailTokenRequest request, User userSecurity) {
         tokenService.validateToken(TokenType.CONFIRM_EMAIL, request.token(), userSecurity.getUuid());
         validation.checkUserEmailValidation(userSecurity, false);
