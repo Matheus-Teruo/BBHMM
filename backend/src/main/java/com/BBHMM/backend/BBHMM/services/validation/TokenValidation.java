@@ -31,7 +31,7 @@ public class TokenValidation {
     public void checkExpireToken(TokenType tokenType, Token token, LocalDateTime now ) {
         switch (tokenType) {
             case TokenType.CONFIRM_EMAIL:
-                if (now.plusMinutes(3).isAfter(token.getTimestamp())) {
+                if (now.isAfter(token.getTimestamp().plusMinutes(3))) {
                     throw new InvalidDatabaseQueryException(
                         "Token expirado",
                         "tente enviar outra requisição",
@@ -40,7 +40,7 @@ public class TokenValidation {
                 }
                 break;
             case TokenType.RESET_PASSWORD:
-                if (now.plusMinutes(10).isAfter(token.getTimestamp())) {
+                if (now.isAfter(token.getTimestamp().plusMinutes(10))) {
                     throw new InvalidDatabaseQueryException(
                         "Token expirado",
                         "tente enviar outra requisição",
