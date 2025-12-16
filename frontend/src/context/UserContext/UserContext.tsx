@@ -1,4 +1,4 @@
-import { UserResume } from "@data/User";
+import { Role, UserResume } from "@data/User";
 import React, { useCallback, useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
 import useUserService from "@service/useUserService";
@@ -12,8 +12,10 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   const { checkUser, logoutUser } = useUserService();
 
   const login = (user: UserResume) => {
-    setEvent(null);
-    localStorage.removeItem(LOCAL_STORAGE_KEY_EVENT);
+    if (user.role === Role.USER) {
+      setEvent(null);
+      localStorage.removeItem(LOCAL_STORAGE_KEY_EVENT);
+    }
     setUser(user);
   };
 
