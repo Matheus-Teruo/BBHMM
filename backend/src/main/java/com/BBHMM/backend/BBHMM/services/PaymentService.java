@@ -30,7 +30,6 @@ public class PaymentService {
 
     private final BillValidation billValidation;
     private final BillRepository billRepository;
-    private final UserService userService;
     private final EventService eventService;
 
     public BigDecimal getTotal(UUID eventUuid, User userOwner) {
@@ -74,15 +73,15 @@ public class PaymentService {
 
     @Transactional
     public void payOffDebit(PayBillRequest request, User userOwner) {
-        var user = userService.safeTakeUserByUuid(userOwner.getUuid());
         var event = eventService.safeTakeEventByUuid(request.eventuUuid());
-        billValidation.checkUserParticipationInEvent(user, event.getUuid());
+        billValidation.checkUserParticipationInEvent(userOwner, event.getUuid());
+        billValidation.checkUsersParticipationInEvent(event.getUuid(), List.of(request.userToPayUuid(), request.userToReceiveUuid()));
         List<Bill> receiverBills = billRepository.findBillsByPayerUuidAndNotPaid(request.userToReceiveUuid(), event.getUuid());
         List<Participants> payerParticipants = billRepository.findUnpaidParticipantsByUser(request.userToPayUuid(), event.getUuid());
         billValidation.checkValueOfPaymentMatches(receiverBills, request.value(), payerParticipants);
 
-        Bill bill = new Bill(request, event, user);
-        Participants participants = new Participants(request, user, bill);
+        Bill bill = new Bill(request, event);
+        Participants participants = new Participants(request, bill);
         bill.addParticipant(participants);
 
         payOffBills(receiverBills, request.value());

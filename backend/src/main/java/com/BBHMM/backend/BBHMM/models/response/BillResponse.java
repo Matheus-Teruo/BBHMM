@@ -11,7 +11,7 @@ public record BillResponse(
     String billName,
     String description,
     BigDecimal value,
-    UserResponse payer,
+    UUID payerUuid,
     List<ParticipantResponse> participants
 ) {
     public BillResponse(Bill bill) {
@@ -19,7 +19,7 @@ public record BillResponse(
             bill.getName(),
             bill.getDescription(),
             bill.getValue(),
-            new UserResponse(bill.getPayer()),
+            bill.getPayerUuid(),
             bill.getParticipants().stream().map(ParticipantResponse::new).toList()
         );
     }

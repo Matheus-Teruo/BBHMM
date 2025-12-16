@@ -45,8 +45,8 @@ public class Participants {
         this.paid = false;
     }
 
-    public Participants(PayBillRequest request, User user, Bill bill) {
-        this.userUuid = user.getUuid();
+    public Participants(PayBillRequest request, Bill bill) {
+        this.userUuid = request.userToReceiveUuid();
         this.bill = bill;
         this.value = request.value();
         this.paidValue = request.value();

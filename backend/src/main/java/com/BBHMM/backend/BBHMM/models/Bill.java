@@ -27,12 +27,8 @@ public class Bill {
     @Column(nullable = false)
     private BigDecimal value;
 
-    @Column(name = "uuid_payer", insertable = false, updatable = false)
+    @Column(name = "uuid_payer", nullable = false)
     private UUID payerUuid;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uuid_payer", nullable = false)
-    private User payer;
 
     @Column(name = "uuid_event", insertable = false, updatable = false)
     private UUID eventUuid;
@@ -62,15 +58,15 @@ public class Bill {
         }
         this.value = request.value();
         this.event = event;
-        this.payer = user;
+        this.payerUuid = user.getUuid();
     }
 
-    public Bill(PayBillRequest request, Event event, User user) {
+    public Bill(PayBillRequest request, Event event) {
         this.name = "Pagamento";
         this.value = request.value();
         this.debitAmount = request.value();
         this.event = event;
-        this.payer = user;
+        this.payerUuid = request.userToPayUuid();
         this.type = BillType.PAYMENT;
         this.paid = true;
     }
