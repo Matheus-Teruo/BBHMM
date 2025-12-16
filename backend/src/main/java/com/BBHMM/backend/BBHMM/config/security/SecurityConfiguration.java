@@ -65,7 +65,7 @@ public class SecurityConfiguration {
 
   private static final String[] AUTHORIZED_POST_ENDPOINTS_ALL = {
       "/auth/login",
-      "/auth/login/guest"
+      "/auth/login/guest",
       "/auth/signup",
       "/auth/reset-password",
       "/auth/check-reset-password"
