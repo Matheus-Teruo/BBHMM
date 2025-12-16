@@ -35,6 +35,7 @@ function ForgotPasswordRedirect() {
           uuid: response.uuid,
           firstname: response.firstname,
           role: response.role,
+          emailVerified: response.emailVerified,
         });
         navigate("/auth/user");
       } else if (isMessage(response)) {

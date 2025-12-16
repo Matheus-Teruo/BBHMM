@@ -35,6 +35,7 @@ function GuestRedirect() {
           uuid: guestResponse.uuid,
           firstname: guestResponse.username,
           role: Role.GUEST,
+          emailVerified: false,
         });
         navigate(`/event/${guestResponse.event.uuid}/bills`);
       } else if (isMessage(guestResponse)) {

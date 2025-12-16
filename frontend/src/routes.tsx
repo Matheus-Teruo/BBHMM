@@ -20,6 +20,7 @@ import UserInfo from "./pages/auth/UserInfo";
 import EmailValidation from "./pages/auth/EmailValidation";
 import ForgotPasswordForm from "./pages/auth/ForgotPasswordForm";
 import ForgotPasswordRedirect from "./pages/auth/ForgotPasswordRedirect";
+import UpgradeGuestForm from "./pages/guest/UpgradeGuestForm";
 
 function AppRouter() {
   const location = useLocation();
@@ -63,6 +64,7 @@ function AppRouter() {
           <Route path="/invites/new/:eventUUID" element={<InviteUserForm />} />
           <Route path="/auth/guest/new" element={<CreateGuestForm />} />
           <Route path="/auth/guest/info" element={<GuestInfo />} />
+          <Route path="/auth/guest/upgrade" element={<UpgradeGuestForm />} />
           <Route path="/auth/user/info" element={<UserInfo />} />
           <Route
             path="/auth/user/mail-validation"

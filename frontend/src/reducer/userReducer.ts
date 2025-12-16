@@ -5,7 +5,13 @@ import {
   regexPassword,
 } from "@/util/regex";
 import { CreatePix, UpdatePix } from "@data/Pix";
-import User, { LoginUser, SignupUser, UpdateUser } from "@data/User";
+import User, {
+  LoginUser,
+  Role,
+  SignupUser,
+  UpdateUser,
+  UpgradeGuestToUser,
+} from "@data/User";
 import {
   createPixPayload,
   initialPixState,
@@ -17,6 +23,7 @@ type UserState = {
   username: string;
   password: string;
   confirmPassword: string;
+  role: Role;
   fullname: string;
   email: string;
   emailVerified: boolean;
@@ -47,6 +54,7 @@ export const initialUserState: UserState = {
   fullname: "",
   password: "",
   confirmPassword: "",
+  role: Role.USER,
   email: "",
   emailVerified: true,
   pix: initialPixState,
@@ -92,6 +100,7 @@ export function userReducer(state: UserState, action: UserAction): UserState {
         ...state,
         uuid: action.payload.uuid,
         username: action.payload.username,
+        role: action.payload.role,
         fullname: action.payload.fullname,
         email: action.payload.email,
         emailVerified: action.payload.emailVerified,
@@ -143,4 +152,9 @@ export const updateUserPayload = (
   }
 
   return payload as UpdateUser;
+};
+
+export const upgradeGuestPayload = (state: UserState): UpgradeGuestToUser => {
+  const { uuid, password, email } = state;
+  return { uuid, password, email } as UpgradeGuestToUser;
 };

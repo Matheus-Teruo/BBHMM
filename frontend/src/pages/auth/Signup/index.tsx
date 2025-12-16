@@ -78,6 +78,7 @@ function SignUp() {
           uuid: user.uuid,
           firstname: user.fullname.split(" ")[0],
           role: user.role,
+          emailVerified: user.emailVerified,
         });
         dispatch({ type: "RESET" });
         navigate("/");
