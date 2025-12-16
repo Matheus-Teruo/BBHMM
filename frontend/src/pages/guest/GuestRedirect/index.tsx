@@ -15,7 +15,7 @@ function GuestRedirect() {
   const [first, setfirst] = useState<boolean>(true);
   const { loginGuest } = useUserService();
   const { addNotification } = useAlertsContext();
-  const { user, login } = useUserContext();
+  const { user, login, selectEvent } = useUserContext();
   const { guestName, token } = useParams();
   const navigate = useNavigate();
 
@@ -37,6 +37,7 @@ function GuestRedirect() {
           role: Role.GUEST,
           emailVerified: false,
         });
+        selectEvent(guestResponse.event);
         navigate(`/event/${guestResponse.event.uuid}/bills`);
       } else if (isMessage(guestResponse)) {
         addNotification({
