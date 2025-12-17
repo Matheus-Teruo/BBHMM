@@ -1,5 +1,4 @@
 import Participants from "./Participants";
-import { UserResume } from "./User";
 
 export interface CreateBill {
   name: string;
@@ -28,7 +27,7 @@ export default interface Bill {
   billName: string;
   description: string;
   value: number;
-  payer: UserResume;
+  payerUuid: string;
   participants: Participants[];
 }
 

@@ -59,9 +59,10 @@ function FormBill({
   useEffect(() => {
     if (isUserLogged(user) && eventUuid) {
       dispatch({ type: "SET_EVENT_UUID", payload: eventUuid });
-      dispatch({ type: "SET_PAYER_UUID", payload: user.uuid });
       if (form === "Update") {
         requestBill();
+      } else if (form === "Create") {
+        dispatch({ type: "SET_PAYER_UUID", payload: user.uuid });
       }
     }
   }, [form]);

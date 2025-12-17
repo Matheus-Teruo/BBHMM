@@ -74,6 +74,7 @@ export function billReducer(state: BillState, action: BillAction): BillState {
         name: action.payload.billName,
         description: action.payload.description,
         value: action.payload.value,
+        payerUuid: action.payload.payerUuid,
       };
     }
     case "RESET":
