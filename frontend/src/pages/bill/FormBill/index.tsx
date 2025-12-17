@@ -187,7 +187,7 @@ function FormBill({
             {form === "Update" && !confirmDelete ? (
               <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
             ) : (
-              <div />
+              form === "Create" && <div />
             )}
             {confirmDelete && (
               <div className={styles.deleteBody}>

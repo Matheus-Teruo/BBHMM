@@ -46,6 +46,24 @@
       display: flex;
       justify-content: space-between;
 
+      .deleteBody {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .buttonCancelDelete {
+          svg {
+            stroke: $color-unaccepted;
+          }
+        }
+
+        .buttonConfirmDelete {
+          svg {
+            stroke: $color-accepted;
+          }
+        }
+      }
+
       button {
         padding: 6px 10px;
         margin-left: 4px;
