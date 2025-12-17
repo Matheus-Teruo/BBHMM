@@ -170,9 +170,7 @@ public class BillService {
 
         currentParticipants.addAll(toAdd);
 
-        BigDecimal share = value.divide(BigDecimal.valueOf(currentParticipants.size()), RoundingMode.HALF_UP);
-
-        updatePaidValue(currentParticipants, bill, share);
+        updatePaidValue(currentParticipants, bill, value);
 
         bill.setParticipants(currentParticipants);
     }
@@ -201,18 +199,21 @@ public class BillService {
             return;
         }
 
-        BigDecimal share = value.divide(
-                BigDecimal.valueOf(currentParticipants.size()),
-                RoundingMode.HALF_UP
-        );
-
-        updatePaidValue(currentParticipants, bill, share);
+        updatePaidValue(currentParticipants, bill, value);
 
         bill.setParticipants(currentParticipants);
     }
 
-    private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal share) {
+    private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal value) {
+        int size = currentParticipants.size();
+        BigDecimal currentValue = value;
         for (Participants participation : currentParticipants) {
+            BigDecimal share = currentValue.divide(
+                BigDecimal.valueOf(size--),
+                2,
+                RoundingMode.DOWN
+            );
+            currentValue = currentValue.subtract(share);
             participation.setValue(share);
             BigDecimal userDebit = share;
             List<Bill> userBills = repository.findBillsByPayerUuidAndNotPaid(participation.getUserUuid(), bill.getEventUuid());
