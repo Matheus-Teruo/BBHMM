@@ -2,6 +2,7 @@ package com.BBHMM.backend.BBHMM.services;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
+import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
@@ -35,12 +36,15 @@ public class BillService {
 
     @Transactional
     public Bill createBill(CreateBillRequest request) {
+        User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var user = userService.safeTakeUserByUuid(request.payerUuid());
         var event = eventService.safeTakeEventByUuid(request.eventUuid());
+        validation.checkUserParticipationInEvent(userSecurity, event.getUuid());
         validation.checkUserParticipationInEvent(user, event.getUuid());
         validation.checkEventFinished(event);
 
         var bill = new Bill(request, event, user);
+        updateBillPaidValue(bill, event);
         repository.save(bill);
 
         return bill;
@@ -135,7 +139,7 @@ public class BillService {
         List<Participants> currentParticipants = bill.getParticipants();
 
         reversePaidValue(currentParticipants, bill);
-
+        reverseBillPaidValue(bill);
         repository.delete(bill);
     }
 
@@ -257,6 +261,55 @@ public class BillService {
                 if (undoPaidValue.compareTo(BigDecimal.ZERO) == 0) {
                     break;
                 }
+            }
+        }
+    }
+
+    private void updateBillPaidValue(Bill bill, Event event) {
+        List<Participants> userParticipants = repository.findUnpaidParticipantsByUser(bill.getPayerUuid(), event.getUuid());
+        BigDecimal userDebit = bill.getValue();
+        for (Participants userParticipation : userParticipants) {
+            BigDecimal debtParticipation = userParticipation.getRemainingBalance();
+            if (userDebit.compareTo(debtParticipation) < 0) {
+                bill.completeBill();
+                userParticipation.addPaidValue(userDebit);
+                userDebit = BigDecimal.ZERO;
+            } else if (userDebit.compareTo(debtParticipation) >= 0) {
+                userParticipation.completeParticipation();
+                if (userDebit.compareTo(debtParticipation) == 0) {
+                    bill.completeBill();
+                } else {
+                    bill.addToDebit(debtParticipation);
+                }
+                userDebit = userDebit.subtract(debtParticipation);
+            }
+            if (userDebit.compareTo(BigDecimal.ZERO) == 0) {
+                bill.setPaid(true);
+                break;
+            }
+        }
+    }
+
+    private void reverseBillPaidValue(Bill bill) {
+        List<Participants> userParticipants = repository.findPaidParticipantsByUser(bill.getPayerUuid(), bill.getEventUuid());
+        BigDecimal undoDebitAmount = bill.getDebitAmount();
+        for (Participants userParticipation : userParticipants) {
+            BigDecimal undoDebtBill = userParticipation.getPaidValue();
+            if (undoDebitAmount.compareTo(undoDebtBill) < 0) {
+                bill.undoCompleteBill();
+                userParticipation.subtractPaidValue(undoDebitAmount);
+                undoDebitAmount = BigDecimal.ZERO;
+            } else if (undoDebitAmount.compareTo(undoDebtBill) >= 0) {
+                userParticipation.undoParticipation();
+                if (undoDebitAmount.compareTo(undoDebtBill) == 0) {
+                    bill.undoCompleteBill();
+                } else {
+                    bill.subtractToDebit(undoDebtBill);
+                }
+                undoDebitAmount = undoDebitAmount.subtract(undoDebtBill);
+            }
+            if (undoDebitAmount.compareTo(BigDecimal.ZERO) == 0) {
+                break;
             }
         }
     }

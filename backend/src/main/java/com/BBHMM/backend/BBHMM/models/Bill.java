@@ -41,6 +41,7 @@ public class Bill {
     @Column(name = "debit_amount", nullable = false)
     private BigDecimal debitAmount = BigDecimal.ZERO;
 
+    @Setter
     @Column(nullable = false)
     private Boolean paid = false;
 
