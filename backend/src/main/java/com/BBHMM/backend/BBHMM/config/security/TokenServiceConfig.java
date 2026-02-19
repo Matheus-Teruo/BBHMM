@@ -5,28 +5,29 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
+import lombok.RequiredArgsConstructor;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
 import com.BBHMM.backend.BBHMM.models.User;
 
 @Configuration
+@EnableConfigurationProperties(TokenProperties.class)
+@RequiredArgsConstructor
 public class TokenServiceConfig {
 
-  @Value("${api.security.token.secret}")
-  private String secret;
-
-  @Value("${api.security.auth.issuer}")
-  private String issuer;
+  private final TokenProperties props;
 
   public String generateToken(User user) {
     try {
-      Algorithm algorithm = Algorithm.HMAC256(secret);
+      Algorithm algorithm = Algorithm.HMAC256(props.token().security());
       return JWT.create()
-          .withIssuer(issuer)
+          .withIssuer(props.issuer())
           .withSubject(user.getUsername())
           .withClaim("id", user.getUuid().toString())
           .withExpiresAt(dataExpired())
@@ -39,8 +40,8 @@ public class TokenServiceConfig {
   public UUID recoverUserUuid(String jwtToken) {
     try {
       return UUID.fromString(
-          JWT.require(Algorithm.HMAC256(secret))
-          .withIssuer(issuer)
+          JWT.require(Algorithm.HMAC256(props.token().security()))
+          .withIssuer(props.issuer())
           .build()
           .verify(jwtToken)
           .getClaim("id").asString());

@@ -23,7 +23,6 @@ import java.util.Optional;
 public class SecurityFilter extends OncePerRequestFilter {
 
   private final TokenServiceConfig service;
-
   private final UserRepository repository;
 
   @Override

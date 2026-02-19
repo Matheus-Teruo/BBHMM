@@ -25,9 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration {
 
   private final SecurityFilter securityFilter;
-
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-
   private final CustomAccessDeniedHandler accessDeniedHandler;
 
   @Bean
