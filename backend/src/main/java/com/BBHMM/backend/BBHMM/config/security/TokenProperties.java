@@ -8,7 +8,7 @@ public record TokenProperties(
     TokenSecurity token
 ) {
     public record TokenSecurity (
-        String security
+        String secret
     ) {
     }
 }

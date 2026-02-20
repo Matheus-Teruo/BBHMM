@@ -25,7 +25,7 @@ public class TokenServiceConfig {
 
   public String generateToken(User user) {
     try {
-      Algorithm algorithm = Algorithm.HMAC256(props.token().security());
+      Algorithm algorithm = Algorithm.HMAC256(props.token().secret());
       return JWT.create()
           .withIssuer(props.issuer())
           .withSubject(user.getUsername())
@@ -40,7 +40,7 @@ public class TokenServiceConfig {
   public UUID recoverUserUuid(String jwtToken) {
     try {
       return UUID.fromString(
-          JWT.require(Algorithm.HMAC256(props.token().security()))
+          JWT.require(Algorithm.HMAC256(props.token().secret()))
           .withIssuer(props.issuer())
           .build()
           .verify(jwtToken)
