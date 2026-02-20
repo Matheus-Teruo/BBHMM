@@ -9,25 +9,25 @@ import { useUserContext } from "@context/UserContext/useUserContext";
 import { CheckResetPassword } from "@data/Token";
 import useTokenService from "@service/useTokenService";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function ForgotPasswordRedirect() {
   const [first, setfirst] = useState<boolean>(true);
   const { checkResetPassword } = useTokenService();
   const { addNotification } = useAlertsContext();
   const { user, login } = useUserContext();
-  const { email, token } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
   const fetchPassword = useCallback(async () => {
-    if (email && token && first) {
+    const token = searchParams.get("token");
+    if (token && first) {
       setfirst(false);
       await sleep(1000);
       const response = await checkResetPassword({
-        email: email,
         token: token,
       } as CheckResetPassword);
       if (response && !isMessage(response)) {
@@ -47,7 +47,7 @@ function ForgotPasswordRedirect() {
         navigate("/auth/login");
       }
     }
-  }, [email, token]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (isUserLogged(user)) {

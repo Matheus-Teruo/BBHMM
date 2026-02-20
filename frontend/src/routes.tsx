@@ -49,11 +49,11 @@ function AppRouter() {
           <Route path="signup" element={<Signup />} />
           <Route path="login" element={<Login />} />
           <Route
-            path="user/reset-password/:email/:token"
+            path="user/reset-password"
             element={<ForgotPasswordRedirect />}
           />
           <Route
-            path="guest/redirect/:guestName/:token"
+            path="guest/redirect"
             element={<GuestRedirect />}
           />
         </Route>

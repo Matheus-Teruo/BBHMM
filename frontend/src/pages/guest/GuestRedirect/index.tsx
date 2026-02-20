@@ -9,21 +9,23 @@ import { useUserContext } from "@context/UserContext/useUserContext";
 import { LoginUser, Role } from "@data/User";
 import useUserService from "@service/useUserService";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function GuestRedirect() {
   const [first, setfirst] = useState<boolean>(true);
   const { loginGuest } = useUserService();
   const { addNotification } = useAlertsContext();
   const { user, login, selectEvent } = useUserContext();
-  const { guestName, token } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
   const fetchGuest = useCallback(async () => {
-    if (guestName && token && first) {
+    const guestName = searchParams.get("guestName");
+    const token = searchParams.get("token");
+    if (searchParams && first) {
       setfirst(false);
       await sleep(1500);
       const guestResponse = await loginGuest({
@@ -49,7 +51,7 @@ function GuestRedirect() {
         navigate("/auth/login");
       }
     }
-  }, [guestName, token]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (isUserLogged(user)) {
@@ -62,7 +64,7 @@ function GuestRedirect() {
   return (
     <div className={styles.body}>
       <h1>Bem vindo(a)</h1>
-      <h2>{guestName}</h2>
+      <h2>{searchParams.get("guestName")}</h2>
     </div>
   );
 }

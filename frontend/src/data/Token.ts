@@ -3,7 +3,6 @@ export interface ResetPassword {
 }
 
 export interface CheckResetPassword {
-  email: string;
   token: string;
 }
 
