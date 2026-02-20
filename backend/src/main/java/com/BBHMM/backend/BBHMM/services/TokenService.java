@@ -28,6 +28,14 @@ public class TokenService {
     public Token createToken(TokenType type, User user) {
         LocalDateTime limitTime = LocalDateTime.now().minusMinutes(2);
         validation.checkLastValidToken(user, type, limitTime);
+
+        LocalDateTime rangeTimeForLast = LocalDateTime.now().minusMinutes(10);
+        Optional<Token> lastToken = respository.findLastValidByUserAndType(user.getUuid(), type, rangeTimeForLast);
+        if (lastToken.isPresent()) {
+            System.out.println(lastToken.get().getToken());
+            lastToken.get().setValid(false);
+        }
+
         String tokenValue;
         switch (type) {
             case TokenType.CONFIRM_EMAIL:
@@ -43,12 +51,6 @@ public class TokenService {
                 break;
         }
         
-        LocalDateTime rangeTimeForLast = LocalDateTime.now().minusMinutes(10);
-        Optional<Token> lastToken = respository.findLastValidByUserAndType(user.getUuid(), type, rangeTimeForLast);
-        if (lastToken.isPresent()) {
-            System.out.println(lastToken.get().getToken());
-            lastToken.get().setValid(false);
-        }
         Token token = new Token(tokenValue, type, user);
         respository.save(token);
         return token;
@@ -65,6 +67,16 @@ public class TokenService {
             tokenValue)
         );
         validation.checkExpireToken(type, token, now);
+    }
+
+    public User getUserByToken(String tokenValue) {
+        Token token = respository.getByToken(tokenValue).orElseThrow(() -> new InvalidDatabaseQueryException(
+            "Token não encontrado",
+            "token pode ter expirado ou não existe, tente enviar outra requisição",
+            "token",
+            tokenValue)
+        );
+        return token.getUser();
     }
 
     public static String generate6NumberToken() {

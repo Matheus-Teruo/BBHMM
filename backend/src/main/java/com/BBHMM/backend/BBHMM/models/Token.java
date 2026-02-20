@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -24,7 +25,7 @@ public class Token {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String token;
 
     @Enumerated(EnumType.STRING)
@@ -37,7 +38,7 @@ public class Token {
     @Setter
     private boolean valid;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uuid_user", nullable = false)
     private User user;
 

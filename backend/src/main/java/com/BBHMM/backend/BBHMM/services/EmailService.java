@@ -1,5 +1,8 @@
 package com.BBHMM.backend.BBHMM.services;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -63,8 +66,10 @@ public class EmailService {
 
             Context context = new Context();
             context.setVariable("userName", user.getFullname());
+
+            String token = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
             
-            String resetLink = "http://" + domain + "/auth/user/reset-password/" + user.getEmail() + "/" + resetToken; 
+            String resetLink = "http://" + domain + "/auth/user/reset-password?token=" + token; 
             context.setVariable("resetLink", resetLink);
 
             String htmlContent = templateEngine.process("email-templates/reset-password-email", context);

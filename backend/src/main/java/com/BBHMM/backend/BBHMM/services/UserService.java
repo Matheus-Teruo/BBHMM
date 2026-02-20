@@ -172,11 +172,11 @@ public class UserService {
         emailService.sendPasswordResetEmail(user, token.getToken());
     }
 
+    @Transactional
     public User checkResetPassword(CheckResetPasswordRequest request, String password) {
-        User user = findUserByEmail(request.email());
+        User user = tokenService.getUserByToken(request.token().toString());
         tokenService.validateToken(TokenType.RESET_PASSWORD, request.token().toString(), user.getUuid());
         user.updatePassword(passwordEncoder.encode(password));
-        repository.saveAndFlush(user);
         return user;
     }
 

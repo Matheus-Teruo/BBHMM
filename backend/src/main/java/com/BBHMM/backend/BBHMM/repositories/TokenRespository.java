@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,9 @@ import java.util.UUID;
 @Repository
 public interface TokenRespository extends JpaRepository<Token, UUID> {
 
+    @EntityGraph(attributePaths = "user")
+    Optional<Token> getByToken(String token);
+    
     @Query("""
         SELECT t
         FROM Token t
