@@ -15,8 +15,10 @@ import { DebitTotal } from "@data/Payment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useUserService from "@service/useUserService";
 import { isMessage } from "@context/AlertContext/useAlertContext";
+import Event from "@data/Event";
 
 function BillPage() {
+  const [event, setEvent] = useState<Event>();
   const [bills, setBills] = useState<BillResume[]>([]);
   const [users, setUsers] = useState<UserList[]>([]);
   const [debitTotal, setDebitTotal] = useState<DebitTotal>({
@@ -25,7 +27,7 @@ function BillPage() {
   });
   const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
   const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
-  const { listUserFromEvent } = useEventService();
+  const { getEvent, listUserFromEvent } = useEventService();
   const { listBills, updateBillParticipant } = useBillsService();
   const { getDebitTotal } = usePaymentService();
   const { getGuest } = useUserService();
@@ -33,6 +35,15 @@ function BillPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { eventUUID } = useParams();
+
+  const fetchEvent = useCallback(async () => {
+    if (eventUUID) {
+      const eventResponse = await getEvent(eventUUID);
+      if (eventResponse) {
+        setEvent(eventResponse);
+      }
+    }
+  }, [eventUUID, getEvent]);
 
   const fetchUsers = useCallback(async () => {
     if (eventUUID) {
@@ -63,6 +74,7 @@ function BillPage() {
 
   useEffect(() => {
     if (isUserLogged(user)) {
+      fetchEvent();
       fetchBill();
       fetchUsers();
       fetchPayment();
@@ -154,7 +166,8 @@ function BillPage() {
 
   return (
     <div className={styles.body}>
-      <h2 className={styles.title}>Contas</h2>
+      <h2 className={styles.title}>{event?.eventName}</h2>
+      <p>{event?.description}</p>
       <div className={styles.top}>
         <div className={styles.actions}>
           <Button onClick={() => setBillForm("Create")}>
