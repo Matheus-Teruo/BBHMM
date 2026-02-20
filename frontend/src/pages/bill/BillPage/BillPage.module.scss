@@ -4,10 +4,12 @@
 .body {
   padding: 24px;
   margin: 0 auto;
-  height: calc(100vh - 36px);
+  height: calc(100vh - 36px - 32px);
   max-width: $desktop_md;
   background-color: $color-primary-1;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: $mobile) {
     padding: 18px 12px;
@@ -72,6 +74,7 @@
   .tableWrapper {
     width: 100%;
     overflow-x: auto;
+    overflow-y: scroll;
   }
 
   .list {
