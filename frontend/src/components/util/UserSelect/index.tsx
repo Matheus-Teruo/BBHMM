@@ -1,7 +1,7 @@
 import styles from "./UserSelect.module.scss";
 import { InputStatus } from "../InputStatus";
 import { useEffect, useState } from "react";
-import { UserList } from "@data/User";
+import { EventUser } from "@data/User";
 import useEventService from "@service/useEventService";
 import { useUserContext } from "@context/UserContext/useUserContext";
 
@@ -18,7 +18,7 @@ function UserSelect({
   showStatus = false,
   message = "",
 }: UserSelectProps) {
-  const [listUser, setListUsers] = useState<UserList[]>([]);
+  const [listUser, setListUsers] = useState<EventUser[]>([]);
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
   const { listUserFromEvent } = useEventService();
   const { event } = useUserContext();

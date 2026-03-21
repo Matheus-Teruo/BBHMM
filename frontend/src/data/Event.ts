@@ -11,6 +11,10 @@ export interface UpdateEvent {
   eventDate?: string;
 }
 
+export interface UpdateEventUser {
+  color: string;
+}
+
 export default interface Event {
   uuid: string;
   eventName: string;

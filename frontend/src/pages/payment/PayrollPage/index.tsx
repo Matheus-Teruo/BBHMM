@@ -3,7 +3,7 @@ import { ArrowRightSVG } from "@/assets/svg";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { PaymentDetails } from "@data/Payment";
-import { UserList } from "@data/User";
+import { EventUser } from "@data/User";
 import useEventService from "@service/useEventService";
 import usePaymentService from "@service/usePaymentService";
 import { useCallback, useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function PayrollPage() {
   const [payroll, setPayroll] = useState<PaymentDetails[]>([]);
-  const [users, setUsers] = useState<Record<string, UserList>>({});
+  const [users, setUsers] = useState<Record<string, EventUser>>({});
   const { listPayroll } = usePaymentService();
   const { listUserFromEvent } = useEventService();
   const { user } = useUserContext();
@@ -22,12 +22,12 @@ function PayrollPage() {
     if (eventUUID) {
       const usersResponse = await listUserFromEvent(eventUUID);
       if (usersResponse) {
-        const usersRecord: Record<string, UserList> = usersResponse.reduce(
+        const usersRecord: Record<string, EventUser> = usersResponse.reduce(
           (acc, user) => {
             acc[user.uuid] = user;
             return acc;
           },
-          {} as Record<string, UserList>,
+          {} as Record<string, EventUser>,
         );
         setUsers(usersRecord);
       }

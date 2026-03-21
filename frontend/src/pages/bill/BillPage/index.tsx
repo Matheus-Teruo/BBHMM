@@ -3,7 +3,7 @@ import Button from "@/components/util/Button";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume, UpdateBillParticipants } from "@data/Bills";
-import { Role, UserList } from "@data/User";
+import { Role, EventUser } from "@data/User";
 import useBillsService from "@service/useBillsService";
 import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useState } from "react";
@@ -20,7 +20,7 @@ import Event from "@data/Event";
 function BillPage() {
   const [event, setEvent] = useState<Event>();
   const [bills, setBills] = useState<BillResume[]>([]);
-  const [users, setUsers] = useState<UserList[]>([]);
+  const [users, setUsers] = useState<EventUser[]>([]);
   const [debitTotal, setDebitTotal] = useState<DebitTotal>({
     debit: true,
     value: 0,
@@ -129,7 +129,7 @@ function BillPage() {
     });
   }
 
-  async function handleUser(user: UserList) {
+  async function handleUser(user: EventUser) {
     if (user.role == Role.GUEST) {
       if (eventUUID) {
         const guestRespone = await getGuest(user.uuid, eventUUID);

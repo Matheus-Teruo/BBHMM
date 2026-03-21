@@ -51,12 +51,13 @@ export interface UserResume {
   emailVerified: boolean;
 }
 
-export interface UserList {
+export interface EventUser {
   uuid: string;
   firstname: string;
   fullname: string;
   role: Role;
   pix?: Pix;
+  color: string;
 }
 
 export interface Guest {

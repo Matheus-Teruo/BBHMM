@@ -2,14 +2,14 @@ import { FaceSmileSVG } from "@/assets/svg";
 import styles from "./UserInfo.module.scss";
 import GlassBackground from "@/components/GlassBackground";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UserList } from "@data/User";
+import { EventUser } from "@data/User";
 
 function UserInfo() {
   const location = useLocation();
   const navigate = useNavigate();
 
   const { user, backgroundLocation } = location.state as {
-    user: UserList;
+    user: EventUser;
     backgroundLocation?: {
       pathname: string;
       search: string;

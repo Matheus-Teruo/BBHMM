@@ -10,7 +10,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { UserList } from "@data/User";
+import { EventUser } from "@data/User";
 import { initialPaymentState, paymentReducer } from "@reducer/paymentReducer";
 import usePaymentService from "@service/usePaymentService";
 import { useEffect, useReducer, useState } from "react";
@@ -28,8 +28,8 @@ function PaymentForm() {
   const location = useLocation();
 
   const { payer, receiver, value } = location.state as {
-    payer: UserList;
-    receiver: UserList;
+    payer: EventUser;
+    receiver: EventUser;
     value: number;
     backgroundLocation?: {
       pathname: string;

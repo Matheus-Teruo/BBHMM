@@ -13,7 +13,7 @@ import {
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume } from "@data/Bills";
-import { UserList } from "@data/User";
+import { EventUser } from "@data/User";
 import {
   billReducer,
   createBillPayload,
@@ -28,7 +28,7 @@ interface NewBillProps {
   initialValue?: BillResume;
   eventUuid?: string;
   onChange: () => void;
-  userList: UserList[];
+  userList: EventUser[];
 }
 
 function FormBill({

@@ -1,9 +1,9 @@
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertContext/useAlertContext";
-import Event, { CreateEvent, UpdateEvent } from "@data/Event";
+import Event, { CreateEvent, UpdateEvent, UpdateEventUser } from "@data/Event";
 import { useCallback } from "react";
 import { PaginatedResponse } from "../data/PagesType";
-import { UserList } from "@data/User";
+import { EventUser } from "@data/User";
 import { useSafeRequest } from "./useHandleRequest";
 
 const useEventService = () => {
@@ -56,6 +56,14 @@ const useEventService = () => {
     [api, safeRequest],
   );
 
+  const updateEventUser = useCallback(
+    async (eventUuid: string, eventUser: UpdateEventUser): Promise<EventUser[] | Message | null> =>
+      safeRequest(() =>
+        api.put<EventUser[]>(`/events/${eventUuid}/user`, eventUser).then((res) => res.data),
+      ),
+    [api],
+  );
+
   const finishEvent = useCallback(
     async (eventUuid: string): Promise<void | Message | null> =>
       safeRequest(() =>
@@ -65,8 +73,8 @@ const useEventService = () => {
   );
 
   const listUserFromEvent = useCallback(
-    async (eventUuid: string): Promise<UserList[] | null> =>
-      api.get<UserList[]>(`/events/${eventUuid}/users`).then((res) => res.data),
+    async (eventUuid: string): Promise<EventUser[] | null> =>
+      api.get<EventUser[]>(`/events/${eventUuid}/users`).then((res) => res.data),
     [api],
   );
 
@@ -75,6 +83,7 @@ const useEventService = () => {
     getEvent,
     getEvents,
     updateEvent,
+    updateEventUser,
     finishEvent,
     listUserFromEvent,
   };
