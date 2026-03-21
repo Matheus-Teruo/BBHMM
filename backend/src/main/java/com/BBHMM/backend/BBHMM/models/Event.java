@@ -29,13 +29,8 @@ public class Event {
     @Setter
     private boolean finished = false;
 
-    @ManyToMany
-    @JoinTable(
-            name = "event_user",
-            joinColumns = @JoinColumn(name = "uuid_event"),
-            inverseJoinColumns = @JoinColumn(name = "uuid_user")
-    )
-    private Set<User> users = new HashSet<>();
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EventUser> eventUsers = new HashSet<>();
 
     @OneToMany(mappedBy = "event", orphanRemoval = true)
     private List<Bill> bills = new ArrayList<>();
@@ -43,10 +38,9 @@ public class Event {
     @OneToMany(mappedBy = "event", orphanRemoval = true)
     private List<EventInvitation> eventInvitations = new ArrayList<>();
 
-    public Event(CreateEventRequest request, User user) {
+    public Event(CreateEventRequest request) {
         this.eventName = request.eventName();
         this.description = request.description();
-        this.users.add(user);
         this.eventDate = request.eventDate();
         this.finished = false;
     }
@@ -63,7 +57,7 @@ public class Event {
         }
     }
 
-    public void addUser(User user) {
-        this.users.add(user);
+    public void addUser(EventUser eventUsers) {
+        this.eventUsers.add(eventUsers);
     }
 }

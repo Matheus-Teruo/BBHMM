@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
+import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.AcceptInvitationRequest;
 import com.BBHMM.backend.BBHMM.models.request.CreateEventRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateEventUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventRepository;
@@ -39,7 +41,9 @@ public class EventService {
     
     @Transactional
     public Event createEvent(CreateEventRequest request, User user) {
-        var event = new Event(request, user);
+        var event = new Event(request);
+        EventUser eventUser = new EventUser(user, event);
+        event.addUser(eventUser);
         repository.save(event);
 
         return event;
@@ -78,6 +82,18 @@ public class EventService {
         return event;
     }
 
+    public EventUser updateEventUser(UpdateEventUserRequest request, UUID eventUuid, User userSecurity) {
+        Event event = safeTakeEventByUuid(eventUuid);
+        EventUser eventUser = event.getEventUsers()
+                                    .stream()
+                                    .filter(user -> user.getUserUuid() == userSecurity.getUuid())
+                                    .findFirst()
+                                    .orElseThrow(() -> new InvalidDatabaseQueryException("Usuário não encontrado", "usuário não encontrado no evento", "UserID", userSecurity.toString()));
+        eventUser.update(request);
+
+        return eventUser;
+    }
+
     public EventInvitation userEventInvitation(UserInvitationRequest request) {
         Event event = safeTakeEventByUuid(request.eventUuid());
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -101,7 +117,11 @@ public class EventService {
         validation.checkInvateValid(eventInvitation, userInvited);
 
         eventInvitation.acceptInvitation(request.accept());
-        if (request.accept()) eventInvitation.getEvent().addUser(userInvited);
+        if (request.accept()) {
+            Event event = eventInvitation.getEvent();
+            EventUser eventUser = new EventUser(userInvited, event);
+            event.addUser(eventUser);
+        }
 
         return eventInvitation;
     }
@@ -114,8 +134,8 @@ public class EventService {
     @Transactional
     public void addUser(UUID eventUuid, User guest) {
         Event event = safeTakeEventByUuid(eventUuid);
-
-        event.addUser(guest);
+        EventUser eventUser = new EventUser(guest, event);
+        event.addUser(eventUser);
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.repositories;
 
+import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,8 +17,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT u FROM User u WHERE u.uuid = :uuid")
     Optional<User> findByUuid(UUID uuid);
 
-    @Query("SELECT u FROM User u JOIN u.events e WHERE e.uuid = :eventUuid")
-    List<User> listUsersByEvent(UUID eventUuid);
+    @Query("SELECT eu FROM EventUser eu JOIN eu.event e WHERE e.uuid = :eventUuid")
+    List<EventUser> listUsersByEvent(UUID eventUuid);
 
     Optional<User> findByEmail(String email);
 
@@ -29,12 +30,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     UserDetails findByUsernameReturnDetails(String username);
 
     @Query("""
-    SELECT CASE WHEN EXISTS (
-        SELECT 1 FROM User u
-        JOIN u.events e
-        WHERE u.uuid = :userUuid
-        AND e.uuid = :eventUuid
-        ) THEN TRUE ELSE FALSE END
+        SELECT CASE WHEN COUNT(eu) > 0 THEN TRUE ELSE FALSE END
+        FROM EventUser eu
+        WHERE eu.user.uuid = :userUuid
+        AND eu.event.uuid = :eventUuid
     """)
     boolean isUserParticipantInEvent(UUID userUuid, UUID eventUuid);
 

@@ -3,6 +3,7 @@ package com.BBHMM.backend.BBHMM.services;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.Event;
+import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
@@ -120,7 +121,7 @@ public class BillService {
             case "all":
                 reversePaidValue(bill.getParticipants(), bill);
                 bill.getParticipants().removeAll(bill.getParticipants());
-                updateParticipants(bill, bill.getEvent().getUsers().stream().map(User::getUuid).toList(), bill.getValue());
+                updateParticipants(bill, bill.getEvent().getEventUsers().stream().map(EventUser::getUserUuid).toList(), bill.getValue());
                 return;
             default:
                 return;

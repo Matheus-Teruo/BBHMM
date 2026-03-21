@@ -19,24 +19,26 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     Optional<Event> findByUuid(UUID uuid);
 
     @Query("""
-        SELECT e FROM Event e 
-        JOIN e.users u 
-        WHERE u.uuid = :userUuid 
-        AND (:eventName IS NULL OR LOWER(e.eventName) LIKE LOWER(CONCAT('%', :eventName, '%')))
-        AND (:eventDate IS NULL OR e.eventDate >= :eventDate)
-        AND (:finished IS NULL OR e.finished = :finished)
+        SELECT eu.event FROM EventUser eu
+        WHERE eu.user.uuid = :userUuid
+        AND (:eventName IS NULL OR LOWER(eu.event.eventName) LIKE LOWER(CONCAT('%', :eventName, '%')))
+        AND (:eventDate IS NULL OR eu.event.eventDate >= :eventDate)
+        AND (:finished IS NULL OR eu.event.finished = :finished)
     """)
     Page<Event> findAllbyUser(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable, UUID userUuid);
 
-    @Query("SELECT e FROM Event e JOIN e.users u WHERE u.uuid = :userUuid")
+    @Query("""
+        SELECT eu.event
+        FROM EventUser eu
+        WHERE eu.user.uuid = :userUuid
+    """)
     List<Event> findAllbyUserList(UUID userUuid);
 
     @Query("""
-    SELECT CASE WHEN EXISTS(
-        SELECT 1 FROM Event e
-        JOIN e.users u
-        WHERE e.uuid = :eventUuid
-        AND u.uuid = :userUuid
+        SELECT CASE WHEN EXISTS(
+            SELECT 1 FROM EventUser eu
+            WHERE eu.event.uuid = :eventUuid
+            AND eu.user.uuid = :userUuid
         ) THEN TRUE ELSE FALSE END
     """)
     boolean userAlreadyInEvent(UUID userUuid, UUID eventUuid);

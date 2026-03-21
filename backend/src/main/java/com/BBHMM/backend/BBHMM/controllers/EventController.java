@@ -11,8 +11,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateEventRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
+import com.BBHMM.backend.BBHMM.models.request.UpdateEventUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.EventResponse;
-import com.BBHMM.backend.BBHMM.models.response.UserListResponse;
+import com.BBHMM.backend.BBHMM.models.response.EventUserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,17 @@ public class EventController {
         return ResponseEntity.ok(new EventResponse(event));
     }
 
+    @PutMapping("/{eventUuid}/user")
+    public ResponseEntity<EventUserResponse> updateEventUser(
+        @RequestBody UpdateEventUserRequest request,
+        @PathVariable UUID eventUuid
+    ) {
+        User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var eventUser = service.updateEventUser(request, eventUuid, userSecurity);
+
+        return ResponseEntity.ok(new EventUserResponse(userSecurity, eventUser));
+    }
+
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{eventUuid}")
     public ResponseEntity<Void> finishEvent(@PathVariable UUID eventUuid) {
@@ -80,8 +92,8 @@ public class EventController {
     }
 
     @GetMapping("/{eventUuid}/users")
-    public ResponseEntity<List<UserListResponse>> listUsersFromEvent(@PathVariable UUID eventUuid) {
-        var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(UserListResponse::new).toList();
+    public ResponseEntity<List<EventUserResponse>> listUsersFromEvent(@PathVariable UUID eventUuid) {
+        var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(EventUserResponse::new).toList();
         return ResponseEntity.ok(response);
     }
 }

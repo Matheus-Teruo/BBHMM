@@ -2,6 +2,7 @@ package com.BBHMM.backend.BBHMM.services;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
+import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.Token;
 import com.BBHMM.backend.BBHMM.models.TokenType;
@@ -117,12 +118,12 @@ public class UserService {
                     ));
     }
 
-    public List<User> findParticipantsByEventUuid(UUID eventUuid) {
+    public List<EventUser> findParticipantsByEventUuid(UUID eventUuid) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         billValidation.checkUserParticipationInEvent(user, eventUuid);
-        var users = repository.listUsersByEvent(eventUuid);
+        var eventUsers = repository.listUsersByEvent(eventUuid);
 
-        return users;
+        return eventUsers;
     }
 
     @Transactional

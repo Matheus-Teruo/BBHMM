@@ -14,6 +14,7 @@ import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionExceptio
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.Event;
+import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
@@ -38,9 +39,9 @@ public class BillValidation {
     }
 
     public void checkUsersParticipationInEvent(UUID eventUuid, List<UUID> participantsUuid) {
-        List<User> users = userRepository.listUsersByEvent(eventUuid);
-        Set<UUID> foundUserUuids = users.stream()
-                                        .map(User::getUuid)
+        List<EventUser> eventUsers = userRepository.listUsersByEvent(eventUuid);
+        Set<UUID> foundUserUuids = eventUsers.stream()
+                                        .map(EventUser::getUserUuid)
                                         .collect(Collectors.toSet());
         List<UUID> missingUsers = participantsUuid.stream()
                                                 .filter(uuid -> !foundUserUuids.contains(uuid))

@@ -46,8 +46,8 @@ public class User implements UserDetails {
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
-    @ManyToMany(mappedBy = "users")
-    private Set<Event> events = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EventUser> eventUsers = new HashSet<>();
 
     public User(SignupUserRequest request, String password) {
         this.username = request.username();
