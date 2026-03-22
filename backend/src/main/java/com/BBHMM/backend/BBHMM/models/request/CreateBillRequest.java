@@ -16,7 +16,7 @@ public record CreateBillRequest(
     @Pattern(regexp = "^[\\p{L}\\p{N}:!\\-]*$", message = "Nome da conta não pode ter alguns caracteres especiais")
     @Schema(example = "newBill")
     String name,
-    
+
     @Size(min = 3, message = "A decrição precisa pelomenos 3 caractéres")
     @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A decrição só deve conter letras, numeros e espaço")
     @Schema(example = "Bill description")
@@ -25,7 +25,7 @@ public record CreateBillRequest(
     @NotNull(message = "Valor é necessário")
     @Positive(message = "Valor deve ser positivo")
     BigDecimal value,
-    
+
     @NotNull(message = "Evento é necessário")
     UUID eventUuid,
 

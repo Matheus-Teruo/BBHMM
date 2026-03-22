@@ -10,11 +10,14 @@ import com.BBHMM.backend.BBHMM.services.BillService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,15 +31,22 @@ public class BillsController {
     @PostMapping("/bills")
     @Operation(summary = "Create Bill")
     @ApiResponse(responseCode = "201", description = "Bill created")
-    public ResponseEntity<BillResponse> createBill(@RequestBody CreateBillRequest request) {
+    public ResponseEntity<BillResponse> createBill(@Valid @RequestBody CreateBillRequest request) {
         var bill = service.createBill(request);
-        return ResponseEntity.ok(new BillResponse(bill));
+
+        URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{uuid}")
+            .buildAndExpand(bill.getUuid())
+            .toUri();
+
+            return ResponseEntity.created(location).body(new BillResponse(bill));
     }
 
     @GetMapping("/bills/{billUuid}")
     @Operation(summary = "Read Bill by id")
     @ApiResponse(responseCode = "200", description = "Bill returned by id")
-    public ResponseEntity<BillResponse> getBills(@PathVariable UUID billUuid) {
+    public ResponseEntity<BillResponse> getBills(@Valid @PathVariable UUID billUuid) {
         var bill = service.getBill(billUuid);
 
         return ResponseEntity.ok(new BillResponse(bill));
@@ -45,7 +55,7 @@ public class BillsController {
     @GetMapping("/{eventUuid}/bills")
     @Operation(summary = "List Bills")
     @ApiResponse(responseCode = "200", description = "Bills returned by event")
-    public ResponseEntity<List<BillsResumeResponse>> listBills(@PathVariable UUID eventUuid) {
+    public ResponseEntity<List<BillsResumeResponse>> listBills(@Valid @PathVariable UUID eventUuid) {
         var participants = service.listParticipantsByEvent(eventUuid);
         var response = service.listBillsByEvent(eventUuid).stream().map((bill) ->
             new BillsResumeResponse(
@@ -58,7 +68,7 @@ public class BillsController {
     @PutMapping("/bills")
     @Operation(summary = "Update Bill")
     @ApiResponse(responseCode = "200", description = "Bill updated by id")
-    public ResponseEntity<BillResponse> updateBill(@RequestBody UpdateBillRequest request) {
+    public ResponseEntity<BillResponse> updateBill(@Valid @RequestBody UpdateBillRequest request) {
         var bill = service.updateBill(request);
 
         return ResponseEntity.ok(new BillResponse(bill));
@@ -67,7 +77,7 @@ public class BillsController {
     @PutMapping("/bills/participants")
     @Operation(summary = "Update Bill participantes")
     @ApiResponse(responseCode = "204", description = "Participants of the bill updated")
-    public ResponseEntity<Void> updateBillParticipants(@RequestBody UpdateBillParticipantsRequest request) {
+    public ResponseEntity<Void> updateBillParticipants(@Valid @RequestBody UpdateBillParticipantsRequest request) {
         service.updateBillParticipants(request);
 
         return ResponseEntity.noContent().build();
@@ -77,7 +87,7 @@ public class BillsController {
     @DeleteMapping("/bills/{billUuid}")
     @Operation(summary = "Delete Bill")
     @ApiResponse(responseCode = "204", description = "Bill deleted")
-    public ResponseEntity<Void> deleteBill(@PathVariable UUID billUuid) {
+    public ResponseEntity<Void> deleteBill(@Valid @PathVariable UUID billUuid) {
         service.deleteBill(billUuid);
 
         return ResponseEntity.noContent().build();

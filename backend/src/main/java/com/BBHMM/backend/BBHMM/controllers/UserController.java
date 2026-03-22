@@ -14,6 +14,7 @@ import com.BBHMM.backend.BBHMM.services.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
@@ -34,7 +35,7 @@ public class UserController {
     @GetMapping("/{userUuid}")
     @Operation(summary = "Get User details")
     @ApiResponse(responseCode = "200", description = "Return user details")
-    public ResponseEntity<UserResponse> getUser(@PathVariable UUID userUuid) {
+    public ResponseEntity<UserResponse> getUser(@Valid @PathVariable UUID userUuid) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.getUser(userUuid, userSecurity);
 
@@ -45,7 +46,7 @@ public class UserController {
     @PutMapping
     @Operation(summary = "Update User")
     @ApiResponse(responseCode = "200", description = "User updated")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.updateUser(request, userSecurity);
 
@@ -56,7 +57,7 @@ public class UserController {
     @PostMapping("/verify-email")
     @Operation(summary = "Email validation")
     @ApiResponse(responseCode = "204", description = "Email Sended")
-    public ResponseEntity<Void> verifyEmail(@RequestBody EmailValidaitonRequest request) {
+    public ResponseEntity<Void> verifyEmail(@Valid @RequestBody EmailValidaitonRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.verifyEmail(request ,userSecurity);
 
@@ -67,7 +68,7 @@ public class UserController {
     @PostMapping("/confirm-email")
     @Operation(summary = "Confirm Email")
     @ApiResponse(responseCode = "204", description = "Email confirmed")
-    public ResponseEntity<Void> validateEmail(@RequestBody EmailTokenRequest request) {
+    public ResponseEntity<Void> validateEmail(@Valid @RequestBody EmailTokenRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.confirmEmail(request, userSecurity);
 
@@ -78,7 +79,7 @@ public class UserController {
     @PostMapping("/guest")
     @Operation(summary = "Create Guest")
     @ApiResponse(responseCode = "200", description = "Guest created")
-    public ResponseEntity<NewGuestResponse> createGuest(@RequestBody CreateGuestRequest request) {
+    public ResponseEntity<NewGuestResponse> createGuest(@Valid @RequestBody CreateGuestRequest request) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         String password = service.generatePassword();
@@ -93,7 +94,7 @@ public class UserController {
     @GetMapping("/guest/{guestUuid}/event/{eventUuid}")
     @Operation(summary = "Get guest data")
     @ApiResponse(responseCode = "200", description = "Return guest data and password redefined")
-    public ResponseEntity<NewGuestResponse> getGuest(@PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
+    public ResponseEntity<NewGuestResponse> getGuest(@Valid @PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         String password = service.generatePassword();
@@ -106,7 +107,7 @@ public class UserController {
     @PostMapping("/guest/upgrade")
     @Operation(summary = "Upgrade Guest to User")
     @ApiResponse(responseCode = "200", description = "Guest upgraded to user")
-    public ResponseEntity<UserResponse> upgradeGuestToUser(@RequestBody UpgradeGuestToUserRequest request) {
+    public ResponseEntity<UserResponse> upgradeGuestToUser(@Valid @RequestBody UpgradeGuestToUserRequest request) {
         User user = service.upgradeGuestToUser(request);
 
         return ResponseEntity.ok(new UserResponse(user));

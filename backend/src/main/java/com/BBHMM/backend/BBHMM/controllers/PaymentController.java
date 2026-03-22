@@ -18,6 +18,7 @@ import com.BBHMM.backend.BBHMM.services.PaymentService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
@@ -34,7 +35,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/total")
     @Operation(summary = "Get total of user from event")
     @ApiResponse(responseCode = "200", description = "Return total")
-    public ResponseEntity<DebitTotalResponse> getDebtTotal(@PathVariable UUID eventUuid) {
+    public ResponseEntity<DebitTotalResponse> getDebtTotal(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         BigDecimal value = service.getTotal(eventUuid, userOwner);
@@ -44,7 +45,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/payment")
     @Operation(summary = "Get list to pay")
     @ApiResponse(responseCode = "200", description = "Return list of pendent debt")
-    public ResponseEntity<List<PaymentResponse>> getDebtPayment(@PathVariable UUID eventUuid) {
+    public ResponseEntity<List<PaymentResponse>> getDebtPayment(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<PaymentResponse> response = service.getPaymentList(eventUuid, userOwner);
@@ -54,7 +55,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/receiving")
     @Operation(summary = "Get list to receive")
     @ApiResponse(responseCode = "200", description = "Return list of pendent receivement")
-    public ResponseEntity<List<PaymentResponse>> getDebtReceiving(@PathVariable UUID eventUuid) {
+    public ResponseEntity<List<PaymentResponse>> getDebtReceiving(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<PaymentResponse> response = service.getReceivingList(eventUuid, userOwner);
@@ -64,7 +65,7 @@ public class PaymentController {
     @PostMapping("/payment")
     @Operation(summary = "Pay Bill")
     @ApiResponse(responseCode = "200", description = "Bill paid")
-    public ResponseEntity<Void> payOffDebtPayment(@RequestBody PayBillRequest request) {
+    public ResponseEntity<Void> payOffDebtPayment(@Valid @RequestBody PayBillRequest request) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         service.payOffDebit(request, userOwner);
@@ -74,7 +75,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/payment/list")
     @Operation(summary = "List paid Bill")
     @ApiResponse(responseCode = "200", description = "Return list of paid bill")
-    public ResponseEntity<List<PaymentDetailsResponse>> listOfPayrollPerUser(@PathVariable UUID eventUuid) {
+    public ResponseEntity<List<PaymentDetailsResponse>> listOfPayrollPerUser(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return ResponseEntity.ok(service.listOfPayrollPerUser(eventUuid, userOwner));

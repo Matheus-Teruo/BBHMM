@@ -42,11 +42,11 @@ public class EventService {
     @Transactional
     public Event createEvent(CreateEventRequest request, User user) {
         var event = new Event(request);
+
         EventUser eventUser = new EventUser(user, event);
         event.addUser(eventUser);
-        repository.save(event);
 
-        return event;
+        return repository.save(event);
     }
 
     public Event getEvent(UUID uuid) {

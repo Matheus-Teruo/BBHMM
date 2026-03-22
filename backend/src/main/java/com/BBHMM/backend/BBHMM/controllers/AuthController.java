@@ -49,7 +49,7 @@ public class AuthController {
     @Operation(summary = "Create User")
     @ApiResponse(responseCode = "201", description = "User created and logged in")
     public ResponseEntity<UserResponse> signUp(
-        @RequestBody @Valid
+        @Valid @RequestBody
         SignupUserRequest request,
         HttpServletResponse response) {
         var user = service.createUser(request);
@@ -74,7 +74,7 @@ public class AuthController {
     @Operation(summary = "Login User")
     @ApiResponse(responseCode = "200", description = "User logged in")
     public ResponseEntity<UserResumeResponse> login(
-        @RequestBody @Valid
+        @Valid @RequestBody
         LoginUserRequest request,
         HttpServletResponse response) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
@@ -91,7 +91,7 @@ public class AuthController {
     @Operation(summary = "Login Guest")
     @ApiResponse(responseCode = "200", description = "Guest logged in")
     public ResponseEntity<GuestResponse> loginGuest(
-        @RequestBody @Valid LoginUserRequest request,
+        @Valid @RequestBody LoginUserRequest request,
         HttpServletResponse response) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         var authentication = manager.authenticate(authenticationToken);
@@ -125,7 +125,7 @@ public class AuthController {
     @PostMapping("/reset-password")
     @Operation(summary = "Reset User password")
     @ApiResponse(responseCode = "204", description = "Reset password started")
-    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         service.resetPassword(request);
 
         return ResponseEntity.noContent().build();
@@ -135,7 +135,7 @@ public class AuthController {
     @Operation(summary = "Check reset User password")
     @ApiResponse(responseCode = "200", description = "User logged 15 min to change password")
     public ResponseEntity<UserResumeResponse> checkResetPassword(
-        @RequestBody CheckResetPasswordRequest request,
+        @Valid @RequestBody CheckResetPasswordRequest request,
         HttpServletResponse response
     ) {
         String password = service.generatePassword();

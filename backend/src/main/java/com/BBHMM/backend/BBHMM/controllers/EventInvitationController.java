@@ -22,6 +22,7 @@ import com.BBHMM.backend.BBHMM.services.EventService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +37,7 @@ public class EventInvitationController {
     @Operation(summary = "Invite User to event")
     @ApiResponse(responseCode = "200", description = "User invited to event")
     public ResponseEntity<EventInvitationResponse> userEventInvitation(
-        @RequestBody UserInvitationRequest request
+        @Valid @RequestBody UserInvitationRequest request
         ) {
         EventInvitation eventInvitation = eventService.userEventInvitation(request);
         
@@ -48,7 +49,7 @@ public class EventInvitationController {
     @Operation(summary = "Accpet Invite")
     @ApiResponse(responseCode = "200", description = "Invite accepted and user is part of event")
     public ResponseEntity<EventInvitationResponse> acceptedEventInvitation(
-        @RequestBody AcceptInvitationRequest request
+        @Valid @RequestBody AcceptInvitationRequest request
         ) {
         EventInvitation eventInvitation = eventService.acceptedEventInvitation(request);
         User invitedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -19,6 +19,7 @@ import com.BBHMM.backend.BBHMM.services.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
@@ -38,7 +39,7 @@ public class EventController {
     @PostMapping
     @Operation(summary = "Create Event")
     @ApiResponse(responseCode = "201", description = "Event created")
-    public ResponseEntity<EventResponse> createEvent(@RequestBody CreateEventRequest request) {
+    public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody CreateEventRequest request) {
         User userSec = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.safeTakeUserByUuid(userSec.getUuid());
         var event = service.createEvent(request, user);
@@ -55,12 +56,12 @@ public class EventController {
     @GetMapping("/{eventUuid}")
     @Operation(summary = "Read Event")
     @ApiResponse(responseCode = "200", description = "Event returned by id")
-    public ResponseEntity<EventResponse> getEvent(@PathVariable UUID eventUuid) {
+    public ResponseEntity<EventResponse> getEvent(@Valid @PathVariable UUID eventUuid) {
         return ResponseEntity.ok(new EventResponse(service.getEvent(eventUuid)));
     }
 
     @GetMapping
-    @Operation(summary = "List Evvent by user")
+    @Operation(summary = "List Event by user")
     @ApiResponse(responseCode = "200", description = "Events from user included returned")
     public ResponseEntity<Page<EventResponse>> listEvents(
         @RequestParam(required = false) String eventName,
@@ -76,7 +77,7 @@ public class EventController {
     @PutMapping
     @Operation(summary = "Update Event")
     @ApiResponse(responseCode = "200", description = "Bill returned by id")
-    public ResponseEntity<EventResponse> updateEvent(@RequestBody UpdateEventRequest request) {
+    public ResponseEntity<EventResponse> updateEvent(@Valid @RequestBody UpdateEventRequest request) {
         var event = service.updateEvent(request);
 
         return ResponseEntity.ok(new EventResponse(event));
@@ -86,8 +87,8 @@ public class EventController {
     @Operation(summary = "Update User on Event")
     @ApiResponse(responseCode = "200", description = "User on event updated")
     public ResponseEntity<EventUserResponse> updateEventUser(
-        @RequestBody UpdateEventUserRequest request,
-        @PathVariable UUID eventUuid
+        @Valid @RequestBody UpdateEventUserRequest request,
+        @Valid @PathVariable UUID eventUuid
     ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var eventUser = service.updateEventUser(request, eventUuid, userSecurity);
@@ -99,7 +100,7 @@ public class EventController {
     @DeleteMapping("/{eventUuid}")
     @Operation(summary = "Finilize Event")
     @ApiResponse(responseCode = "204", description = "Event Finished")
-    public ResponseEntity<Void> finishEvent(@PathVariable UUID eventUuid) {
+    public ResponseEntity<Void> finishEvent(@Valid @PathVariable UUID eventUuid) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.finishEvent(eventUuid, userSecurity);
 
@@ -109,7 +110,7 @@ public class EventController {
     @GetMapping("/{eventUuid}/users")
     @Operation(summary = "List Users from Event")
     @ApiResponse(responseCode = "200", description = "Return users from event")
-    public ResponseEntity<List<EventUserResponse>> listUsersFromEvent(@PathVariable UUID eventUuid) {
+    public ResponseEntity<List<EventUserResponse>> listUsersFromEvent(@Valid @PathVariable UUID eventUuid) {
         var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(EventUserResponse::new).toList();
         return ResponseEntity.ok(response);
     }

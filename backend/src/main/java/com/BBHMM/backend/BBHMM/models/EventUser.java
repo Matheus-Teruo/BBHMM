@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class EventUser {
 
     @EmbeddedId
-    private EventUserId id;
+    private EventUserId id = new EventUserId();
 
     @ManyToOne
     @MapsId("uuidUser")
@@ -39,7 +39,6 @@ public class EventUser {
     public EventUser(User user, Event event) {
         this.user = user;
         this.event = event;
-        this.id = new EventUserId(user.getUuid(), event.getUuid());
     }
 
     public UUID getUserUuid() {
