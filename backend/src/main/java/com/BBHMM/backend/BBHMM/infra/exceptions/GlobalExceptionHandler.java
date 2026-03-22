@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -63,5 +66,26 @@ public class GlobalExceptionHandler {
     error.put("message", ex.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ApiError> handleGeneric(
+      Exception ex,
+      HttpServletRequest request
+  ) {
+
+    log.error(
+        "System error | errorMessage={} path={}",
+        ex.getMessage(),
+        request.getRequestURI()
+    );
+
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(ApiError.of(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "Erro interno inesperado: " + ex.getMessage(),
+            request.getRequestURI()
+        ));
   }
 }
