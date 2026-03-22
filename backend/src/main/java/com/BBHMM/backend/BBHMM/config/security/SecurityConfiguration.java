@@ -41,6 +41,8 @@ public class SecurityConfiguration {
 
           req.requestMatchers(HttpMethod.POST,
               AUTHORIZED_POST_ENDPOINTS_ALL).permitAll();
+          req.requestMatchers(HttpMethod.GET,
+              SWAGGER_WHITELIST).permitAll();
           req.requestMatchers(HttpMethod.OPTIONS,
               "/**").permitAll();
 
@@ -68,5 +70,11 @@ public class SecurityConfiguration {
       "/auth/reset-password",
       "/auth/check-reset-password"
   };
+
+  private static final String[] SWAGGER_WHITELIST = {
+    "/swagger-ui/**",
+    "/v3/api-docs/**",
+    "/swagger-ui.html"
+};
 }
 

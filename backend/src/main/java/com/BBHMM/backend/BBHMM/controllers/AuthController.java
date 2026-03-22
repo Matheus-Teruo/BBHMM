@@ -12,6 +12,9 @@ import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResumeResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,6 +46,8 @@ public class AuthController {
     private String activeProfile;
 
     @PostMapping("/signup")
+    @Operation(summary = "Create User")
+    @ApiResponse(responseCode = "201", description = "User created and logged in")
     public ResponseEntity<UserResponse> signUp(
         @RequestBody @Valid
         SignupUserRequest request,
@@ -66,6 +71,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login User")
+    @ApiResponse(responseCode = "200", description = "User logged in")
     public ResponseEntity<UserResumeResponse> login(
         @RequestBody @Valid
         LoginUserRequest request,
@@ -81,6 +88,8 @@ public class AuthController {
     }
 
     @PostMapping("/login/guest")
+    @Operation(summary = "Login Guest")
+    @ApiResponse(responseCode = "200", description = "Guest logged in")
     public ResponseEntity<GuestResponse> loginGuest(
         @RequestBody @Valid LoginUserRequest request,
         HttpServletResponse response) {
@@ -96,6 +105,8 @@ public class AuthController {
     }
 
     @GetMapping("/check")
+    @Operation(summary = "Check User Logged Status")
+    @ApiResponse(responseCode = "200", description = "User checked log status ok")
     public ResponseEntity<UserResumeResponse> user(HttpServletRequest request) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -103,6 +114,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "Logout User")
+    @ApiResponse(responseCode = "204", description = "User logged out")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         response.addCookie(createCookie("", 0));
 
@@ -110,6 +123,8 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
+    @Operation(summary = "Reset User password")
+    @ApiResponse(responseCode = "204", description = "Reset password started")
     public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
         service.resetPassword(request);
 
@@ -117,6 +132,8 @@ public class AuthController {
     }
 
     @PostMapping("/check-reset-password")
+    @Operation(summary = "Check reset User password")
+    @ApiResponse(responseCode = "200", description = "User logged 15 min to change password")
     public ResponseEntity<UserResumeResponse> checkResetPassword(
         @RequestBody CheckResetPasswordRequest request,
         HttpServletResponse response

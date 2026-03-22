@@ -12,6 +12,8 @@ import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
@@ -30,6 +32,8 @@ public class UserController {
     private final EventService eventService;
 
     @GetMapping("/{userUuid}")
+    @Operation(summary = "Get User details")
+    @ApiResponse(responseCode = "200", description = "Return user details")
     public ResponseEntity<UserResponse> getUser(@PathVariable UUID userUuid) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.getUser(userUuid, userSecurity);
@@ -39,6 +43,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping
+    @Operation(summary = "Update User")
+    @ApiResponse(responseCode = "200", description = "User updated")
     public ResponseEntity<UserResponse> updateUser(@RequestBody UpdateUserRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.updateUser(request, userSecurity);
@@ -48,6 +54,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/verify-email")
+    @Operation(summary = "Email validation")
+    @ApiResponse(responseCode = "204", description = "Email Sended")
     public ResponseEntity<Void> verifyEmail(@RequestBody EmailValidaitonRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.verifyEmail(request ,userSecurity);
@@ -57,6 +65,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/confirm-email")
+    @Operation(summary = "Confirm Email")
+    @ApiResponse(responseCode = "204", description = "Email confirmed")
     public ResponseEntity<Void> validateEmail(@RequestBody EmailTokenRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.confirmEmail(request, userSecurity);
@@ -66,6 +76,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/guest")
+    @Operation(summary = "Create Guest")
+    @ApiResponse(responseCode = "200", description = "Guest created")
     public ResponseEntity<NewGuestResponse> createGuest(@RequestBody CreateGuestRequest request) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -79,6 +91,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/guest/{guestUuid}/event/{eventUuid}")
+    @Operation(summary = "Get guest data")
+    @ApiResponse(responseCode = "200", description = "Return guest data and password redefined")
     public ResponseEntity<NewGuestResponse> getGuest(@PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -90,6 +104,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('GUEST')")
     @PostMapping("/guest/upgrade")
+    @Operation(summary = "Upgrade Guest to User")
+    @ApiResponse(responseCode = "200", description = "Guest upgraded to user")
     public ResponseEntity<UserResponse> upgradeGuestToUser(@RequestBody UpgradeGuestToUserRequest request) {
         User user = service.upgradeGuestToUser(request);
 

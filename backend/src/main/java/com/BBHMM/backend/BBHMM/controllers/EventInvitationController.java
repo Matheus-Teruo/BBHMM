@@ -20,6 +20,8 @@ import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.models.response.EventInvitationResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,6 +33,8 @@ public class EventInvitationController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/invitation")
+    @Operation(summary = "Invite User to event")
+    @ApiResponse(responseCode = "200", description = "User invited to event")
     public ResponseEntity<EventInvitationResponse> userEventInvitation(
         @RequestBody UserInvitationRequest request
         ) {
@@ -41,6 +45,8 @@ public class EventInvitationController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/invitation/accepted")
+    @Operation(summary = "Accpet Invite")
+    @ApiResponse(responseCode = "200", description = "Invite accepted and user is part of event")
     public ResponseEntity<EventInvitationResponse> acceptedEventInvitation(
         @RequestBody AcceptInvitationRequest request
         ) {
@@ -52,6 +58,8 @@ public class EventInvitationController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/invitations")
+    @Operation(summary = "List invitations")
+    @ApiResponse(responseCode = "200", description = "Return invitation of user")
     public ResponseEntity<Page<EventInvitationResponse>> listEventInvitation(
         @RequestParam(required = false) Boolean accepted,
         @PageableDefault(size = 10) Pageable pageable
