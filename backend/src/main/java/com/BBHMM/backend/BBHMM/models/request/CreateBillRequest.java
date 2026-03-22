@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.models.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -13,10 +14,12 @@ public record CreateBillRequest(
     @NotBlank(message = "Nome da conta deve existir")   
     @Size(min = 3, message = "Nome da conta pelomenos 3 caractéres")
     @Pattern(regexp = "^[\\p{L}\\p{N}:!\\-]*$", message = "Nome da conta não pode ter alguns caracteres especiais")
+    @Schema(example = "newBill")
     String name,
     
     @Size(min = 3, message = "A decrição precisa pelomenos 3 caractéres")
     @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A decrição só deve conter letras, numeros e espaço")
+    @Schema(example = "Bill description")
     String description,
 
     @NotNull(message = "Valor é necessário")
