@@ -1,6 +1,8 @@
 package com.BBHMM.backend.BBHMM.services.validation;
 
 import org.springframework.stereotype.Component;
+
+import com.BBHMM.backend.BBHMM.infra.exceptions.FieldErrorDetail;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionException;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
@@ -11,7 +13,7 @@ import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventRepository;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Map;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -25,13 +27,16 @@ public class EventValidation {
         if (eventInvitationRepository.existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Convite pendente já existente",
-                "usuário ja possui um convite pendente para esse evento",
-                "Convite de Evento",
-                Map.of(
-                    "invitedUser",
-                    invitedUser.getFullname().split(" ")[0],
-                    "event",
-                    event.getEventName()
+                "Usuário ja possui um convite pendente para esse evento",
+                "EventInvitation",
+                List.of(
+                    new FieldErrorDetail(
+                        "invitedUser",
+                        invitedUser.getFullname().split(" ")[0]),
+                    new FieldErrorDetail(
+                        "event",
+                        event.getEventName()
+                    )
                 )
             );
         }
@@ -41,13 +46,15 @@ public class EventValidation {
         if (repository.userAlreadyInEvent(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Usuário ja está no evento",
-                "usuário já participa desse evento",
-                "Convite de Evento",
-                Map.of(
-                    "invitedUser",
-                    invitedUser.getFullname().split(" ")[0],
-                    "event",
-                    event.getEventName()
+                "Usuário já participa desse evento, não é possivel gerar convite",
+                "EventInvitation",
+                List.of(
+                    new FieldErrorDetail(
+                        "invitedUser",
+                        invitedUser.getFullname().split(" ")[0]),
+                    new FieldErrorDetail(
+                        "event",
+                        event.getEventName())
                 )
             );
         }
@@ -57,8 +64,8 @@ public class EventValidation {
         if (!eventInvitation.getUserInvited().getUuid().equals(userInvited.getUuid())) {
             throw new InvalidDatabaseQueryException(
                 "Convite não pode ser aceito",
-                "convite não pertence ao usuário",
-                "Convite de Evento",
+                "Convite não pertence ao usuário",
+                "EventInvitation",
                 userInvited.getFullname().split(" ")[0]
             );
         }
@@ -68,8 +75,8 @@ public class EventValidation {
         if (!billRepository.findBillsByEventUuidAndNotPaid(event.getUuid()).isEmpty()) {
             throw new InvalidDatabaseQueryException(
                 "Evento não pode ser finalizado",
-                "evento não ser finalizado pois ainda tem conta ativa",
-                "Finalização",
+                "Evento com conta ativa não pode ser finalizado",
+                "Event",
                 event.getEventName()
             );
         }

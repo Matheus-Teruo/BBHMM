@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.services.validation;
 
+import com.BBHMM.backend.BBHMM.infra.exceptions.FieldErrorDetail;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionException;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.User;
@@ -7,7 +8,7 @@ import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -19,34 +20,37 @@ public class UserValidation {
     public void checkNameDuplication(String username, String fullname, String email) {
         if (username != null && repository.existsByUsername(username)) {
             throw new InvalidDatabaseInsertionException(
-                "Campo duplicado",
-                "nome de usuário já está em uso",
-                "Nome de usuário",
-                Map.of(
-                    "username",
-                    username
+                "Nome de usuário duplicado",
+                "Nome de usuário já está em uso",
+                "User",
+                List.of(
+                    new FieldErrorDetail(
+                        "username",
+                        username)
                 )
             );
         }
         if (fullname != null && repository.existsByFullname(fullname)) {
             throw new InvalidDatabaseInsertionException(
-                "Campo duplicado",
-                "esse nome já foi cadastrado",
+                "Nome duplicado",
+                "Esse nome já foi cadastrado",
                 "Nome completo",
-                Map.of(
-                    "fullname",
-                    fullname
+                List.of(
+                    new FieldErrorDetail(
+                        "fullname",
+                        fullname)
                 )
             );
         }
         if (email != null && repository.existsByEmail(email)) {
             throw new InvalidDatabaseInsertionException(
-                "Campo duplicado",
-                "esse email já foi cadastrado",
+                "Email duplicado",
+                "Esse email já foi cadastrado",
                 "Email",
-                Map.of(
-                    "email",
-                    email
+                List.of(
+                    new FieldErrorDetail(
+                        "email",
+                        email)
                 )
             );
         }
@@ -80,7 +84,11 @@ public class UserValidation {
                 "Não pode convidar usuário",
                 "convidados só podem pertencer ao evento que foram criados",
                 "usuário",
-                Map.of("userField", user.getFullname())
+                List.of(
+                    new FieldErrorDetail(
+                        "userField",
+                        user.getFullname())
+                    )
             );
         }
     }

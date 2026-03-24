@@ -1,15 +1,8 @@
 package com.BBHMM.backend.BBHMM.services.validation;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Component;
 
+import com.BBHMM.backend.BBHMM.infra.exceptions.FieldErrorDetail;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionException;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
@@ -20,6 +13,12 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -31,8 +30,8 @@ public class BillValidation {
         if (!userRepository.isUserParticipantInEvent(user.getUuid(), eventUuid)) {
             throw new InvalidDatabaseQueryException(
                 "Usuário inválido",
-                "não pertence ao evento",
-                "Usuário",
+                "Usuário Não pertence ao evento",
+                "User",
                 user.getFullname().split(" ")[0]
             );
         }
@@ -50,9 +49,9 @@ public class BillValidation {
         if (!missingUsers.isEmpty()) {
             throw new InvalidDatabaseInsertionException(
                 "Usuário(s) não encontrado(s) no evento",
-                "não pertencem ao evento",
-                "UUID do usuário",
-                Map.of(
+                "Usuários não pertencem ao evento",
+                "EventUser",
+                List.of(
                 )
             );
         }
@@ -67,11 +66,11 @@ public class BillValidation {
         if (totalToReceive.compareTo(value) < 0) {
             throw new InvalidDatabaseInsertionException(
                 "Valor passa o que deve receber",
-                "usuário tem valor á receber menor que o valor pago, causando transação desnecessária",
-                "Valor recebido",
-                Map.of(
+                "Usuário precisa receber valor menor que o valor pago, causando transação desnecessária",
+                "Bill",
+                List.of(new FieldErrorDetail(
                     "value",
-                    value.toString()
+                    value.toString())
                 )
             );
         }
@@ -84,11 +83,11 @@ public class BillValidation {
         if (totalToPay.compareTo(value) < 0) {
             throw new InvalidDatabaseInsertionException(
                 "Valor passa o que deve pagar",
-                "usuário tem valor á pagar menor que o valor pago, causando transação desnecessária",
-                "Valor pago",
-                Map.of(
+                "Usuário tem valor á pagar menor que o valor pago, causando transação desnecessária",
+                "Bill",
+                List.of(new FieldErrorDetail(
                     "value",
-                    value.toString()
+                    value.toString())
                 )
             );
         }
@@ -98,8 +97,8 @@ public class BillValidation {
         if (event.isFinished()) {
             throw new InvalidDatabaseQueryException(
                 "Evento finalizado",
-                "evento não pode ser modificado, pois já foi finalizado",
-                "Finalizado",
+                "Evento não pode ser modificado, pois já foi finalizado",
+                "Event",
                 event.getEventName()
             );
         }

@@ -2,7 +2,6 @@ package com.BBHMM.backend.BBHMM.infra.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,61 +10,93 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<Void> handleError404(EntityNotFoundException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+  public ResponseEntity<ApiError> handleError404(
+    EntityNotFoundException ex,
+    HttpServletRequest request
+  ) {
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(ApiError.of(
+            HttpStatus.NOT_FOUND,
+            "Não encontrado",
+            "Objeto não encotrado",
+            request.getRequestURI()
+        ));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-    Map<String, String> invalidFields = new HashMap<>();
+  public ResponseEntity<ApiError> handleValidationExceptions(
+    MethodArgumentNotValidException ex,
+    HttpServletRequest request
+  ) {
+    List<FieldErrorDetail> fields = ex.getBindingResult()
+      .getFieldErrors()
+      .stream()
+      .map(err -> new FieldErrorDetail(
+          err.getField(),
+          err.getDefaultMessage()
+      ))
+      .toList();
 
-    for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-      invalidFields.put(error.getField(), error.getDefaultMessage());
-    }
-
-    Map<String, Object> response = new HashMap<>();
-    response.put("status", HttpStatus.BAD_REQUEST.value());
-    response.put("errorType", "Erro de Validação");
-    response.put("invalidFields", invalidFields);
-    response.put("error", "Campos inválidos");
-    response.put("message", "Alguns campos contêm valores inválidos. Verifique e tente novamente.");
+    log.warn(
+        "ValidationError | fields={} | path={} | cause={}",
+        fields,
+        request.getRequestURI(),
+        ex.getMessage()
+    );
 
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(ApiError.validation(
+            HttpStatus.BAD_REQUEST,
+            "Erro de validação",
+            ex.getMessage(),
+            request.getRequestURI(),
+            fields
+        ));
   }
 
   @ExceptionHandler(InvalidDatabaseInsertionException.class)
-  public ResponseEntity<Map<String, Object>> handleDatabaseInsertionExceptions(InvalidDatabaseInsertionException ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("errorType",
-        "Erro ao Inserir no Banco"
-    );
-    error.put("entity", ex.getEntityName());
-    error.put("invalidFields", ex.getFieldErrors());
-    error.put("error", ex.getError());
-    error.put("message", ex.getMessage());
+  public ResponseEntity<ApiError> handleDatabaseInsertionExceptions(
+    InvalidDatabaseInsertionException ex,
+    HttpServletRequest request
+  ) {
+    log.warn(ex.log(request.getRequestURI()));
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(ApiError.validation(
+            HttpStatus.BAD_REQUEST,
+            ex.getError(),
+            ex.getMessage(),
+            request.getRequestURI(),
+            ex.getFieldErrors()
+        ));
   }
 
   @ExceptionHandler(InvalidDatabaseQueryException.class)
-  public ResponseEntity<Map<String, String>> handleDatabaseQueryExceptions(InvalidDatabaseQueryException ex) {
-    Map<String, String> error = new HashMap<>();
-    error.put("errorType","Componentem não existente");
-    error.put("entity", ex.getEntityName());
-    error.put("invalidValue", ex.getInvalidValue());
-    error.put("error",  ex.getError());
-    error.put("message", ex.getMessage());
+  public ResponseEntity<ApiError> handleDatabaseQueryExceptions(
+    InvalidDatabaseQueryException ex,
+    HttpServletRequest request
+  ) {
+    log.warn(ex.log(request.getRequestURI()));
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(ApiError.of(
+            HttpStatus.BAD_REQUEST,
+            ex.getError(),
+            ex.getMessage(),
+            request.getRequestURI()
+        ));
   }
 
   @ExceptionHandler(Exception.class)
@@ -73,7 +104,6 @@ public class GlobalExceptionHandler {
       Exception ex,
       HttpServletRequest request
   ) {
-
     log.error(
         "System error | errorMessage={} path={}",
         ex.getMessage(),
@@ -84,6 +114,7 @@ public class GlobalExceptionHandler {
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(ApiError.of(
             HttpStatus.INTERNAL_SERVER_ERROR,
+            "Erro interno do sistema",
             "Erro interno inesperado: " + ex.getMessage(),
             request.getRequestURI()
         ));
