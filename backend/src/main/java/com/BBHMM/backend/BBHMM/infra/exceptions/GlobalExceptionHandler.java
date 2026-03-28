@@ -2,6 +2,7 @@ package com.BBHMM.backend.BBHMM.infra.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,19 +32,40 @@ public class GlobalExceptionHandler {
         ));
   }
 
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<ApiError> handleAuthenticationException(
+      AuthenticationException ex,
+      HttpServletRequest request
+  ) {
+    log.warn(
+        "Authentication failed | path={} | cause={}",
+        request.getRequestURI(),
+        ex.getMessage()
+    );
+
+    return ResponseEntity
+        .status(HttpStatus.UNAUTHORIZED)
+        .body(ApiError.of(
+            HttpStatus.UNAUTHORIZED,
+            "Falha na autenticação",
+            "Usuário ou senha inválidos",
+            request.getRequestURI()
+        ));
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiError> handleValidationExceptions(
     MethodArgumentNotValidException ex,
     HttpServletRequest request
   ) {
     List<FieldErrorDetail> fields = ex.getBindingResult()
-      .getFieldErrors()
-      .stream()
-      .map(err -> new FieldErrorDetail(
-          err.getField(),
-          err.getDefaultMessage()
-      ))
-      .toList();
+        .getFieldErrors()
+        .stream()
+        .map(err -> new FieldErrorDetail(
+            err.getField(),
+            err.getDefaultMessage()
+        ))
+        .toList();
 
     log.warn(
         "ValidationError | fields={} | path={} | cause={}",
@@ -105,7 +127,8 @@ public class GlobalExceptionHandler {
       HttpServletRequest request
   ) {
     log.error(
-        "System error | errorMessage={} path={}",
+        "System error | type={} | errorMessage={} | path={}",
+        ex.getClass().getName(),
         ex.getMessage(),
         request.getRequestURI()
     );

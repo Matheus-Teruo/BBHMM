@@ -21,8 +21,8 @@ public record ApiError(
   ) {
     return new ApiError(
         Instant.now(),
-        title,
         status.getReasonPhrase(),
+        title,
         message,
         path,
         null
@@ -38,8 +38,8 @@ public record ApiError(
   ) {
     return new ApiError(
         Instant.now(),
-        title,
         status.getReasonPhrase(),
+        title,
         message,
         path,
         fields
