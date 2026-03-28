@@ -6,11 +6,11 @@ import Button from "@/components/util/Button";
 import TokenInput from "@/components/util/TokenInput";
 import useTokenService from "@service/useTokenService";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { timerFormater } from "@/util/timerFormater";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 
 const WAIT_TIME = 120;
 
@@ -39,17 +39,17 @@ function EmailValidation() {
     setTouched(false);
     if (userUuid) {
       const response = await validateEmail({ token: value });
-      if (!isMessage(response)) {
+      if (!isApiError(response)) {
         addNotification({
           title: "Email Confirmado",
           message:
             "Parabens, obrigado por confirmar o email, agora esse email está vinculado a está conta",
-          type: MessageType.INFO,
+          type: MessageType.OK,
         });
         closePopup();
-      } else if (isMessage(response)) {
+      } else {
         const message = response;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
     }
     setTouched(true);
@@ -61,16 +61,16 @@ function EmailValidation() {
     setTouched(false);
     if (userUuid) {
       const response = await verifyEmail(userUuid);
-      if (!isMessage(response)) {
+      if (!isApiError(response)) {
         addNotification({
           title: "Email enviado",
           message: "Confira seu email, possivelmente sua caixa de spam",
           type: MessageType.INFO,
         });
         setTimer(WAIT_TIME);
-      } else if (isMessage(response)) {
+      } else {
         const message = response;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
     }
     setTouched(true);

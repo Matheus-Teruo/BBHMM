@@ -1,7 +1,7 @@
+import { isApiError } from "@/util/checkApiResponse";
 import styles from "./ForgotPasswordRedirect.module.scss";
 import { isUserLogged } from "@/util/checkAuthentication";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -30,7 +30,7 @@ function ForgotPasswordRedirect() {
       const response = await checkResetPassword({
         token: token,
       } as CheckResetPassword);
-      if (response && !isMessage(response)) {
+      if (!isApiError(response)) {
         login({
           uuid: response.uuid,
           firstname: response.firstname,
@@ -38,10 +38,10 @@ function ForgotPasswordRedirect() {
           emailVerified: response.emailVerified,
         });
         navigate("/auth/user");
-      } else if (isMessage(response)) {
+      } else {
         addNotification({
-          title: "Não foi possivel redefinir senha",
-          message: "Seu e-mail expirou, tente novamente com outro email.",
+          title: "Não foi possivel redefinir sua senha",
+          message: "Seu e-mail expirou, tente novamente enviando outro email.",
           type: MessageType.WARNING,
         });
         navigate("/auth/login");

@@ -9,13 +9,12 @@ import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useState } from "react";
 import FormBill from "../FormBill";
 import { EditSVG } from "@/assets/svg";
-import { isSuccess } from "@/util/requestHelper";
 import usePaymentService from "@service/usePaymentService";
 import { DebitTotal } from "@data/Payment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useUserService from "@service/useUserService";
-import { isMessage } from "@context/AlertContext/useAlertContext";
 import Event from "@data/Event";
+import { isApiError } from "@/util/checkApiResponse";
 
 function BillPage() {
   const [event, setEvent] = useState<Event>();
@@ -101,7 +100,7 @@ function BillPage() {
       partUuid: participant,
     } as UpdateBillParticipants;
     const response = await updateBillParticipant(body);
-    if (isSuccess(response)) {
+    if (!isApiError(response)) {
       fetchBill();
       fetchPayment();
     }
@@ -133,7 +132,7 @@ function BillPage() {
     if (user.role == Role.GUEST) {
       if (eventUUID) {
         const guestRespone = await getGuest(user.uuid, eventUUID);
-        if (guestRespone && !isMessage(guestRespone)) {
+        if (!isApiError(guestRespone)) {
           navigate("/auth/guest/info", {
             state: {
               username: guestRespone.username,

@@ -4,8 +4,8 @@ import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -43,7 +43,7 @@ function PaymentForm() {
     setTouched(false);
     setMessageError({});
     const payment = await makePayment(state);
-    if (payment && !isMessage(payment)) {
+    if (!isApiError(payment)) {
       addNotification({
         title: "Conta paga",
         message: `o valor ${state.value} foi pago`,
@@ -51,9 +51,9 @@ function PaymentForm() {
       });
       dispatch({ type: "RESET" });
       navigate(-1);
-    } else if (payment) {
+    } else {
       const message = payment;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+      if (message.fields) setMessageError(mapFieldErrors(message.fields));
     }
     setTouched(true);
     setWaitingFetch(false);

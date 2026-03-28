@@ -34,7 +34,7 @@ const useUserService = () => {
   );
 
   const checkUser = useCallback(
-    async (): Promise<UserResume> =>
+    async (): Promise<UserResume | ApiError> =>
       api.get<UserResume>("/auth/check").then((res) => res.data),
     [api],
   );

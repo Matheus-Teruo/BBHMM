@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
 import useUserService from "@service/useUserService";
 import Event from "@data/Event";
+import { isApiError } from "@/util/checkApiResponse";
 
 const LOCAL_STORAGE_KEY_EVENT = "selectedEvent";
 
@@ -22,7 +23,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   const checkLogged = useCallback(async () => {
     try {
       const logginUser = await checkUser();
-      if (logginUser !== null) {
+      if (!isApiError(logginUser)) {
         setUser(logginUser);
       } else {
         setUser("unlogged");

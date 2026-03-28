@@ -5,9 +5,9 @@ import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
 import UserSelect from "@/components/util/UserSelect";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 import { isUserLogged } from "@/util/checkAuthentication";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -52,7 +52,7 @@ function FormBill({
   const requestBill = async () => {
     if (initialValue) {
       var bill = await getBill(initialValue.uuid);
-      if (bill) dispatch({ type: "SET_BILL", payload: bill });
+      if (!isApiError(bill)) dispatch({ type: "SET_BILL", payload: bill });
     }
   };
 
@@ -74,7 +74,7 @@ function FormBill({
     setMessageError({});
     if (form === "Create") {
       const event = await createBill(createBillPayload(state));
-      if (event && !isMessage(event)) {
+      if (!isApiError(event)) {
         addNotification({
           title: "Evento Criado",
           message: `Evento ${state.name} criado, adicione mais pessoas`,
@@ -82,13 +82,13 @@ function FormBill({
         });
         dispatch({ type: "RESET" });
         onChange();
-      } else if (event) {
+      } else {
         const message = event;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
     } else if (form === "Update") {
       const event = await updateBill(updateBillPayload(state));
-      if (event && !isMessage(event)) {
+      if (!isApiError(event)) {
         addNotification({
           title: "Evento Editado",
           message: `Evento ${state.name} modificado`,
@@ -96,9 +96,9 @@ function FormBill({
         });
         dispatch({ type: "RESET" });
         onChange();
-      } else if (event) {
+      } else {
         const message = event;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
     }
     setTouched(true);

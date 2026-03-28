@@ -10,14 +10,14 @@ import {
 import AuthInput from "@/components/util/AuthInput";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 import { isUserLogged } from "@/util/checkAuthentication";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { Role, UserResume } from "@data/User";
+import { Role } from "@data/User";
 import {
   initialUserState,
   loginPayload,
@@ -49,7 +49,7 @@ function Login() {
     setTouched(false);
     setMessageError({});
     const user = await loginUser(loginPayload(state));
-    if (user && !isMessage<UserResume>(user)) {
+    if (!isApiError(user)) {
       addNotification({
         title: "Sucesso ao fazer Login",
         message: `Usuário ${state.username} loggado`,
@@ -60,15 +60,15 @@ function Login() {
           title: "Valide seu email",
           message:
             "Sua conta não tem um email validado, Na tela de usuário valide seu email",
-          type: MessageType.WARNING,
+          type: MessageType.INFO,
         });
       }
       login(user);
       dispatch({ type: "RESET" });
       navigate("/");
-    } else if (user) {
+    } else {
       const message = user;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+      if (message.fields) setMessageError(mapFieldErrors(message.fields));
     }
     setTouched(true);
     setWaitingFetch(false);

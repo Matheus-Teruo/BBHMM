@@ -1,7 +1,7 @@
+import { isApiError } from "@/util/checkApiResponse";
 import styles from "./GuestRedirect.module.scss";
 import { isUserLogged } from "@/util/checkAuthentication";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -32,7 +32,7 @@ function GuestRedirect() {
         username: guestName,
         password: token,
       } as LoginUser);
-      if (guestResponse && !isMessage(guestResponse)) {
+      if (!isApiError(guestResponse)) {
         login({
           uuid: guestResponse.uuid,
           firstname: guestResponse.username,
@@ -41,7 +41,7 @@ function GuestRedirect() {
         });
         selectEvent(guestResponse.event);
         navigate(`/event/${guestResponse.event.uuid}/bills`);
-      } else if (isMessage(guestResponse)) {
+      } else {
         addNotification({
           title: "Convidado não existente",
           message:

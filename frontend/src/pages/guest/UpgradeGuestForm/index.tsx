@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./UpgradeGuestForm.module.scss";
 import useUserService from "@service/useUserService";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -17,6 +16,7 @@ import {
 } from "@reducer/userReducer";
 import { EmailSVG, LockPadCloseSVG, LockPadOpenSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 
 function UpgradeGuestForm() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -55,16 +55,16 @@ function UpgradeGuestForm() {
     setTouched(false);
     setMessageError({});
     const response = await upgradeGuestToUser(upgradeGuestPayload(state));
-    if (!isMessage(response)) {
+    if (!isApiError(response)) {
       addNotification({
         title: "Upgrade realizado com sucesso",
         message: "Agora pode editer campos e participar de mais eventos",
         type: MessageType.OK,
       });
       closePopup();
-    } else if (isMessage(response)) {
+    } else {
       const message = response;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+      if (message.fields) setMessageError(mapFieldErrors(message.fields));
     }
     setTouched(true);
     setWaitingFetch(false);

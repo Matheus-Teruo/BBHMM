@@ -23,7 +23,6 @@ import {
   userReducer,
 } from "@reducer/userReducer";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -32,6 +31,7 @@ import useUserService from "@service/useUserService";
 import { initialPixState, pixReducer } from "@reducer/pixReducer";
 import { Link, useNavigate } from "react-router-dom";
 import { isUserLogged } from "@/util/checkAuthentication";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 
 function SignUp() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -68,7 +68,7 @@ function SignUp() {
           pixState.pixKey != "" || pixState.bankAccount != "",
         ),
       );
-      if (user && !isMessage(user)) {
+      if (!isApiError(user)) {
         addNotification({
           title: "Conta criada com sucesso",
           message: `Usuário: ${user.fullname} criado.`,
@@ -82,9 +82,9 @@ function SignUp() {
         });
         dispatch({ type: "RESET" });
         navigate("/");
-      } else if (isMessage(user)) {
+      } else {
         const message = user;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
     } else {
       addNotification({

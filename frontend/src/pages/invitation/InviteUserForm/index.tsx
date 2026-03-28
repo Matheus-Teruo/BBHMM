@@ -5,7 +5,6 @@ import GlassBackground from "@/components/GlassBackground";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -13,6 +12,7 @@ import { UserInvitation } from "@data/EventInvitation";
 import useEventInvitationService from "@service/useEventInvitationService";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 
 function InviteUserForm() {
   const [userfield, setUserfield] = useState<string>("");
@@ -34,7 +34,7 @@ function InviteUserForm() {
         userfield: userfield,
         eventUuid: eventUUID,
       } as UserInvitation);
-      if (invitation && !isMessage(invitation)) {
+      if (!isApiError(invitation)) {
         addNotification({
           title: "Convite enviado",
           message: `Convite enviado para ${invitation.ownerUser.firstname}`,
@@ -44,7 +44,7 @@ function InviteUserForm() {
         navigate(-1);
       } else if (invitation) {
         const message = invitation;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
       setTouched(true);
       setWaitingFetch(false);

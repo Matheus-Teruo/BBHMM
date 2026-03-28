@@ -4,9 +4,9 @@ import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 import { regexLeterNumber } from "@/util/regex";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -45,7 +45,7 @@ function CreateGuestForm() {
       guestName: guestName,
       eventUuid: event?.uuid,
     } as CreateGuest);
-    if (guest && !isMessage(guest)) {
+    if (!isApiError(guest)) {
       addNotification({
         title: "Convidado criado",
         message: `Convidado ${guestName} criado`,
@@ -60,9 +60,9 @@ function CreateGuestForm() {
           onCreated: true,
         },
       });
-    } else if (guest) {
+    } else {
       const message = guest;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+      if (message.fields) setMessageError(mapFieldErrors(message.fields));
     }
     setTouched(true);
     setWaitingFetch(false);

@@ -4,8 +4,8 @@ import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -48,7 +48,7 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
     setMessageError({});
     if (form === "Create") {
       const event = await createEvent(createEventPayload(state));
-      if (event && !isMessage(event)) {
+      if (!isApiError(event)) {
         addNotification({
           title: "Evento Criado",
           message: `Evento ${state.eventName} criado, adicione mais pessoas`,
@@ -56,13 +56,13 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
         });
         dispatch({ type: "RESET" });
         onChange();
-      } else if (event) {
+      } else {
         const message = event;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
     } else if (form === "Update") {
       const event = await updateEvent(updateEventPayload(state));
-      if (event && !isMessage(event)) {
+      if (!isApiError(event)) {
         addNotification({
           title: "Evento Editado",
           message: `Evento ${state.eventName} criado, adicione mais pessoas`,
@@ -70,9 +70,9 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
         });
         dispatch({ type: "RESET" });
         onChange();
-      } else if (event) {
+      } else {
         const message = event;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
     }
     setTouched(true);
@@ -84,7 +84,7 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
     setTouched(false);
     setMessageError({});
     const event = await finishEvent(state.uuid);
-    if (event && !isMessage(event)) {
+    if (!isApiError(event)) {
       addNotification({
         title: "Evento Finalizado",
         message: `Evento ${state.eventName} finalizado, não podendo ser mais editado`,
@@ -92,9 +92,9 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
       });
       dispatch({ type: "RESET" });
       onChange();
-    } else if (event) {
+    } else {
       const message = event;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+      if (message.fields) setMessageError(mapFieldErrors(message.fields));
     }
     setTouched(true);
     setWaitingFetch("");

@@ -8,7 +8,6 @@ import {
 } from "@/components/util/InviteParamsSelect/inviteMetadata";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
@@ -19,6 +18,7 @@ import useEventInvitationService from "@service/useEventInvitationService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import InviteParamsSelect from "@/components/util/InviteParamsSelect";
+import { isApiError } from "@/util/checkApiResponse";
 
 function EventInvitationPage() {
   const [invites, setInvites] = useState<EventInvitation[]>([]);
@@ -54,7 +54,7 @@ function EventInvitationPage() {
       uuid: uuid,
       accept: accept,
     } as AcceptInvitation);
-    if (invitation && !isMessage(invitation)) {
+    if (!isApiError(invitation)) {
       addNotification({
         title: `Convite ${accept ? "Aceito" : "Recusado"}`,
         message: `Convite para evento ${invitation.eventName} ${accept ? "Aceito" : "Recusado"} ${accept ? ", veja a lista de eventos que participa" : ""}`,

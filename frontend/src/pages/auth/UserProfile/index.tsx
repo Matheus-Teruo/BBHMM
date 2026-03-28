@@ -19,14 +19,14 @@ import {
 import AuthInput from "@/components/util/AuthInput";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
+import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import User, { Role } from "@data/User";
+import { Role } from "@data/User";
 import { initialPixState, pixReducer } from "@reducer/pixReducer";
 import {
   initialUserState,
@@ -79,16 +79,16 @@ function UserProfile() {
     setWaitingFetch(update);
     setTouched(false);
     const user = await updateUser(updateUserPayload(state, update));
-    if (user && !isMessage<User>(user)) {
+    if (!isApiError(user)) {
       addNotification({
         title: "Sucesso na atualização",
         message: `Atualização no usuário ${user.username}`,
         type: MessageType.OK,
       });
       setUpdate("");
-    } else if (user) {
+    } else {
       const message = user;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+      if (message.fields) setMessageError(mapFieldErrors(message.fields));
     }
     setTouched(true);
     setWaitingFetch("");
