@@ -82,13 +82,14 @@ public class EventService {
         return event;
     }
 
+    @Transactional
     public EventUser updateEventUser(UpdateEventUserRequest request, UUID eventUuid, User userSecurity) {
         Event event = safeTakeEventByUuid(eventUuid);
         EventUser eventUser = event.getEventUsers()
                                     .stream()
-                                    .filter(user -> user.getUserUuid() == userSecurity.getUuid())
+                                    .filter(eu -> userSecurity.getUuid().equals(eu.getUserUuid()))
                                     .findFirst()
-                                    .orElseThrow(() -> new InvalidDatabaseQueryException("Usuário não encontrado", "usuário não encontrado no evento", "UserID", userSecurity.toString()));
+                                    .orElseThrow(() -> new InvalidDatabaseQueryException("Usuário não encontrado", "usuário não encontrado no evento", "UserID", userSecurity.getUuid().toString()));
         eventUser.update(request);
 
         return eventUser;

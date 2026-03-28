@@ -42,10 +42,14 @@ public class EventUser {
     }
 
     public UUID getUserUuid() {
-        return user.getUuid();
+        return id.getUuidUser();
+    }
+
+    public UUID getEventUuid() {
+        return id.getUuidEvent();
     }
 
     public void update(UpdateEventUserRequest request) {
-        if (this.color != null) this.color = request.color();
+        if (request.color() != null) this.color = request.color();
     }
 }
