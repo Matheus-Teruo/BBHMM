@@ -1,23 +1,23 @@
 import useAxios from "@/axios/useAxios";
-import { Message } from "@context/AlertContext/useAlertContext";
 import { useCallback } from "react";
-import { useSafeRequest } from "./useHandleRequest";
+import { useSafeRequest } from "../axios/useHandleRequest";
 import { UserResume } from "@data/User";
 import { CheckResetPassword, EmailToken, ResetPassword } from "@data/Token";
+import ApiError from "@data/Error";
 
 const useTokenService = () => {
   const api = useAxios();
   const { safeRequest } = useSafeRequest();
 
   const resetPassword = useCallback(
-    async (payload: ResetPassword): Promise<void | Message | null> =>
+    async (payload: ResetPassword): Promise<void | ApiError> =>
       safeRequest(() =>
         api.post<void>("auth/reset-password", payload).then((res) => res.data),
       ),
     [api, safeRequest],
   );
   const checkResetPassword = useCallback(
-    async (payload: CheckResetPassword): Promise<UserResume | Message | null> =>
+    async (payload: CheckResetPassword): Promise<UserResume | ApiError> =>
       safeRequest(() =>
         api
           .post<UserResume>("auth/check-reset-password", payload)
@@ -27,7 +27,7 @@ const useTokenService = () => {
   );
 
   const verifyEmail = useCallback(
-    async (userUuid: string): Promise<void | Message | null> =>
+    async (userUuid: string): Promise<void | ApiError> =>
       safeRequest(() =>
         api
           .post<void>("/users/verify-email", { userUuid: userUuid })
@@ -37,7 +37,7 @@ const useTokenService = () => {
   );
 
   const validateEmail = useCallback(
-    async (payload: EmailToken): Promise<void | Message | null> =>
+    async (payload: EmailToken): Promise<void | ApiError> =>
       safeRequest(() =>
         api.post<void>("/users/confirm-email", payload).then((res) => res.data),
       ),

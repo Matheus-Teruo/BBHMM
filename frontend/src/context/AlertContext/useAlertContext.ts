@@ -10,12 +10,7 @@ export enum MessageType {
 export interface Message {
   title: string;
   message: string;
-  invalidFields?: Record<string, string>;
   type: MessageType;
-}
-
-export function isMessage<T>(response: T | Message): response is Message {
-  return (response as Message).message !== undefined;
 }
 
 export interface Notification {

@@ -1,12 +1,12 @@
 import useAxios from "@/axios/useAxios";
-import { Message } from "@context/AlertContext/useAlertContext";
 import { useCallback } from "react";
 import { PaginatedResponse } from "../data/PagesType";
 import EventInvitation, {
   AcceptInvitation,
   UserInvitation,
 } from "@data/EventInvitation";
-import { useSafeRequest } from "./useHandleRequest";
+import { useSafeRequest } from "../axios/useHandleRequest";
+import ApiError from "@data/Error";
 
 const useEventInvitationService = () => {
   const api = useAxios();
@@ -15,7 +15,7 @@ const useEventInvitationService = () => {
   const userEventInvitation = useCallback(
     async (
       invitation: UserInvitation,
-    ): Promise<EventInvitation | Message | null> =>
+    ): Promise<EventInvitation | ApiError> =>
       safeRequest(() =>
         api
           .post<EventInvitation>("/events/invitation", invitation)
@@ -27,7 +27,7 @@ const useEventInvitationService = () => {
   const acceptedEventInvitation = useCallback(
     async (
       acceptInvitation: AcceptInvitation,
-    ): Promise<EventInvitation | Message | null> =>
+    ): Promise<EventInvitation | ApiError> =>
       safeRequest(() =>
         api
           .post<EventInvitation>(
@@ -36,6 +36,7 @@ const useEventInvitationService = () => {
           )
           .then((res) => res.data),
       ),
+      
     [api, safeRequest],
   );
 
@@ -45,7 +46,7 @@ const useEventInvitationService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<EventInvitation> | null> =>
+    ): Promise<PaginatedResponse<EventInvitation>> =>
       api
         .get<
           PaginatedResponse<EventInvitation>
