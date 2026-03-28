@@ -215,6 +215,9 @@ function BillPage() {
                 >
                   <input
                     type="checkbox"
+                    style={{
+                      color: user.color
+                    }}
                     checked={bill.participantsUuid.includes(user.uuid)}
                     onChange={(e) =>
                       handleCheckBill(e.target.checked, user.uuid, bill.uuid)
