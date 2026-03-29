@@ -128,33 +128,37 @@ function BillPage() {
     });
   }
 
-  async function handleUser(user: EventUser) {
-    if (user.role == Role.GUEST) {
-      if (eventUUID) {
-        const guestRespone = await getGuest(user.uuid, eventUUID);
-        if (!isApiError(guestRespone)) {
-          navigate("/auth/guest/info", {
-            state: {
-              username: guestRespone.username,
-              token: guestRespone.token,
-              backgroundLocation: {
-                pathname: location.pathname,
-                search: location.search,
-              },
+  async function handleUser(eu: EventUser) {
+    if (isUserLogged(user)) {
+      if (eu.role === Role.USER || user.uuid === eu.uuid) {
+        navigate("/auth/user/info", {
+          state: {
+            user: eu,
+            eventUuid: eventUUID,
+            self: user.uuid === eu.uuid,
+            backgroundLocation: {
+              pathname: location.pathname,
+              search: location.search,
             },
-          });
+          },
+        });
+      } else if (eu.role === Role.GUEST) {
+        if (eventUUID) {
+          const guestRespone = await getGuest(eu.uuid, eventUUID);
+          if (!isApiError(guestRespone)) {
+            navigate("/auth/guest/info", {
+              state: {
+                username: guestRespone.username,
+                token: guestRespone.token,
+                backgroundLocation: {
+                  pathname: location.pathname,
+                  search: location.search,
+                },
+              },
+            });
+          }
         }
       }
-    } else if (user.role == Role.USER) {
-      navigate("/auth/user/info", {
-        state: {
-          user: user,
-          backgroundLocation: {
-            pathname: location.pathname,
-            search: location.search,
-          },
-        },
-      });
     }
   }
 
@@ -216,7 +220,7 @@ function BillPage() {
                   <input
                     type="checkbox"
                     style={{
-                      color: user.color
+                      accentColor: user.color,
                     }}
                     checked={bill.participantsUuid.includes(user.uuid)}
                     onChange={(e) =>

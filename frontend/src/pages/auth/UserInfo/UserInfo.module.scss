@@ -58,6 +58,17 @@
         padding: 0 4px;
       }
     }
+
+    .colorValue {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .colorButton {
+      padding: 6px 12px;
+      margin-top: 4px;
+      background-color: $color-gray-000;
+    }
   }
 
   .message {

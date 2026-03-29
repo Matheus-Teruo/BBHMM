@@ -57,9 +57,14 @@ const useEventService = () => {
   );
 
   const updateEventUser = useCallback(
-    async (eventUuid: string, eventUser: UpdateEventUser): Promise<EventUser[] | ApiError> =>
+    async (
+      eventUuid: string,
+      eventUser: UpdateEventUser,
+    ): Promise<EventUser | ApiError> =>
       safeRequest(() =>
-        api.put<EventUser[]>(`/events/${eventUuid}/user`, eventUser).then((res) => res.data),
+        api
+          .put<EventUser>(`/events/${eventUuid}/user`, eventUser)
+          .then((res) => res.data),
       ),
     [api],
   );
@@ -74,7 +79,9 @@ const useEventService = () => {
 
   const listUserFromEvent = useCallback(
     async (eventUuid: string): Promise<EventUser[]> =>
-      api.get<EventUser[]>(`/events/${eventUuid}/users`).then((res) => res.data),
+      api
+        .get<EventUser[]>(`/events/${eventUuid}/users`)
+        .then((res) => res.data),
     [api],
   );
 
