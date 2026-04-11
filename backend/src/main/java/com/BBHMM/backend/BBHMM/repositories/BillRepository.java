@@ -16,6 +16,14 @@ public interface BillRepository extends JpaRepository<Bill, UUID>{
     @Query("SELECT b FROM Bill b WHERE b.uuid = :uuid")
     Optional<Bill> findByUuid(UUID uuid);
 
+    @Query("""
+            SELECT DISTINCT b
+            FROM Bill b
+            LEFT JOIN FETCH b.participants p
+            WHERE b.uuid = :uuid
+        """)
+    Optional<Bill> findByUuidWithParticipants(UUID uuid);
+
     @Query("SELECT b FROM Bill b WHERE b.eventUuid = :eventUuid AND b.type = com.BBHMM.backend.BBHMM.models.BillType.BILL")
     List<Bill> findBillsByEventUuid(UUID eventUuid);
 

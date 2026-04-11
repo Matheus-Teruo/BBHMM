@@ -18,6 +18,7 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.BillResponse;
 import com.BBHMM.backend.BBHMM.models.response.BillsResumeResponse;
 import com.BBHMM.backend.BBHMM.services.BillService;
+import com.BBHMM.backend.BBHMM.services.CalculateBillUseCase;
 
 import java.net.URI;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public class BillsController {
 
     private final BillService service;
+    private final CalculateBillUseCase cBillUseCase;
 
     @PostMapping("/bills")
     @Operation(summary = "Create Bill")
@@ -85,7 +87,7 @@ public class BillsController {
     @ApiResponse(responseCode = "204", description = "Participants of the bill updated")
     @CreateWithReadErrors
     public ResponseEntity<Void> updateBillParticipants(@Valid @RequestBody UpdateBillParticipantsRequest request) {
-        service.updateBillParticipants(request);
+        cBillUseCase.updateBillParticipants(request);
 
         return ResponseEntity.noContent().build();
     }

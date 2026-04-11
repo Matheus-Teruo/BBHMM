@@ -3,11 +3,9 @@ package com.BBHMM.backend.BBHMM.services;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.Event;
-import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
-import com.BBHMM.backend.BBHMM.models.request.UpdateBillParticipantsRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.repositories.BillRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
@@ -60,7 +58,7 @@ public class BillService {
     }
 
     public Bill safeTakeBillByUuid(UUID uuid) {
-    return repository.findByUuid(uuid)
+    return repository.findByUuidWithParticipants(uuid)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             "Conta não encontrado",
             "conta inexistente",
@@ -98,39 +96,6 @@ public class BillService {
     }
 
     @Transactional
-    public void updateBillParticipants(UpdateBillParticipantsRequest request) {
-        var bill = safeTakeBillByUuid(request.uuid());
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User partUser = userService.safeTakeUserByUuid(request.partUuid());
-        validation.checkUserParticipationInEvent(user, bill.getEventUuid());
-        validation.checkUserParticipationInEvent(partUser, bill.getEventUuid());
-        validation.checkEventFinished(bill.getEvent());
-
-        boolean plus = true;
-        switch (request.type()) {
-            case "add":
-                plus = true;
-                break;
-            case "remove":
-                plus = false;
-                break;
-            case "reset":
-                reversePaidValue(bill.getParticipants(), bill);
-                bill.getParticipants().removeAll(bill.getParticipants());
-                return;
-            case "all":
-                reversePaidValue(bill.getParticipants(), bill);
-                bill.getParticipants().removeAll(bill.getParticipants());
-                updateParticipants(bill, bill.getEvent().getEventUsers().stream().map(EventUser::getUserUuid).toList(), bill.getValue());
-                return;
-            default:
-                return;
-        }
-
-        updateParticipants(bill, partUser, plus, bill.getValue());
-    }
-
-    @Transactional
     public void deleteBill(UUID billUuid) {
         var bill = safeTakeBillByUuid(billUuid);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -144,7 +109,7 @@ public class BillService {
         repository.delete(bill);
     }
 
-    private void updateParticipants(Bill bill, List<UUID> listPartUuids, BigDecimal value) {
+    public void updateParticipants(Bill bill, List<UUID> listPartUuids, BigDecimal value) {
         List<Participants> currentParticipants = bill.getParticipants();
 
         reversePaidValue(currentParticipants, bill);
@@ -176,7 +141,7 @@ public class BillService {
         bill.setParticipants(currentParticipants);
     }
 
-    private void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value) {
+    public void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value) {
 
         List<Participants> currentParticipants = bill.getParticipants();
 
@@ -241,7 +206,7 @@ public class BillService {
         }
     }
 
-    private void reversePaidValue(List<Participants> removedParticipants, Bill bill) {
+    public void reversePaidValue(List<Participants> removedParticipants, Bill bill) {
         for (Participants participation : removedParticipants) {
             BigDecimal undoPaidValue = participation.getPaidValue();
             List<Bill> userBills = repository.findBillsByPayerUuidAndPaid(participation.getUserUuid(), bill.getEventUuid());
