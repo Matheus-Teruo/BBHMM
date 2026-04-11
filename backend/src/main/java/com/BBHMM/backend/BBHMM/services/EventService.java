@@ -1,9 +1,13 @@
 package com.BBHMM.backend.BBHMM.services;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
@@ -19,10 +23,6 @@ import com.BBHMM.backend.BBHMM.repositories.EventRepository;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
 import com.BBHMM.backend.BBHMM.services.validation.EventValidation;
 import com.BBHMM.backend.BBHMM.services.validation.UserValidation;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;

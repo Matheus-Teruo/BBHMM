@@ -1,8 +1,7 @@
 package com.BBHMM.backend.BBHMM.services;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,8 +12,8 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.BBHMM.backend.BBHMM.models.User;
 
-import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor

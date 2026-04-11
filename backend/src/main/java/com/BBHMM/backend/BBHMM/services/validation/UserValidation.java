@@ -1,12 +1,13 @@
 package com.BBHMM.backend.BBHMM.services.validation;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
 import com.BBHMM.backend.BBHMM.infra.exceptions.FieldErrorDetail;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseInsertionException;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;

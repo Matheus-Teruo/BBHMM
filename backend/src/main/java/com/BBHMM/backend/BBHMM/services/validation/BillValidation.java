@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.services.validation;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.FieldErrorDetail;
@@ -12,7 +13,6 @@ import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 
-import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;

@@ -1,10 +1,7 @@
 package com.BBHMM.backend.BBHMM.services;
 
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
@@ -14,8 +11,10 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.TokenRespository;
 import com.BBHMM.backend.BBHMM.services.validation.TokenValidation;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

@@ -1,7 +1,6 @@
 package com.BBHMM.backend.BBHMM.services.validation;
 
-import java.time.LocalDateTime;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
@@ -10,7 +9,7 @@ import com.BBHMM.backend.BBHMM.models.TokenType;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.repositories.TokenRespository;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
