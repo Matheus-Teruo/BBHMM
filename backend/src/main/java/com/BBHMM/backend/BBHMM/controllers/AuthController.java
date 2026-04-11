@@ -1,6 +1,24 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import com.BBHMM.backend.BBHMM.config.security.TokenServiceConfig;
+import com.BBHMM.backend.BBHMM.docs.api.CreateResourceErrors;
+import com.BBHMM.backend.BBHMM.docs.api.CreateWithReadErrors;
+import com.BBHMM.backend.BBHMM.docs.api.ReadResourceErrors;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CheckResetPasswordRequest;
@@ -12,22 +30,6 @@ import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResumeResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -48,6 +50,7 @@ public class AuthController {
     @PostMapping("/signup")
     @Operation(summary = "Create User")
     @ApiResponse(responseCode = "201", description = "User created and logged in")
+    @CreateResourceErrors
     public ResponseEntity<UserResponse> signUp(
         @Valid @RequestBody
         SignupUserRequest request,
@@ -73,6 +76,7 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Login User")
     @ApiResponse(responseCode = "200", description = "User logged in")
+    @ReadResourceErrors
     public ResponseEntity<UserResumeResponse> login(
         @Valid @RequestBody
         LoginUserRequest request,
@@ -90,6 +94,7 @@ public class AuthController {
     @PostMapping("/login/guest")
     @Operation(summary = "Login Guest")
     @ApiResponse(responseCode = "200", description = "Guest logged in")
+    @ReadResourceErrors
     public ResponseEntity<GuestResponse> loginGuest(
         @Valid @RequestBody LoginUserRequest request,
         HttpServletResponse response) {
@@ -107,6 +112,7 @@ public class AuthController {
     @GetMapping("/check")
     @Operation(summary = "Check User Logged Status")
     @ApiResponse(responseCode = "200", description = "User checked log status ok")
+    @ReadResourceErrors
     public ResponseEntity<UserResumeResponse> user(HttpServletRequest request) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -116,6 +122,7 @@ public class AuthController {
     @PostMapping("/logout")
     @Operation(summary = "Logout User")
     @ApiResponse(responseCode = "204", description = "User logged out")
+    @ReadResourceErrors
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         response.addCookie(createCookie("", 0));
 
@@ -125,6 +132,7 @@ public class AuthController {
     @PostMapping("/reset-password")
     @Operation(summary = "Reset User password")
     @ApiResponse(responseCode = "204", description = "Reset password started")
+    @CreateWithReadErrors
     public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         service.resetPassword(request);
 
@@ -134,6 +142,7 @@ public class AuthController {
     @PostMapping("/check-reset-password")
     @Operation(summary = "Check reset User password")
     @ApiResponse(responseCode = "200", description = "User logged 15 min to change password")
+    @CreateWithReadErrors
     public ResponseEntity<UserResumeResponse> checkResetPassword(
         @Valid @RequestBody CheckResetPasswordRequest request,
         HttpServletResponse response

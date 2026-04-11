@@ -1,5 +1,9 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,17 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BBHMM.backend.BBHMM.docs.api.CreateWithReadErrors;
+import com.BBHMM.backend.BBHMM.docs.api.ReadResourceErrors;
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.AcceptInvitationRequest;
 import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.models.response.EventInvitationResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/events")
@@ -36,6 +37,7 @@ public class EventInvitationController {
     @PostMapping("/invitation")
     @Operation(summary = "Invite User to event")
     @ApiResponse(responseCode = "200", description = "User invited to event")
+    @ReadResourceErrors
     public ResponseEntity<EventInvitationResponse> userEventInvitation(
         @Valid @RequestBody UserInvitationRequest request
         ) {
@@ -48,6 +50,7 @@ public class EventInvitationController {
     @PostMapping("/invitation/accepted")
     @Operation(summary = "Accpet Invite")
     @ApiResponse(responseCode = "200", description = "Invite accepted and user is part of event")
+    @CreateWithReadErrors
     public ResponseEntity<EventInvitationResponse> acceptedEventInvitation(
         @Valid @RequestBody AcceptInvitationRequest request
         ) {
@@ -61,6 +64,7 @@ public class EventInvitationController {
     @GetMapping("/invitations")
     @Operation(summary = "List invitations")
     @ApiResponse(responseCode = "200", description = "Return invitation of user")
+    @ReadResourceErrors
     public ResponseEntity<Page<EventInvitationResponse>> listEventInvitation(
         @RequestParam(required = false) Boolean accepted,
         @PageableDefault(size = 10) Pageable pageable

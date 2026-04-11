@@ -1,5 +1,9 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -8,6 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.BBHMM.backend.BBHMM.docs.api.CreateWithReadErrors;
+import com.BBHMM.backend.BBHMM.docs.api.ReadResourceErrors;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateEventRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
@@ -16,11 +23,6 @@ import com.BBHMM.backend.BBHMM.models.response.EventResponse;
 import com.BBHMM.backend.BBHMM.models.response.EventUserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -39,6 +41,7 @@ public class EventController {
     @PostMapping
     @Operation(summary = "Create Event")
     @ApiResponse(responseCode = "201", description = "Event created")
+    @CreateWithReadErrors
     public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody CreateEventRequest request) {
         User userSec = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.safeTakeUserByUuid(userSec.getUuid());
@@ -56,6 +59,7 @@ public class EventController {
     @GetMapping("/{eventUuid}")
     @Operation(summary = "Read Event")
     @ApiResponse(responseCode = "200", description = "Event returned by id")
+    @ReadResourceErrors
     public ResponseEntity<EventResponse> getEvent(@Valid @PathVariable UUID eventUuid) {
         return ResponseEntity.ok(new EventResponse(service.getEvent(eventUuid)));
     }
@@ -63,6 +67,7 @@ public class EventController {
     @GetMapping
     @Operation(summary = "List Event by user")
     @ApiResponse(responseCode = "200", description = "Events from user included returned")
+    @ReadResourceErrors
     public ResponseEntity<Page<EventResponse>> listEvents(
         @RequestParam(required = false) String eventName,
         @RequestParam(required = false) LocalDate eventDate,
@@ -77,6 +82,7 @@ public class EventController {
     @PutMapping
     @Operation(summary = "Update Event")
     @ApiResponse(responseCode = "200", description = "Bill returned by id")
+    @CreateWithReadErrors
     public ResponseEntity<EventResponse> updateEvent(@Valid @RequestBody UpdateEventRequest request) {
         var event = service.updateEvent(request);
 
@@ -86,6 +92,7 @@ public class EventController {
     @PutMapping("/{eventUuid}/user")
     @Operation(summary = "Update User on Event")
     @ApiResponse(responseCode = "200", description = "User on event updated")
+    @CreateWithReadErrors
     public ResponseEntity<EventUserResponse> updateEventUser(
         @Valid @RequestBody UpdateEventUserRequest request,
         @Valid @PathVariable UUID eventUuid
@@ -100,6 +107,7 @@ public class EventController {
     @DeleteMapping("/{eventUuid}")
     @Operation(summary = "Finilize Event")
     @ApiResponse(responseCode = "204", description = "Event Finished")
+    @CreateWithReadErrors
     public ResponseEntity<Void> finishEvent(@Valid @PathVariable UUID eventUuid) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.finishEvent(eventUuid, userSecurity);
@@ -110,6 +118,7 @@ public class EventController {
     @GetMapping("/{eventUuid}/users")
     @Operation(summary = "List Users from Event")
     @ApiResponse(responseCode = "200", description = "Return users from event")
+    @ReadResourceErrors
     public ResponseEntity<List<EventUserResponse>> listUsersFromEvent(@Valid @PathVariable UUID eventUuid) {
         var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(EventUserResponse::new).toList();
         return ResponseEntity.ok(response);

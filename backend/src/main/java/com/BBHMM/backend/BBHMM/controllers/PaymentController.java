@@ -1,5 +1,9 @@
 package com.BBHMM.backend.BBHMM.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,17 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BBHMM.backend.BBHMM.docs.api.CreateWithReadErrors;
+import com.BBHMM.backend.BBHMM.docs.api.ReadResourceErrors;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.PayBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.DebitTotalResponse;
 import com.BBHMM.backend.BBHMM.models.response.PaymentDetailsResponse;
 import com.BBHMM.backend.BBHMM.models.response.PaymentResponse;
 import com.BBHMM.backend.BBHMM.services.PaymentService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,6 +36,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/total")
     @Operation(summary = "Get total of user from event")
     @ApiResponse(responseCode = "200", description = "Return total")
+    @ReadResourceErrors
     public ResponseEntity<DebitTotalResponse> getDebtTotal(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -45,6 +47,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/payment")
     @Operation(summary = "Get list to pay")
     @ApiResponse(responseCode = "200", description = "Return list of pendent debt")
+    @ReadResourceErrors
     public ResponseEntity<List<PaymentResponse>> getDebtPayment(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -55,6 +58,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/receiving")
     @Operation(summary = "Get list to receive")
     @ApiResponse(responseCode = "200", description = "Return list of pendent receivement")
+    @ReadResourceErrors
     public ResponseEntity<List<PaymentResponse>> getDebtReceiving(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -65,6 +69,7 @@ public class PaymentController {
     @PostMapping("/payment")
     @Operation(summary = "Pay Bill")
     @ApiResponse(responseCode = "200", description = "Bill paid")
+    @CreateWithReadErrors
     public ResponseEntity<Void> payOffDebtPayment(@Valid @RequestBody PayBillRequest request) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -75,6 +80,7 @@ public class PaymentController {
     @GetMapping("/{eventUuid}/payment/list")
     @Operation(summary = "List paid Bill")
     @ApiResponse(responseCode = "200", description = "Return list of paid bill")
+    @ReadResourceErrors
     public ResponseEntity<List<PaymentDetailsResponse>> listOfPayrollPerUser(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
