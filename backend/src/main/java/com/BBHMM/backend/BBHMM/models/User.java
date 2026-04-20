@@ -16,7 +16,9 @@ import java.util.*;
 @Entity
 @Table(name = "users")
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User implements UserDetails {
 
     @Id @GeneratedValue(generator = "UUID")
@@ -42,10 +44,12 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 255)
     private String email;
 
+    @Builder.Default
     @Setter
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventUser> eventUsers = new HashSet<>();
 

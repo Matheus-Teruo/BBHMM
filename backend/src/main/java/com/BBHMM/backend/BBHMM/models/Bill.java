@@ -13,7 +13,9 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 @Entity
 @Table(name = "bills")
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Bill {
 
     @Id @GeneratedValue(generator = "UUID")
@@ -37,17 +39,21 @@ public class Bill {
     @JoinColumn(name = "uuid_event", nullable = false)
     private Event event;
 
+    @Builder.Default
     @Setter
     @Column(name = "debit_amount", nullable = false)
     private BigDecimal debitAmount = BigDecimal.ZERO;
 
+    @Builder.Default
     @Setter
     @Column(nullable = false)
     private Boolean paid = false;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private BillType type = BillType.BILL;
 
+    @Builder.Default
     @Setter
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participants> participants = new ArrayList<>();

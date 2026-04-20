@@ -11,7 +11,9 @@ import lombok.*;
 @Entity
 @Table(name = "pixes")
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Pix {
 
     @Id @GeneratedValue(generator = "UUID")
