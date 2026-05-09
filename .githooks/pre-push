@@ -1,0 +1,56 @@
+#!/bin/sh
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+echo "🚀 Push detectado na branch: $BRANCH"
+
+run_backend_tests () {
+  echo "📦 Rodando testes do backend..."
+
+  docker run --rm \
+      -v "$PWD/backend":/app \
+      -w /app \
+      --network host \
+      openjdk:21-jdk-slim \
+      ./mvnw test
+}
+
+run_frontend_tests () {
+  echo "🎨 Rodando testes do frontend..."
+
+  docker run --rm \
+      -v "$PWD/frontend":/app \
+      -w /app \
+      node:20 \
+      npm test
+}
+
+case "$BRANCH" in
+
+  dev-backend)
+    run_backend_tests
+    ;;
+
+  dev-frontend)
+    run_frontend_tests
+    ;;
+
+  dev)
+    run_backend_tests || exit 1
+    run_frontend_tests || exit 1
+    ;;
+
+  *)
+    echo "⚡ Nenhum teste obrigatório para $BRANCH"
+    exit 0
+    ;;
+
+esac
+
+
+if [ $? -ne 0 ]; then
+  echo "❌ Testes falharam. Push cancelado."
+  exit 1
+fi
+
+echo "✅ Testes passaram. Push liberado."
