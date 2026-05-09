@@ -112,7 +112,8 @@ public class EventService {
 
     @Transactional
     public EventInvitation acceptedEventInvitation(AcceptInvitationRequest request) {
-        EventInvitation eventInvitation = eventInvitationRepository.findById(request.uuid()).orElseThrow(EntityNotFoundException::new);
+        EventInvitation eventInvitation = eventInvitationRepository.findByUuid(request.uuid())
+            .orElseThrow(EntityNotFoundException::new);
         User userInvitedSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User userInvited = userService.safeTakeUserByUuid(userInvitedSecurity.getUuid());
         validation.checkInviteValid(eventInvitation, userInvited);

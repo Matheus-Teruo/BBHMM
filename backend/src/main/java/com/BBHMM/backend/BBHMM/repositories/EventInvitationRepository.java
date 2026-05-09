@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.BBHMM.backend.BBHMM.models.EventInvitation;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -28,4 +29,6 @@ public interface EventInvitationRepository extends JpaRepository<EventInvitation
     Page<EventInvitation> findAllByUserInvitedUuid(UUID userUuid, Boolean accepted, Pageable pageable);
 
     boolean existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(UUID userUuid, UUID eventUuid);
+
+    Optional<EventInvitation> findByUuid(UUID uuid);
 }
