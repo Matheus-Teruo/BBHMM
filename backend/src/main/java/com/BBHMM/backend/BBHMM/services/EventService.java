@@ -66,11 +66,11 @@ public class EventService {
 
     public Page<Event> pageEvent(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return repository.findAllbyUser(eventName, eventDate, finished, pageable, user.getUuid());
+        return repository.findAllByUser(eventName, eventDate, finished, pageable, user.getUuid());
     }
 
     public List<Event> listEvent(User user) {
-        return repository.findAllbyUserList(user.getUuid());
+        return repository.findAllByUserList(user.getUuid());
     }
 
     @Transactional
@@ -98,8 +98,8 @@ public class EventService {
     public EventInvitation userEventInvitation(UserInvitationRequest request) {
         Event event = safeTakeEventByUuid(request.eventUuid());
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User userInvited = userService.findUserByNameOrFullnameOrEmail(request.userfield());
-        validation.checkDuplicationInvate(userInvited, event);
+        User userInvited = userService.findUserByNameOrFullnameOrEmail(request.userField());
+        validation.checkDuplicationInvite(userInvited, event);
         validation.checkUserAlreadyInEvent(userInvited, event);
         userValidation.checkIsNotAGuest(userInvited);
         billValidation.checkEventFinished(event);
@@ -115,7 +115,7 @@ public class EventService {
         EventInvitation eventInvitation = eventInvitationRepository.findById(request.uuid()).orElseThrow(EntityNotFoundException::new);
         User userInvitedSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User userInvited = userService.safeTakeUserByUuid(userInvitedSecurity.getUuid());
-        validation.checkInvateValid(eventInvitation, userInvited);
+        validation.checkInviteValid(eventInvitation, userInvited);
 
         eventInvitation.acceptInvitation(request.accept());
         if (request.accept()) {
@@ -142,7 +142,7 @@ public class EventService {
     @Transactional
     public void finishEvent(UUID eventUuid, User user) {
         Event event = safeTakeEventByUuid(eventUuid);
-        validation.checkEventAvaliableToFinish(event);
+        validation.checkEventAvailableToFinish(event);
         billValidation.checkUserParticipationInEvent(user, eventUuid);
 
         event.setFinished(true);

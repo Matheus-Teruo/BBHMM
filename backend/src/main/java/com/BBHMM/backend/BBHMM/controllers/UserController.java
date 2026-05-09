@@ -15,7 +15,7 @@ import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.EmailTokenRequest;
-import com.BBHMM.backend.BBHMM.models.request.EmailValidaitonRequest;
+import com.BBHMM.backend.BBHMM.models.request.EmailValidationRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
@@ -61,7 +61,7 @@ public class UserController {
     @Operation(summary = "Email validation")
     @ApiResponse(responseCode = "204", description = "Email Sended")
     @CreateWithReadErrors
-    public ResponseEntity<Void> verifyEmail(@Valid @RequestBody EmailValidaitonRequest request) {
+    public ResponseEntity<Void> verifyEmail(@Valid @RequestBody EmailValidationRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.verifyEmail(request ,userSecurity);
 

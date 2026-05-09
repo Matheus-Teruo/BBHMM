@@ -12,13 +12,13 @@ public record UpdateEventRequest(
     @NotNull(message = "ID é necessário")
     UUID uuid,
 
-    @Size(min = 3, message = "Nome do evento pelomenos 3 caractéres")
+    @Size(min = 3, message = "Nome do evento pelo menos 3 caracteres")
     @Pattern(regexp = "^[\\p{L}\\p{N}:!\\-]*$", message = "Nome do evento não pode ter alguns caracteres especiais")
     @Schema(example = "EditedEvent")
     String eventName,
 
-    @Size(min = 3, message = "A decrição precisa pelomenos 3 caractéres")
-    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A decrição só deve conter letras, numeros e espaço")
+    @Size(min = 3, message = "A descrição precisa pelo menos 3 caracteres")
+    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A descrição só deve conter letras, números e espaço")
     @Schema(example = "Event description edited")
     String description,
 
