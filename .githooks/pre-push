@@ -11,7 +11,7 @@ run_backend_tests () {
       -v "$PWD/backend":/app \
       -w /app \
       --network host \
-      openjdk:21-jdk-slim \
+      eclipse-temurin:21-jdk \
       ./mvnw test
 }
 

@@ -1,4 +1,4 @@
-FROM openjdk:21-jdk-slim AS build
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY src ./src
 
 RUN ./mvnw package -DskipTests
 
-FROM openjdk:21-slim
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
