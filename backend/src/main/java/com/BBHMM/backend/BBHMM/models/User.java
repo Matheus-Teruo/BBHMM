@@ -46,6 +46,10 @@ public class User implements UserDetails {
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
+    @Setter
+    @Column(name = "image_key")
+    private String imageKey;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventUser> eventUsers = new HashSet<>();
 

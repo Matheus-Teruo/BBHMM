@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
@@ -41,6 +42,7 @@ public class UserService {
 
     private final EmailService emailService;
     private final TokenService tokenService;
+    private final StorageService storageService;
     private final UserRepository repository;
     private final UserValidation validation;
     private final BillValidation billValidation;
@@ -229,5 +231,21 @@ public class UserService {
         }
 
         return sb.toString();
+    }
+
+    @Transactional
+    public String uploadImage(MultipartFile file, UUID userUuid) {
+        User user = safeTakeUserByUuid(userUuid);
+
+        String existingImage = user.getImageKey();
+        if (existingImage != null) {
+            storageService.deleteFile(existingImage);
+        }
+
+        String key = storageService.uploadImageFile(file, userUuid, "perfil");
+
+        user.setImageKey(key);
+
+        return key;
     }
 }

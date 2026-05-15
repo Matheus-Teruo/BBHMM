@@ -4,10 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.BBHMM.backend.BBHMM.docs.api.CreateWithReadErrors;
 import com.BBHMM.backend.BBHMM.docs.api.ReadResourceErrors;
@@ -19,10 +22,12 @@ import com.BBHMM.backend.BBHMM.models.request.EmailValidationRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
+import com.BBHMM.backend.BBHMM.models.response.UploadResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -119,6 +124,18 @@ public class UserController {
         User user = service.upgradeGuestToUser(request);
 
         return ResponseEntity.ok(new UserResponse(user));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping(
+        value = "/upload-image",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+)
+    @Operation(summary = "Upload of user perfil image")
+    @ApiResponse(responseCode = "200", description = "User image changed")
+    public ResponseEntity<UploadResponse> uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(new UploadResponse(service.uploadImage(image, user.getUuid())));
     }
 }
 
