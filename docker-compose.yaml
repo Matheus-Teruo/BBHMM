@@ -36,6 +36,23 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
+  storage:
+    container_name: bbhmm_storage
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - MINIO_ROOT_USER=${S3_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${S3_SECRET_KEY}
+    ports:
+      - 9000:9000
+      - 9001:9001
+    networks:
+      - public
+    volumes:
+      - storage-data:/data
   mailhog:
     image: mailhog/mailhog:latest
     container_name: bbhmm_mailhog
@@ -64,3 +81,4 @@ networks:
   private:
 volumes:
   db-data:
+  storage-data:
