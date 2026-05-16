@@ -70,7 +70,7 @@ public class AuthController {
             .buildAndExpand(user.getUuid())
             .toUri();
         
-        return ResponseEntity.created(location).body(new UserResponse(user));
+        return ResponseEntity.created(location).body(new UserResponse(user, null));
     }
 
     @PostMapping("/login")

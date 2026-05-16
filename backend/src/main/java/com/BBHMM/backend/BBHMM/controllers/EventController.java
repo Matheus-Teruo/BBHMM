@@ -22,9 +22,11 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateEventUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.EventResponse;
 import com.BBHMM.backend.BBHMM.models.response.EventUserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
+import com.BBHMM.backend.BBHMM.services.StorageService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 
 import java.net.URI;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +38,7 @@ public class EventController {
 
     private final EventService service;
     private final UserService userService;
+    private final StorageService storageService;
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
@@ -99,8 +102,9 @@ public class EventController {
     ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var eventUser = service.updateEventUser(request, eventUuid, userSecurity);
+        var imageUrl = storageService.generatePresignedUrl(userSecurity.getImageKey(), Duration.ofMinutes(10));
 
-        return ResponseEntity.ok(new EventUserResponse(userSecurity, eventUser));
+        return ResponseEntity.ok(new EventUserResponse(userSecurity, eventUser, imageUrl));
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -120,7 +124,11 @@ public class EventController {
     @ApiResponse(responseCode = "200", description = "Return users from event")
     @ReadResourceErrors
     public ResponseEntity<List<EventUserResponse>> listUsersFromEvent(@Valid @PathVariable UUID eventUuid) {
-        var response = userService.findParticipantsByEventUuid(eventUuid).stream().map(EventUserResponse::new).toList();
+        User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var response = userService.findParticipantsByEventUuid(eventUuid, userSecurity)
+            .stream().map(eventUser -> 
+                new EventUserResponse(eventUser, storageService.generatePresignedUrl(userSecurity.getImageKey(), Duration.ofMinutes(10))))
+                .toList();
         return ResponseEntity.ok(response);
     }
 }

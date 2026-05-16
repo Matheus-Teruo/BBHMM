@@ -11,16 +11,18 @@ public record UserResponse(
     String fullname,
     String email,
     boolean emailVerified,
-    PixResponse pix
+    PixResponse pix,
+    String imageUrl
 ) {
-    public UserResponse(User user) {
+    public UserResponse(User user, String imageUrl) {
         this(user.getUuid(),
             user.getUsername(),
             user.getRole().toString(),
             user.getFullname(),
             user.getEmail(),
             user.isEmailVerified(),
-            user.getPix() != null ? new PixResponse(user.getPix()) : null
+            user.getPix() != null ? new PixResponse(user.getPix()) : null,
+            imageUrl
         );
     }
 }

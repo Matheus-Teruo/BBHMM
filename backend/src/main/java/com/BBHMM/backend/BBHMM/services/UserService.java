@@ -120,8 +120,7 @@ public class UserService {
                     ));
     }
 
-    public List<EventUser> findParticipantsByEventUuid(UUID eventUuid) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public List<EventUser> findParticipantsByEventUuid(UUID eventUuid, User user) {
         billValidation.checkUserParticipationInEvent(user, eventUuid);
         var eventUsers = repository.listUsersByEvent(eventUuid);
 

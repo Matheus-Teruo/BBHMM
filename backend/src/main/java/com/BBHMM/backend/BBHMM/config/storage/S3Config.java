@@ -75,6 +75,11 @@ public class S3Config {
                     .endpointOverride(URI.create(props.endpoint()))
                     .credentialsProvider(
                             StaticCredentialsProvider.create(credentials)
+                    )
+                    .serviceConfiguration(
+                        S3Configuration.builder()
+                        .pathStyleAccessEnabled(true)
+                        .build()
                     );
         }
 

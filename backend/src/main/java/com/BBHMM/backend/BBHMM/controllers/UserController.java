@@ -25,9 +25,11 @@ import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
 import com.BBHMM.backend.BBHMM.models.response.UploadResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
+import com.BBHMM.backend.BBHMM.services.StorageService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +39,7 @@ public class UserController {
 
     private final UserService service;
     private final EventService eventService;
+    private final StorageService storageService;
 
     @GetMapping("/{userUuid}")
     @Operation(summary = "Get User details")
@@ -45,8 +48,9 @@ public class UserController {
     public ResponseEntity<UserResponse> getUser(@Valid @PathVariable UUID userUuid) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.getUser(userUuid, userSecurity);
+        var imageUrl = storageService.generatePresignedUrl(user.getImageKey(), Duration.ofMinutes(10));
 
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(new UserResponse(user, imageUrl));
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -57,8 +61,9 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.updateUser(request, userSecurity);
+        var imageUrl = storageService.generatePresignedUrl(user.getImageKey(), Duration.ofMinutes(10));
 
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(new UserResponse(user, imageUrl));
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -122,8 +127,9 @@ public class UserController {
     @CreateWithReadErrors
     public ResponseEntity<UserResponse> upgradeGuestToUser(@Valid @RequestBody UpgradeGuestToUserRequest request) {
         User user = service.upgradeGuestToUser(request);
+        var imageUrl = storageService.generatePresignedUrl(user.getImageKey(), Duration.ofMinutes(10));
 
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(new UserResponse(user, imageUrl));
     }
 
     @PreAuthorize("hasRole('USER')")
