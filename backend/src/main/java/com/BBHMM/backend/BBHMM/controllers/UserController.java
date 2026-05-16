@@ -91,14 +91,14 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/guest")
+    @PostMapping("/new-guest")
     @Operation(summary = "Create Guest")
     @ApiResponse(responseCode = "200", description = "Guest created")
     @CreateWithReadErrors
     public ResponseEntity<NewGuestResponse> createGuest(@Valid @RequestBody CreateGuestRequest request) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        String password = service.generatePassword();
+        String password = service.generatePassword(8);
         Event event = eventService.safeTakeEventByUuid(request.eventUuid());
         User user = service.createGuest(request, hostUser, password, event);
         eventService.addUser(request.eventUuid(), user);
@@ -114,7 +114,20 @@ public class UserController {
     public ResponseEntity<NewGuestResponse> getGuest(@Valid @PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        String password = service.generatePassword();
+        User user = service.getGuest(guestUuid, hostUser, eventUuid, null);
+
+        return ResponseEntity.ok(new NewGuestResponse(user, null));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/guest-password/{guestUuid}/event/{eventUuid}")
+    @Operation(summary = "Get guest data")
+    @ApiResponse(responseCode = "200", description = "Return guest data and password redefined")
+    @ReadResourceErrors
+    public ResponseEntity<NewGuestResponse> getGuestPassword(@Valid @PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
+        User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        String password = service.generatePassword(8);
         User user = service.getGuest(guestUuid, hostUser, eventUuid, password);
 
         return ResponseEntity.ok(new NewGuestResponse(user, password));

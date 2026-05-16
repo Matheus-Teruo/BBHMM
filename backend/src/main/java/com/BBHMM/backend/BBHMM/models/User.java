@@ -62,8 +62,8 @@ public class User implements UserDetails {
         this.email = request.email();
     }
 
-    public User(CreateGuestRequest request, String password) {
-        this.username = request.guestName();
+    public User(CreateGuestRequest request, String guestName, String password) {
+        this.username = guestName;
         this.password = password;
         this.role = RoleEnum.ROLE_GUEST;
         this.emailVerified = false;

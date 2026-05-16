@@ -147,7 +147,7 @@ public class AuthController {
         @Valid @RequestBody CheckResetPasswordRequest request,
         HttpServletResponse response
     ) {
-        String password = service.generatePassword();
+        String password = service.generatePassword(8);
         User user = service.checkResetPassword(request, password);
 
         var authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), password);

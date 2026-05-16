@@ -183,11 +183,12 @@ public class UserService {
     }
 
     public User createGuest(CreateGuestRequest request, User hostUser, String password, Event event) {
-        validation.checkNameDuplication(request.guestName(), request.guestName(), null);
+        String guestName = request.guestName() + "-" + generatePassword(4);
+        validation.checkNameDuplication(guestName, request.guestName(), null);
         billValidation.checkUserParticipationInEvent(hostUser, request.eventUuid());
         billValidation.checkEventFinished(event);
 
-        User guest = new User(request, passwordEncoder.encode(password));
+        User guest = new User(request, guestName, passwordEncoder.encode(password));
 
         repository.save(guest);
         return guest;
@@ -198,7 +199,9 @@ public class UserService {
         billValidation.checkUsersParticipationInEvent(eventUuid, List.of(guestUuid, hostUser.getUuid()));
         User guest = safeTakeUserByUuid(guestUuid);
 
-        guest.updatePassword(passwordEncoder.encode(password));
+        if(password != null) {           
+            guest.updatePassword(passwordEncoder.encode(password));
+        }
 
         return guest;
     }
@@ -213,11 +216,11 @@ public class UserService {
         return guest;
     }
 
-    public String generatePassword() {
+    public String generatePassword(int size) {
         SecureRandom random = new SecureRandom();
         List<Character> password = new ArrayList<>();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < size; i++) {
             String all = LETTERS + NUMBERS;
             password.add(all.charAt(random.nextInt(all.length())));
         }
