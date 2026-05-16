@@ -57,6 +57,22 @@ public class UserValidation {
         }
     }
 
+    public void checkFullnameSpace(String fullname) {
+        String[] parts = fullname.trim().split("\\s+");
+        if (parts.length >= 2) {
+            throw new InvalidDatabaseInsertionException(
+                "Nome Inválido",
+                "O nome precisa ter nome e sobrenome",
+                "Nome completo",
+                List.of(
+                    new FieldErrorDetail(
+                        "fullname",
+                        fullname)
+                )
+            );
+        };
+    }
+
     public void checkUserAuthentication(UUID requestUuid, User user){
         if (!requestUuid.equals(user.getUuid())) {
             throw new InvalidDatabaseQueryException(

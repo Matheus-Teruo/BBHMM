@@ -50,6 +50,7 @@ public class UserService {
 
     @Transactional
     public User createUser(SignupUserRequest request) {
+        validation.checkFullnameSpace(request.fullname());
         validation.checkNameDuplication(request.username(), request.fullname(), request.email());
         User user = new User(
             request,
@@ -183,12 +184,14 @@ public class UserService {
     }
 
     public User createGuest(CreateGuestRequest request, User hostUser, String password, Event event) {
-        String guestName = request.guestName() + "-" + generatePassword(4);
-        validation.checkNameDuplication(guestName, request.guestName(), null);
+        validation.checkFullnameSpace(request.guestName());
+        String guestUsername = request.guestName() + "-" + generatePassword(4);
+        String guestUsernameTrimmed = guestUsername.replaceAll("\\s+", "");
+        validation.checkNameDuplication(guestUsernameTrimmed, request.guestName(), null);
         billValidation.checkUserParticipationInEvent(hostUser, request.eventUuid());
         billValidation.checkEventFinished(event);
 
-        User guest = new User(request, guestName, passwordEncoder.encode(password));
+        User guest = new User(request, guestUsernameTrimmed, passwordEncoder.encode(password));
 
         repository.save(guest);
         return guest;
