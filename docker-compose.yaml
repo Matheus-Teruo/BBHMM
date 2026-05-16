@@ -10,6 +10,7 @@ services:
       - 8080:8080
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://${DATABASE_HOST}:3306/${DATABASE_DB}
+      - S3_URL=http://${STORAGE_HOST}:9000
     networks:
       - public
       - private

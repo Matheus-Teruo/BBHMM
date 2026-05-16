@@ -7,6 +7,7 @@ public record S3Properties(
         String region,
         String bucket,
         String endpoint,
+        String endpointPublic,
         Key key
 ) {
     public record Key(

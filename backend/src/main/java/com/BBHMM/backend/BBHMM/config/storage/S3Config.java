@@ -62,7 +62,7 @@ public class S3Config {
 
         S3Presigner.Builder builder = S3Presigner.builder();
 
-        if (props.endpoint() == null || props.endpoint().isBlank()) {
+        if (props.endpointPublic() == null || props.endpointPublic().isBlank()) {
             builder.credentialsProvider(
                     DefaultCredentialsProvider.builder().build()
             );
@@ -72,7 +72,7 @@ public class S3Config {
 
             builder
                     .region(Region.of(props.region()))
-                    .endpointOverride(URI.create(props.endpoint()))
+                    .endpointOverride(URI.create(props.endpointPublic()))
                     .credentialsProvider(
                             StaticCredentialsProvider.create(credentials)
                     )
