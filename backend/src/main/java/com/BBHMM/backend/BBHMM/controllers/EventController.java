@@ -127,7 +127,7 @@ public class EventController {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var response = userService.findParticipantsByEventUuid(eventUuid, userSecurity)
             .stream().map(eventUser -> 
-                new EventUserResponse(eventUser, storageService.generatePresignedUrl(userSecurity.getImageKey(), Duration.ofMinutes(10))))
+                new EventUserResponse(eventUser, storageService.generatePresignedUrl(eventUser.getUser().getImageKey(), Duration.ofMinutes(10))))
                 .toList();
         return ResponseEntity.ok(response);
     }

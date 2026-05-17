@@ -56,6 +56,7 @@ public class StorageService {
 
     public String generatePresignedUrl(String key, Duration duration) {
 
+        if (key == null) return null;
         PresignedGetObjectRequest presignedRequest =
                 presigner.presignGetObject(p -> p
                         .getObjectRequest(r -> r

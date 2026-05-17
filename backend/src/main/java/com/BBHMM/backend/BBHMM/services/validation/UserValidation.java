@@ -59,7 +59,7 @@ public class UserValidation {
 
     public void checkFullnameSpace(String fullname) {
         String[] parts = fullname.trim().split("\\s+");
-        if (parts.length >= 2) {
+        if (parts.length < 2) {
             throw new InvalidDatabaseInsertionException(
                 "Nome Inválido",
                 "O nome precisa ter nome e sobrenome",
