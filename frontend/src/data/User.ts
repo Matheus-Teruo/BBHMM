@@ -42,6 +42,7 @@ export default interface User {
   email: string;
   emailVerified: boolean;
   pix?: Pix;
+  imageUrl?: string;
 }
 
 export interface UserResume {
@@ -58,6 +59,7 @@ export interface EventUser {
   role: Role;
   pix?: Pix;
   color: string;
+  imageUrl?: string;
 }
 
 export interface Guest {

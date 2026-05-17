@@ -1,4 +1,4 @@
-import { regexLeterNumberSpace, regexText } from "@/util/regex";
+import { regexLetterNumberSpace, regexText } from "@/util/regex";
 import Pix, { CreatePix, UpdatePix } from "@data/Pix";
 
 type PixAction =
@@ -21,7 +21,7 @@ export function pixReducer(state: CreatePix, action: PixAction): CreatePix {
       return { ...state, pixKey: action.payload };
     }
     case "SET_BANK_ACCOUNT": {
-      if (!regexLeterNumberSpace.test(action.payload)) {
+      if (!regexLetterNumberSpace.test(action.payload)) {
         return state;
       }
       return { ...state, bankAccount: action.payload };

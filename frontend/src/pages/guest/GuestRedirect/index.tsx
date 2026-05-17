@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function GuestRedirect() {
-  const [first, setfirst] = useState<boolean>(true);
+  const [first, setFirst] = useState<boolean>(true);
   const { loginGuest } = useUserService();
   const { addNotification } = useAlertsContext();
   const { user, login, selectEvent } = useUserContext();
@@ -26,7 +26,7 @@ function GuestRedirect() {
     const guestName = searchParams.get("guestName");
     const token = searchParams.get("token");
     if (searchParams && first) {
-      setfirst(false);
+      setFirst(false);
       await sleep(1500);
       const guestResponse = await loginGuest({
         username: guestName,
@@ -45,7 +45,7 @@ function GuestRedirect() {
         addNotification({
           title: "Convidado não existente",
           message:
-            "Infelizmente não foi possivel entrar, peça outro link de acesso atualizado",
+            "Infelizmente não foi possível entrar, peça outro link de acesso atualizado",
           type: MessageType.WARNING,
         });
         navigate("/auth/login");

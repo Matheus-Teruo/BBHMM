@@ -94,7 +94,7 @@ function UserProfile() {
     setWaitingFetch("");
   };
 
-  const hangleUpgrade = async () => {
+  const handleUpgrade = async () => {
     if (user && user !== "unlogged") {
       navigate("/auth/guest/upgrade", {
         state: {
@@ -372,7 +372,7 @@ function UserProfile() {
             ) : (
               <Button
                 className={styles.buttonFooter}
-                onClick={() => hangleUpgrade()}
+                onClick={() => handleUpgrade()}
               >
                 Upgrade da conta
               </Button>

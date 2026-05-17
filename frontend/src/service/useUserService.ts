@@ -58,7 +58,7 @@ const useUserService = () => {
   const createGuest = useCallback(
     async (guest: CreateGuest): Promise<NewGuest | ApiError> =>
       safeRequest(() =>
-        api.post<NewGuest>("/users/guest", guest).then((res) => res.data),
+        api.post<NewGuest>("/users/new-guest", guest).then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -82,6 +82,17 @@ const useUserService = () => {
     [api],
   );
 
+  const getGuestPassword = useCallback(
+    async (
+      guestUuid: string,
+      eventUuid: string,
+    ): Promise<NewGuest | ApiError> =>
+      api
+        .get<NewGuest>(`/users/guest-password/${guestUuid}/event/${eventUuid}`)
+        .then((res) => res.data),
+    [api],
+  );
+
   const upgradeGuestToUser = useCallback(
     async (guest: UpgradeGuestToUser): Promise<User | ApiError> =>
       safeRequest(() =>
@@ -100,6 +111,7 @@ const useUserService = () => {
     createGuest,
     loginGuest,
     getGuest,
+    getGuestPassword,
     upgradeGuestToUser,
   };
 };

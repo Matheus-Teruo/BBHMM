@@ -33,6 +33,7 @@ function GuestInfo() {
     <>
       <div className={styles.modal}>
         <h2>Convidado criado</h2>
+        <p><strong>Nome: </strong>{username}</p>
         <p>Passe o seguinte link para o convidado acessar o evento</p>
         <p>{`${window.location.origin}/auth/guest/redirect?guestName=${username}&token=${token}`}</p>
       </div>

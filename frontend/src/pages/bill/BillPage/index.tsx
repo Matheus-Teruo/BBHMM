@@ -144,12 +144,12 @@ function BillPage() {
         });
       } else if (eu.role === Role.GUEST) {
         if (eventUUID) {
-          const guestRespone = await getGuest(eu.uuid, eventUUID);
-          if (!isApiError(guestRespone)) {
+          const guestResponse = await getGuest(eu.uuid, eventUUID);
+          if (!isApiError(guestResponse)) {
             navigate("/auth/guest/info", {
               state: {
-                username: guestRespone.username,
-                token: guestRespone.token,
+                username: guestResponse.username,
+                token: guestResponse.token,
                 backgroundLocation: {
                   pathname: location.pathname,
                   search: location.search,
