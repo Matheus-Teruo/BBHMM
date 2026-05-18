@@ -5,7 +5,7 @@ import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
 import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
-import { regexLetterNumber } from "@/util/regex";
+import { regexLetterSpace } from "@/util/regex";
 import {
   MessageType,
   useAlertsContext,
@@ -69,7 +69,7 @@ function CreateGuestForm() {
   };
 
   const handleGuestName = (value: string) => {
-    if (regexLetterNumber.test(value)) setGuestName(value);
+    if (regexLetterSpace.test(value)) setGuestName(value);
   };
 
   return (

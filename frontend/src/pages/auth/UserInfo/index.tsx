@@ -122,7 +122,7 @@ function UserInfo() {
                     <p
                       style={{
                         backgroundColor: user.color,
-                        color: isColorDark(user.color) ? "white" : "black",
+                        color: (user.color !== null && isColorDark(user.color)) ? "white" : "black",
                         padding: "2px 8px",
                         borderRadius: "6px",
                       }}

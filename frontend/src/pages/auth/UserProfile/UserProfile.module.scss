@@ -4,6 +4,12 @@
 .form {
   width: 100%;
 
+  .perfil{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   p {
     color: $color-gray-900;
   }

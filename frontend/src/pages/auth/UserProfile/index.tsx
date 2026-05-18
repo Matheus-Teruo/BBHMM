@@ -16,6 +16,7 @@ import {
   UserXSVG,
   XSVG,
 } from "@/assets/svg";
+import FaceFrame from "@/components/FaceFrame";
 import AuthInput from "@/components/util/AuthInput";
 import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
@@ -135,6 +136,12 @@ function UserProfile() {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.perfil}>
+        <FaceFrame
+          imageUrl={state.imageUrl}
+          fullname={state.fullname}
+        />
+      </div>
       <div className={styles.field}>
         <p className={styles.title}>Usuário</p>
         {update !== "username" ? (

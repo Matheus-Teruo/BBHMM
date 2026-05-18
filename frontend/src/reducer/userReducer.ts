@@ -28,7 +28,7 @@ type UserState = {
   email: string;
   emailVerified: boolean;
   pix: CreatePix | UpdatePix;
-  imageUrl: string;
+  imageUrl?: string;
 };
 
 export type UpdateUserField =
@@ -59,7 +59,7 @@ export const initialUserState: UserState = {
   email: "",
   emailVerified: true,
   pix: initialPixState,
-  imageUrl: ""
+  imageUrl: undefined
 };
 
 export function userReducer(state: UserState, action: UserAction): UserState {
@@ -107,7 +107,7 @@ export function userReducer(state: UserState, action: UserAction): UserState {
         email: action.payload.email,
         emailVerified: action.payload.emailVerified,
         pix: action.payload.pix ? action.payload.pix : initialPixState,
-        imageUrl: action.payload.imageUrl ? action.payload.imageUrl : "",
+        imageUrl: action.payload.imageUrl ? action.payload.imageUrl : undefined,
       };
     }
     case "RESET":

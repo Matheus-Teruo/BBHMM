@@ -15,6 +15,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useUserService from "@service/useUserService";
 import Event from "@data/Event";
 import { isApiError } from "@/util/checkApiResponse";
+import FaceFrame from "@/components/FaceFrame";
 
 function BillPage() {
   const [event, setEvent] = useState<Event>();
@@ -190,17 +191,17 @@ function BillPage() {
       </div>
       <div className={styles.tableWrapper}>
         <ul className={styles.list}>
-          <li className={`${styles.row} ${styles.header}`}>
+          <li key="header" className={`${styles.row} ${styles.header}`}>
             <p className={`${styles.cell} ${styles.name}`}>Conta</p>
             <p className={`${styles.cell} ${styles.value}`}>Valor</p>
             {users.map((user) => (
-              <p
-                key={user.uuid}
-                className={`${styles.cell} ${styles.userHeader}`}
+              <FaceFrame
                 onClick={() => handleUser(user)}
-              >
-                {user.firstname}
-              </p>
+                imageUrl={user.imageUrl}
+                fullname={user.fullname}
+                userColor={user.color}
+                small
+              />
             ))}
             <div className={`${styles.cell} ${styles.actions}`}>
               <p className={`${styles.cell} ${styles.actions}`}>Editar</p>
@@ -229,7 +230,7 @@ function BillPage() {
                   />
                 </div>
               ))}
-              <div className={`${styles.cell} ${styles.actions}`}>
+              <div key="actions" className={`${styles.cell} ${styles.actions}`}>
                 <Button
                   className={`${styles.cell} ${styles.actions}`}
                   onClick={() => updateBill(bill)}
