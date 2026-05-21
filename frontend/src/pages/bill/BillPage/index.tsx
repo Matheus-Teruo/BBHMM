@@ -8,7 +8,7 @@ import useBillsService from "@service/useBillsService";
 import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useState } from "react";
 import FormBill from "../FormBill";
-import { EditSVG } from "@/assets/svg";
+import { EditSVG, InfoSVG } from "@/assets/svg";
 import usePaymentService from "@service/usePaymentService";
 import { DebitTotal } from "@data/Payment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -210,9 +210,10 @@ function BillPage() {
           {bills.map((bill) => (
             <li key={bill.uuid} className={styles.row}>
               <p className={`${styles.cell} ${styles.name}`}>{bill.billName}</p>
-              <p className={`${styles.cell} ${styles.value}`}>
-                R${bill.value.toFixed(2)}
-              </p>
+              <div className={`${styles.cell} ${styles.value} ${bill.participantsUuid.length == 0 && styles.billWarning}`}>
+                <p>R${bill.value.toFixed(2)}</p>
+                {bill.participantsUuid.length == 0 && <InfoSVG size={16}/>}
+              </div>
               {users.map((user) => (
                 <div
                   key={user.uuid}

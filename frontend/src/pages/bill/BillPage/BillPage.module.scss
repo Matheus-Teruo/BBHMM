@@ -90,7 +90,7 @@
       display: grid;
       grid-template-columns:
         minmax(70px, 120px) /* Nome */
-        80px /* Valor */
+        100px /* Valor */
         repeat(auto-fit, 30px) /* Usuários */
         90px; /* Ações */
 
@@ -112,7 +112,7 @@
           justify-content: flex-start;
         }
         &.value {
-          justify-content: center;
+          justify-content: space-between;
         }
         &.user {
           justify-content: center;
@@ -127,7 +127,19 @@
       }
 
       .value {
-        width: 80px;
+        display: flex;
+        align-items: center;
+        border-radius: $border-radius;
+        width: 100px;
+
+        @media (max-width: $mobile) {
+          font-size: 0.8rem;
+          width: 80px;
+        }
+      }
+
+      .billWarning{
+        background-color: $color-unaccepted;
       }
 
       .userHeader {
