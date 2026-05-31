@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect } from "react";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:8080/",
+  baseURL: "/api",
   withCredentials: true,
   timeout: 10000,
   headers: {

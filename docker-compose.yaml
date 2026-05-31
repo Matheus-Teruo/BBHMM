@@ -67,8 +67,6 @@ services:
     build:
       context: ./frontend
       dockerfile: dockerfile
-      args:
-        VITE_BACKEND_BASE_URL: ${VITE_BACKEND_BASE_URL}
     env_file:
       - .env
     ports:
@@ -77,9 +75,33 @@ services:
       - public
     depends_on:
       - backend
+  proxy:
+    container_name: bbhmm_proxy
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - storage
+    networks:
+      - public
+      - tunnel
+  cloudflare:
+    container_name: bbhmm_cloudflare_tunnel
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://nginx:80
+    depends_on:
+      - proxy
+    networks:
+      - tunnel
+
 networks:
   public:
   private:
+  tunnel:
 volumes:
   db-data:
   storage-data:
