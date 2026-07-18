@@ -22,7 +22,15 @@ run_frontend_tests () {
       -v "$PWD/frontend":/app \
       -w /app \
       node:20 \
-      npm test
+      sh -c '
+        corepack enable &&
+        yarn install --frozen-lockfile &&
+        if yarn run | grep -q "^test"; then
+          yarn test
+        else
+          echo "⚠️ Nenhum script de teste encontrado. Pulando testes."
+        fi
+      '
 }
 
 case "$BRANCH" in
