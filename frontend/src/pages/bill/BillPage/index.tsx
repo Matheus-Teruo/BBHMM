@@ -196,6 +196,7 @@ function BillPage() {
             <p className={`${styles.cell} ${styles.value}`}>Valor</p>
             {users.map((user) => (
               <FaceFrame
+                key={user.uuid}
                 onClick={() => handleUser(user)}
                 imageUrl={user.imageUrl}
                 fullname={user.fullname}

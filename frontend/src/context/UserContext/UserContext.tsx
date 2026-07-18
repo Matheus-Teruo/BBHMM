@@ -7,6 +7,17 @@ import { isApiError } from "@/util/checkApiResponse";
 
 const LOCAL_STORAGE_KEY_EVENT = "selectedEvent";
 
+function isUserResume(value: unknown): value is UserResume {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "uuid" in value &&
+    "firstname" in value &&
+    "role" in value &&
+    "emailVerified" in value
+  );
+}
+
 function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserResume | null | "unlogged">(null);
   const [event, setEvent] = useState<Event | null>(null);
@@ -22,9 +33,9 @@ function UserProvider({ children }: { children: React.ReactNode }) {
 
   const checkLogged = useCallback(async () => {
     try {
-      const logginUser = await checkUser();
-      if (!isApiError(logginUser)) {
-        setUser(logginUser);
+      const loginUser = await checkUser();
+      if (!isApiError(loginUser) && isUserResume(loginUser)) {
+        setUser(loginUser);
       } else {
         setUser("unlogged");
       }
