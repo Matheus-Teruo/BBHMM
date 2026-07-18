@@ -20,7 +20,7 @@ public record UpdateBillRequest(
     String name,
     
     @Size(min = 3, message = "A descrição precisa pelo menos 3 caracteres")
-    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A descrição só deve conter letras, números e espaço")
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\s/:;,.!()?%\\\\-]*$", message = "A descrição só deve conter letras, números e espaço")
     @Schema(example = "Bill description edited")
     String description,
 
