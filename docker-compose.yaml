@@ -15,8 +15,10 @@ services:
       - public
       - private
     depends_on:
-      - db
-      - mailhog
+      db:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
   db:
     container_name: bbhmm_database
     image: mysql
@@ -37,6 +39,15 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -u${DATABASE_USER:-dev} -p${DATABASE_PASSWORD:-devSecret} --silent",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   storage:
     container_name: bbhmm_storage
     image: minio/minio

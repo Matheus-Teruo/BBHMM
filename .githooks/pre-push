@@ -4,22 +4,64 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 echo "🚀 Push detectado na branch: $BRANCH"
 
-run_backend_tests () {
+run_backend_tests() {
   echo "📦 Rodando testes do backend..."
+
+  if command -v java >/dev/null 2>&1; then
+    echo "☕ Java encontrado."
+
+    if [ -f "./backend/mvnw" ]; then
+      (
+        cd backend
+        ./mvnw test
+      )
+      return $?
+    elif command -v mvn >/dev/null 2>&1; then
+      (
+        cd backend
+        mvn test
+      )
+      return $?
+    fi
+  fi
+
+  echo "🐳 Ambiente Java/Maven não encontrado. Usando Docker..."
 
   docker run --rm \
       -v "$PWD/backend":/app \
+      -v bbhmm-test-maven-cache:/root/.m2 \
       -w /app \
       --network host \
       eclipse-temurin:21-jdk \
       ./mvnw test
 }
 
-run_frontend_tests () {
+run_frontend_tests() {
   echo "🎨 Rodando testes do frontend..."
+
+  if command -v yarn >/dev/null 2>&1; then
+    echo "🧶 Yarn encontrado."
+
+    (
+      cd frontend
+
+      yarn install --frozen-lockfile || exit 1
+
+      if yarn run | grep -q "^test"; then
+        yarn test
+      else
+        echo "⚠️ Nenhum script de teste encontrado. Pulando testes."
+      fi
+    )
+
+    return $?
+  fi
+
+  echo "🐳 Yarn não encontrado. Usando Docker..."
 
   docker run --rm \
       -v "$PWD/frontend":/app \
+      -v bbhmm-test-yarn-cache:/usr/local/share/.cache/yarn \
       -w /app \
       node:20 \
       sh -c '
