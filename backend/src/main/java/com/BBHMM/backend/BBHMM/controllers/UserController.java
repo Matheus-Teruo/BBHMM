@@ -19,6 +19,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.EmailTokenRequest;
 import com.BBHMM.backend.BBHMM.models.request.EmailValidationRequest;
+import com.BBHMM.backend.BBHMM.models.request.ResetGuestTokenRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
@@ -109,9 +110,12 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/guest/{guestUuid}/event/{eventUuid}")
     @Operation(summary = "Get guest data")
-    @ApiResponse(responseCode = "200", description = "Return guest data and password redefined")
+    @ApiResponse(responseCode = "200", description = "Return guest data")
     @ReadResourceErrors
-    public ResponseEntity<NewGuestResponse> getGuest(@Valid @PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
+    public ResponseEntity<NewGuestResponse> getGuest(
+        @Valid @PathVariable UUID guestUuid,
+        @Valid @PathVariable UUID eventUuid
+    ) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         User user = service.getGuest(guestUuid, hostUser, eventUuid, null);
@@ -120,15 +124,17 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/guest-password/{guestUuid}/event/{eventUuid}")
-    @Operation(summary = "Get guest data")
+    @PostMapping("/guest-password")
+    @Operation(summary = "Get guest data and redefine password")
     @ApiResponse(responseCode = "200", description = "Return guest data and password redefined")
     @ReadResourceErrors
-    public ResponseEntity<NewGuestResponse> getGuestPassword(@Valid @PathVariable UUID guestUuid, @PathVariable UUID eventUuid) {
+    public ResponseEntity<NewGuestResponse> getGuestPassword(
+        @Valid @RequestBody ResetGuestTokenRequest request
+    ) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         String password = service.generatePassword(8);
-        User user = service.getGuest(guestUuid, hostUser, eventUuid, password);
+        User user = service.getGuest(request.guestUuid(), hostUser, request.eventUuid(), password);
 
         return ResponseEntity.ok(new NewGuestResponse(user, password));
     }
@@ -149,7 +155,7 @@ public class UserController {
     @PostMapping(
         value = "/upload-image",
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-)
+    )
     @Operation(summary = "Upload of user perfil image")
     @ApiResponse(responseCode = "200", description = "User image changed")
     public ResponseEntity<UploadResponse> uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
