@@ -11,7 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function DebtPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [receivings, setReceivings] = useState<Payment[]>([]);
+  const [receivingList, setReceivingList] = useState<Payment[]>([]);
   const [users, setUsers] = useState<Record<string, EventUser>>({});
   const { getPayment, getReceiving } = usePaymentService();
   const { listUserFromEvent } = useEventService();
@@ -43,13 +43,13 @@ function DebtPage() {
         setPayments(paymentResponse);
       }
       if (receivingResponse) {
-        setReceivings(receivingResponse);
+        setReceivingList(receivingResponse);
       }
     }
   }, [eventUUID, getPayment, getReceiving]);
 
   function handlePayment(payer: EventUser, receiver: EventUser, value: number) {
-    navigate("/event/paymnent/new", {
+    navigate("/event/payment/new", {
       state: {
         payer: payer,
         receiver: receiver,
@@ -96,7 +96,7 @@ function DebtPage() {
             <p>{users[payment.userToReceiveUuid]?.firstname}</p>
           </li>
         ))}
-        {receivings.map((receiving) => (
+        {receivingList.map((receiving) => (
           <li
             key={receiving.userToPayUuid + "-receiving"}
             onClick={() =>

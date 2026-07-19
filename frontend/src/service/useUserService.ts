@@ -4,6 +4,7 @@ import User, {
   Guest,
   LoginUser,
   NewGuest,
+  ResetGuestToken,
   SignupUser,
   UpdateUser,
   UpgradeGuestToUser,
@@ -84,11 +85,10 @@ const useUserService = () => {
 
   const getGuestPassword = useCallback(
     async (
-      guestUuid: string,
-      eventUuid: string,
+      guestData: ResetGuestToken
     ): Promise<NewGuest | ApiError> =>
       api
-        .get<NewGuest>(`/users/guest-password/${guestUuid}/event/${eventUuid}`)
+        .post<NewGuest>("/users/guest-password", guestData)
         .then((res) => res.data),
     [api],
   );

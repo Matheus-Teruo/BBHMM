@@ -28,6 +28,11 @@ export interface CreateGuest {
   eventUuid: string;
 }
 
+export interface ResetGuestToken {
+  guestUuid: string;
+  eventUuid: string;
+}
+
 export interface UpgradeGuestToUser {
   uuid: string;
   password: string;

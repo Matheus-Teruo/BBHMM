@@ -1,6 +1,7 @@
 import { takeInitial } from "@/util/initialHelper";
 import styles from "./FaceFrame.module.scss";
 import { useState } from "react";
+import { isColorDark } from "@/util/colorHelper";
 
 function FaceFrame({
   imageUrl,
@@ -35,7 +36,12 @@ function FaceFrame({
           className={styles.emptyFrame}
           style={{ backgroundColor: userColor }}
         >
-          <p>{takeInitial(fullname)}</p>
+          <p 
+            style={{
+              color: (userColor !== null && isColorDark(userColor)) ? "white" : "black"
+            }}>
+              {takeInitial(fullname)}
+          </p>
         </div>
       )}
     </div>

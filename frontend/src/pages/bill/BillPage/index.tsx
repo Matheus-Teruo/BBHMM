@@ -149,8 +149,10 @@ function BillPage() {
           if (!isApiError(guestResponse)) {
             navigate("/auth/guest/info", {
               state: {
+                guestUuid: guestResponse.uuid,
                 username: guestResponse.username,
                 token: guestResponse.token,
+                eventUuid: eventUUID,
                 backgroundLocation: {
                   pathname: location.pathname,
                   search: location.search,
