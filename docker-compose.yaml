@@ -101,6 +101,8 @@ services:
       - public
       - tunnel
   cloudflare:
+    profiles:
+      - cloudflare
     container_name: bbhmm_cloudflare_tunnel
     image: cloudflare/cloudflared:latest
     command: tunnel --no-autoupdate --url http://nginx:80
