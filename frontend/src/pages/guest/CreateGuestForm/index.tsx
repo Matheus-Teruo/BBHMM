@@ -28,8 +28,6 @@ function CreateGuestForm() {
   const location = useLocation();
 
   const { backgroundLocation } = location.state as {
-    username: string;
-    token: string;
     backgroundLocation?: {
       pathname: string;
       search: string;

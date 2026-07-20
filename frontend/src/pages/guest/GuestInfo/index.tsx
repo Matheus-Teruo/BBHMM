@@ -2,10 +2,12 @@ import styles from "./GuestInfo.module.scss";
 import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
 import { isApiError } from "@/util/checkApiResponse";
+import { isUserLogged } from "@/util/checkAuthentication";
 import { MessageType, useAlertsContext } from "@context/AlertContext/useAlertContext";
-import { ResetGuestToken } from "@data/User";
+import { useUserContext } from "@context/UserContext/useUserContext";
+import { ResetGuestToken, Role, UserResume } from "@data/User";
 import useUserService from "@service/useUserService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function GuestInfo() {
@@ -21,11 +23,23 @@ function GuestInfo() {
       search: string;
     };
   };
-
+  const [userState, setUserState] = useState<UserResume>({
+    uuid: "",
+    firstname: "",
+    role: Role.GUEST,
+    emailVerified: false
+  });
   const [guestToken, setGuestToken] = useState<string>(token);
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const { getGuestPassword } = useUserService();
   const { addNotification } = useAlertsContext();
+  const { user } = useUserContext();
+
+  useEffect(() => {
+    if (user && isUserLogged(user)) {
+      setUserState(user);
+    }
+  }, [user]);
 
   const generateToken = async () => {
     setWaitingFetch(true);
@@ -80,19 +94,20 @@ function GuestInfo() {
             </div>
           </div>
         :
-          <div className={styles.tokenDiv}>
-            <p>Os tokens de acesso não são passados toda vez, para gerar um novo acesso deverá criar um novo token.</p>
-            <div className={styles.buttonResetFooter}>
-              <Button
-                className={styles.button}
-                onClick={() => generateToken()}
-                loading={waitingFetch}
-              >
-                Gerar token de acesso
-              </Button>
+          (userState.role === Role.USER &&
+            <div className={styles.tokenDiv}>
+              <p>Os tokens de acesso não são passados toda vez, para gerar um novo acesso deverá criar um novo token.</p>
+              <div className={styles.buttonResetFooter}>
+                <Button
+                  className={styles.button}
+                  onClick={() => generateToken()}
+                  loading={waitingFetch}
+                >
+                  Gerar token de acesso
+                </Button>
+              </div>
             </div>
-          </div>
-        }
+        )}
       </div>
       <GlassBackground onClick={() => closePopup()} />
     </>
