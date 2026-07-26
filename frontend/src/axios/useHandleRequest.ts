@@ -7,15 +7,16 @@ export const useSafeRequest = () => {
   const handleApiError = useApiError();
 
   const safeRequest = useCallback(
-    async <T>(request: () => Promise<T>): Promise<T | ApiError> => {
+    async <T>(request: () => Promise<T>): Promise<T> => {
       try {
         return await request();
       } catch (error) {
         if (axios.isAxiosError<ApiError>(error)) {
           handleApiError(error);
-          if (error.response?.data) return error.response.data;
+          if (error.response?.data && error.response?.data) throw error.response.data;
         }
 
+        console.error(error);
         throw error;
       }
     },

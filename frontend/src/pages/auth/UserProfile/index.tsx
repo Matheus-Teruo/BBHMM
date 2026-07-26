@@ -27,6 +27,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import ApiError from "@data/Error";
 import { Role } from "@data/User";
 import { initialPixState, pixReducer } from "@reducer/pixReducer";
 import {
@@ -55,11 +56,9 @@ function UserProfile() {
     const fetchUser = async () => {
       if (isUserLogged(user)) {
         const userResponse = await getUser(user.uuid);
-        if (userResponse) {
-          dispatch({ type: "SET_USER", payload: userResponse });
-          if (userResponse.pix) {
-            pixDispatch({ type: "SET_PIX", payload: userResponse.pix });
-          }
+        dispatch({ type: "SET_USER", payload: userResponse });
+        if (userResponse.pix) {
+          pixDispatch({ type: "SET_PIX", payload: userResponse.pix });
         }
       } else if (isUserUnlogged(user)) {
         navigate("/auth/login");
@@ -77,22 +76,24 @@ function UserProfile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(update);
-    setTouched(false);
-    const user = await updateUser(updateUserPayload(state, update));
-    if (!isApiError(user)) {
-      addNotification({
-        title: "Sucesso na atualização",
-        message: `Atualização no usuário ${user.username}`,
-        type: MessageType.OK,
-      });
-      setUpdate("");
-    } else {
-      const message = user;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    try {
+      setWaitingFetch(update);
+      setTouched(false);
+      const user = await updateUser(updateUserPayload(state, update));
+      if (!isApiError(user)) {
+        addNotification({
+          title: "Sucesso na atualização",
+          message: `Atualização no usuário ${user.username}`,
+          type: MessageType.OK,
+        });
+        setUpdate("");
+      }
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleUpgrade = async () => {

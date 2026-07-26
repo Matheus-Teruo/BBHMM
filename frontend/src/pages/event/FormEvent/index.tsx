@@ -9,6 +9,7 @@ import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
+import ApiError from "@data/Error";
 import Event from "@data/Event";
 import {
   createEventPayload,
@@ -43,48 +44,47 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("Create|Update");
-    setTouched(false);
-    setMessageError({});
-    if (form === "Create") {
-      const event = await createEvent(createEventPayload(state));
-      if (!isApiError(event)) {
+    try {
+      setWaitingFetch("Create|Update");
+      setTouched(false);
+      setMessageError({});
+      if (form === "Create") {
+        const event = await createEvent(createEventPayload(state));
         addNotification({
           title: "Evento Criado",
-          message: `Evento ${state.eventName} criado, adicione mais pessoas`,
+          message: `Evento ${event.eventName} criado, adicione mais pessoas`,
           type: MessageType.OK,
         });
-        dispatch({ type: "RESET" });
-        onChange();
-      } else {
-        const message = event;
-        if (message.fields) setMessageError(mapFieldErrors(message.fields));
-      }
-    } else if (form === "Update") {
-      const event = await updateEvent(updateEventPayload(state));
-      if (!isApiError(event)) {
+      } else if (form === "Update") {
+        const event = await updateEvent(updateEventPayload(state));
         addNotification({
           title: "Evento Editado",
-          message: `Evento ${state.eventName} criado, adicione mais pessoas`,
+          message: `Evento ${event.eventName} editado`,
           type: MessageType.OK,
         });
-        dispatch({ type: "RESET" });
-        onChange();
-      } else {
-        const message = event;
-        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
+      dispatch({ type: "RESET" });
+      onChange();
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) {
+        if (form === "Create") {
+          setMessageError(mapFieldErrors(error.fields));
+        } else if (form === "Update") {
+          setMessageError(mapFieldErrors(error.fields));
+        }
+      }
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleDelete = async () => {
-    setWaitingFetch("Finish");
-    setTouched(false);
-    setMessageError({});
-    const event = await finishEvent(state.uuid);
-    if (!isApiError(event)) {
+    try{
+      setWaitingFetch("Finish");
+      setTouched(false);
+      setMessageError({});
+      await finishEvent(state.uuid);
       addNotification({
         title: "Evento Finalizado",
         message: `Evento ${state.eventName} finalizado, não podendo ser mais editado`,
@@ -92,12 +92,12 @@ function FormEvent({ form = "Create", initialValue, onChange }: NewEventProps) {
       });
       dispatch({ type: "RESET" });
       onChange();
-    } else {
-      const message = event;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   return (

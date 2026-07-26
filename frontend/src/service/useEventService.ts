@@ -4,14 +4,13 @@ import { useCallback } from "react";
 import { PaginatedResponse } from "../data/PagesType";
 import { EventUser } from "@data/User";
 import { useSafeRequest } from "../axios/useHandleRequest";
-import ApiError from "@data/Error";
 
 const useEventService = () => {
   const api = useAxios();
   const { safeRequest } = useSafeRequest();
 
   const createEvent = useCallback(
-    async (event: CreateEvent): Promise<Event | ApiError> =>
+    async (event: CreateEvent): Promise<Event> =>
       safeRequest(() =>
         api.post<Event>("/events", event).then((res) => res.data),
       ),
@@ -49,7 +48,7 @@ const useEventService = () => {
   );
 
   const updateEvent = useCallback(
-    async (event: UpdateEvent): Promise<Event | ApiError> =>
+    async (event: UpdateEvent): Promise<Event> =>
       safeRequest(() =>
         api.put<Event>("/events", event).then((res) => res.data),
       ),
@@ -60,7 +59,7 @@ const useEventService = () => {
     async (
       eventUuid: string,
       eventUser: UpdateEventUser,
-    ): Promise<EventUser | ApiError> =>
+    ): Promise<EventUser> =>
       safeRequest(() =>
         api
           .put<EventUser>(`/events/${eventUuid}/user`, eventUser)
@@ -70,7 +69,7 @@ const useEventService = () => {
   );
 
   const finishEvent = useCallback(
-    async (eventUuid: string): Promise<void | ApiError> =>
+    async (eventUuid: string): Promise<void> =>
       safeRequest(() =>
         api.delete<void>(`/events/${eventUuid}`).then((res) => res.data),
       ),

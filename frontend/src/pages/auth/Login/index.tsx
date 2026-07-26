@@ -17,6 +17,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import ApiError from "@data/Error";
 import { Role } from "@data/User";
 import {
   initialUserState,
@@ -45,11 +46,11 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    setMessageError({});
-    const user = await loginUser(loginPayload(state));
-    if (!isApiError(user)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      setMessageError({});
+      const user = await loginUser(loginPayload(state));
       addNotification({
         title: "Sucesso ao fazer Login",
         message: `Usuário ${state.username} loggado`,
@@ -66,12 +67,12 @@ function Login() {
       login(user);
       dispatch({ type: "RESET" });
       navigate("/");
-    } else {
-      const message = user;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {      
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   const handleForgotPassword = async () => {

@@ -14,7 +14,6 @@ import { DebitTotal } from "@data/Payment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useUserService from "@service/useUserService";
 import Event from "@data/Event";
-import { isApiError } from "@/util/checkApiResponse";
 import FaceFrame from "@/components/FaceFrame";
 
 function BillPage() {
@@ -45,9 +44,7 @@ function BillPage() {
   const fetchEvent = useCallback(async () => {
     if (eventUUID) {
       const eventResponse = await getEvent(eventUUID);
-      if (eventResponse) {
-        setEvent(eventResponse);
-      }
+      setEvent(eventResponse);
     }
   }, [eventUUID, getEvent]);
 
@@ -112,11 +109,9 @@ function BillPage() {
       uuid: billUuid,
       partUuid: participant,
     } as UpdateBillParticipants;
-    const response = await updateBillParticipant(body);
-    if (!isApiError(response)) {
-      fetchBill();
-      fetchPayment();
-    }
+    await updateBillParticipant(body);
+    fetchBill();  // TODO: update para webhook
+    fetchPayment();  // TODO: update para webhook
   };
 
   function handleInvite() {
@@ -158,20 +153,18 @@ function BillPage() {
       } else if (eu.role === Role.GUEST) {
         if (eventUUID) {
           const guestResponse = await getGuest(eu.uuid, eventUUID);
-          if (!isApiError(guestResponse)) {
-            navigate("/auth/guest/info", {
-              state: {
-                guestUuid: guestResponse.uuid,
-                username: guestResponse.username,
-                token: guestResponse.token,
-                eventUuid: eventUUID,
-                backgroundLocation: {
-                  pathname: location.pathname,
-                  search: location.search,
-                },
+          navigate("/auth/guest/info", {
+            state: {
+              guestUuid: guestResponse.uuid,
+              username: guestResponse.username,
+              token: guestResponse.token,
+              eventUuid: eventUUID,
+              backgroundLocation: {
+                pathname: location.pathname,
+                search: location.search,
               },
-            });
-          }
+            },
+          });
         }
       }
     }

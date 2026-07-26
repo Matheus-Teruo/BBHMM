@@ -1,7 +1,6 @@
 import styles from "./GuestInfo.module.scss";
 import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/util/Button";
-import { isApiError } from "@/util/checkApiResponse";
 import { isUserLogged } from "@/util/checkAuthentication";
 import { MessageType, useAlertsContext } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
@@ -46,9 +45,7 @@ function GuestInfo() {
     const request = {guestUuid: guestUuid, eventUuid: eventUuid} as ResetGuestToken;
     const guest = await getGuestPassword(request);
       
-    if (!isApiError(guest)) {
-      setGuestToken(guest.token)
-    }
+    setGuestToken(guest.token)
     setWaitingFetch(false);
   };
 

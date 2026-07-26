@@ -32,9 +32,7 @@ function EventPage() {
       finishedFilter,
       page.number,
     );
-    if (eventResponse) {
-      setEvents(eventResponse.content);
-    }
+    setEvents(eventResponse.content);
   }, [filter, dateFilter, finishedFilter, page.number, setEvents]);
 
   useEffect(() => {
@@ -51,7 +49,7 @@ function EventPage() {
     setFilter(event.target.value);
   };
 
-  function updateEvent(event: Event) {
+  function handleUpdateEvent(event: Event) {
     setSelectedEvent(event);
     setEventForm("Update");
   }
@@ -101,7 +99,7 @@ function EventPage() {
               <p className={styles.eventDescription}>{event.description}</p>
               <p className={styles.eventDate}>{event.eventDate}</p>
             </div>
-            <div className={styles.editArea} onClick={() => updateEvent(event)}>
+            <div className={styles.editArea} onClick={() => handleUpdateEvent(event)}>
               <p>Editar</p>
               <EditSVG />
             </div>

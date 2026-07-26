@@ -10,6 +10,7 @@ import { LoginUser, Role } from "@data/User";
 import useUserService from "@service/useUserService";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ApiError from "@data/Error";
 
 function GuestRedirect() {
   const [first, setFirst] = useState<boolean>(true);
@@ -28,11 +29,11 @@ function GuestRedirect() {
     if (searchParams && first) {
       setFirst(false);
       await sleep(1500);
-      const guestResponse = await loginGuest({
-        username: guestName,
-        password: token,
-      } as LoginUser);
-      if (!isApiError(guestResponse)) {
+      try {
+        const guestResponse = await loginGuest({
+          username: guestName,
+          password: token,
+        } as LoginUser);
         login({
           uuid: guestResponse.uuid,
           firstname: guestResponse.username,
@@ -41,14 +42,16 @@ function GuestRedirect() {
         });
         selectEvent(guestResponse.event);
         navigate(`/event/${guestResponse.event.uuid}/bills`);
-      } else {
-        addNotification({
-          title: "Convidado não existente",
-          message:
-            "Infelizmente não foi possível entrar, peça outro link de acesso atualizado",
-          type: MessageType.WARNING,
-        });
-        navigate("/auth/login");
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) {
+          addNotification({
+            title: "Convidado não existente",
+            message:
+              "Infelizmente não foi possível entrar, peça outro link de acesso atualizado",
+            type: MessageType.WARNING,
+          });
+          navigate("/auth/login");
+        }
       }
     }
   }, [searchParams]);

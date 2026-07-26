@@ -32,6 +32,7 @@ import { initialPixState, pixReducer } from "@reducer/pixReducer";
 import { Link, useNavigate } from "react-router-dom";
 import { isUserLogged } from "@/util/checkAuthentication";
 import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
+import ApiError from "@data/Error";
 
 function SignUp() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -59,16 +60,16 @@ function SignUp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (state.password == state.confirmPassword) {
-      setWaitingFetch(true);
-      setTouched(false);
-      const user = await signupUser(
-        signupPayload(
-          state,
-          pixState.pixKey != "" || pixState.bankAccount != "",
-        ),
-      );
-      if (!isApiError(user)) {
+    try {
+      if (state.password == state.confirmPassword) {
+        setWaitingFetch(true);
+        setTouched(false);
+        const user = await signupUser(
+          signupPayload(
+            state,
+            pixState.pixKey != "" || pixState.bankAccount != "",
+          ),
+        );
         addNotification({
           title: "Conta criada com sucesso",
           message: `Usuário: ${user.fullname} criado.`,
@@ -83,18 +84,18 @@ function SignUp() {
         dispatch({ type: "RESET" });
         navigate("/");
       } else {
-        const message = user;
-        if (message.fields) setMessageError(mapFieldErrors(message.fields));
+        addNotification({
+          title: "Erro ao criar conta",
+          message: "Senha e confirmação de senha devem ser igual",
+          type: MessageType.WARNING,
+        });
       }
-    } else {
-      addNotification({
-        title: "Erro ao criar conta",
-        message: `Senha e confirmação de senha devem ser igual`,
-        type: MessageType.WARNING,
-      });
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   return (

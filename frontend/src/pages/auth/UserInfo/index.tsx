@@ -14,6 +14,7 @@ import useEventService from "@service/useEventService";
 import { UpdateEventUser } from "@data/Event";
 import Button from "@/components/util/Button";
 import { isColorDark } from "@/util/colorHelper";
+import ApiError from "@data/Error";
 
 function UserInfo() {
   const [editColor, setEditColor] = useState<boolean>(false);
@@ -43,24 +44,24 @@ function UserInfo() {
   }, [self, user]);
 
   const handleUpdateSubmit = async () => {
-    setWaitingFetch(true);
-    setTouched(false);
-    const eventUser = await updateEventUser(eventUuid, {
-      color: color,
-    } as UpdateEventUser);
-    if (!isApiError(eventUser)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      const eventUser = await updateEventUser(eventUuid, {
+        color: color,
+      } as UpdateEventUser);
       addNotification({
         title: "Cor atualizada com sucesso",
         message: `cor atualizada para ${eventUser.color}`,
         type: MessageType.OK,
       });
       setEditColor(false);
-    } else {
-      const message = eventUser;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   const closePopup = () => {

@@ -17,6 +17,7 @@ import {
 import { EmailSVG, LockPadCloseSVG, LockPadOpenSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
+import ApiError from "@data/Error";
 
 function UpgradeGuestForm() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -51,20 +52,19 @@ function UpgradeGuestForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
     setWaitingFetch(true);
     setTouched(false);
     setMessageError({});
     const response = await upgradeGuestToUser(upgradeGuestPayload(state));
-    if (!isApiError(response)) {
       addNotification({
-        title: "Upgrade realizado com sucesso",
-        message: "Agora pode editer campos e participar de mais eventos",
+        title: `Upgrade realizado com sucesso, ${response.fullname.split(" ")[0]}`,
+        message: "Agora pode editar campos e participar de mais eventos",
         type: MessageType.OK,
       });
       closePopup();
-    } else {
-      const message = response;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
     }
     setTouched(true);
     setWaitingFetch(false);

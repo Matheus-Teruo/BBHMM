@@ -11,6 +11,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import ApiError from "@data/Error";
 import { CreateGuest } from "@data/User";
 import useUserService from "@service/useUserService";
 import { useState } from "react";
@@ -36,14 +37,14 @@ function CreateGuestForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    setMessageError({});
-    const guest = await createGuest({
-      guestName: guestName,
-      eventUuid: event?.uuid,
-    } as CreateGuest);
-    if (!isApiError(guest)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      setMessageError({});
+      const guest = await createGuest({
+        guestName: guestName,
+        eventUuid: event?.uuid,
+      } as CreateGuest);
       addNotification({
         title: "Convidado criado",
         message: `Convidado ${guestName} criado`,
@@ -58,12 +59,12 @@ function CreateGuestForm() {
           onCreated: true,
         },
       });
-    } else {
-      const message = guest;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   const handleGuestName = (value: string) => {

@@ -13,6 +13,7 @@ import {
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume } from "@data/Bills";
+import ApiError from "@data/Error";
 import { EventUser } from "@data/User";
 import {
   billReducer,
@@ -52,7 +53,7 @@ function FormBill({
   const requestBill = async () => {
     if (initialValue) {
       var bill = await getBill(initialValue.uuid);
-      if (!isApiError(bill)) dispatch({ type: "SET_BILL", payload: bill });
+      dispatch({ type: "SET_BILL", payload: bill });
     }
   };
 
@@ -69,56 +70,58 @@ function FormBill({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("create/update");
-    setTouched(false);
-    setMessageError({});
-    if (form === "Create") {
-      const event = await createBill(createBillPayload(state));
-      if (!isApiError(event)) {
+    try {
+      setWaitingFetch("create/update");
+      setTouched(false);
+      setMessageError({});
+      if (form === "Create") {
+        const bill = await createBill(createBillPayload(state));
         addNotification({
           title: "Evento Criado",
-          message: `Evento ${state.name} criado, adicione mais pessoas`,
+          message: `Evento ${bill.billName} criado, adicione mais pessoas`,
           type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        onChange();
-      } else {
-        const message = event;
-        if (message.fields) setMessageError(mapFieldErrors(message.fields));
-      }
-    } else if (form === "Update") {
-      const event = await updateBill(updateBillPayload(state));
-      if (!isApiError(event)) {
+        });    
+      } else if (form === "Update") {
+        const bill = await updateBill(updateBillPayload(state));
         addNotification({
           title: "Evento Editado",
-          message: `Evento ${state.name} modificado`,
+          message: `Evento ${bill.billName} modificado`,
           type: MessageType.OK,
         });
-        dispatch({ type: "RESET" });
-        onChange();
-      } else {
-        const message = event;
-        if (message.fields) setMessageError(mapFieldErrors(message.fields));
       }
+      dispatch({ type: "RESET" });
+      onChange();
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) {
+        if (form === "Create") {
+          setMessageError(mapFieldErrors(error.fields));
+        } else if (form === "Update") {
+          setMessageError(mapFieldErrors(error.fields));
+        }
+      }
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (state.uuid != "") {
-      setWaitingFetch("delete");
-      await deleteBill(state.uuid);
-      addNotification({
-        title: "Conta deletado",
-        message: `Conta ${state.name} excluida.`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      setConfirmDelete(false);
-      onChange();
+      try {
+        setWaitingFetch("delete");
+        await deleteBill(state.uuid);
+        addNotification({
+          title: "Conta deletado",
+          message: `Conta ${state.name} excluida.`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        setConfirmDelete(false);
+        onChange();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (
