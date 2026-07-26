@@ -23,11 +23,14 @@ export function parseAxiosError(
     const apiError = error.response?.data;
 
     if (apiError) {
-      return {
-        title: apiError.title ?? "Erro",
-        message: apiError.message,
-        type: MessageType.WARNING,
-      };
+      const status = error.response?.status;
+      if (status && status < 500) {  
+        return {
+          title: apiError.title ?? "Erro",
+          message: apiError.message,
+          type: MessageType.WARNING,
+        };
+      }
     }
 
     return {
