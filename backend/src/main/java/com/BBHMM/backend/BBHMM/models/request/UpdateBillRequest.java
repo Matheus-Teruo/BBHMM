@@ -15,7 +15,7 @@ public record UpdateBillRequest(
     UUID uuid,
     
     @Size(min = 3, message = "Nome da conta pelo menos 3 caracteres")
-    @Pattern(regexp = "^[\\p{L}\\p{N}:!\\-]*$", message = "Nome da conta não pode ter alguns caracteres especiais")
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\s:!\\-]*$", message = "Nome da conta não pode ter alguns caracteres especiais")
     @Schema(example = "updatedBill")
     String name,
     

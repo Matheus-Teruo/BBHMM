@@ -58,7 +58,7 @@ public class User implements UserDetails {
         this.password = password;
         this.role = RoleEnum.ROLE_USER;
         this.emailVerified = false;
-        this.fullname = request.fullname();
+        this.fullname = request.fullname().trim();
         this.email = request.email();
     }
 
@@ -67,7 +67,7 @@ public class User implements UserDetails {
         this.password = password;
         this.role = RoleEnum.ROLE_GUEST;
         this.emailVerified = false;
-        this.fullname = request.guestName();
+        this.fullname = request.guestName().trim();
     }
 
     public void updateUser(UpdateUserRequest request) {
@@ -75,7 +75,7 @@ public class User implements UserDetails {
             this.username = request.username();
         }
         if (request.fullname() != null) {
-            this.fullname = request.fullname();
+            this.fullname = request.fullname().trim();
         }
         if (request.email() != null) {
             this.email = request.email();
