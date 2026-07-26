@@ -80,14 +80,12 @@ function UserProfile() {
       setWaitingFetch(update);
       setTouched(false);
       const user = await updateUser(updateUserPayload(state, update));
-      if (!isApiError(user)) {
-        addNotification({
-          title: "Sucesso na atualização",
-          message: `Atualização no usuário ${user.username}`,
-          type: MessageType.OK,
-        });
-        setUpdate("");
-      }
+      addNotification({
+        title: "Sucesso na atualização",
+        message: `Atualização no usuário ${user.username}`,
+        type: MessageType.OK,
+      });
+      setUpdate("");
     } catch (error: ApiError | any) {
       if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
     } finally {
