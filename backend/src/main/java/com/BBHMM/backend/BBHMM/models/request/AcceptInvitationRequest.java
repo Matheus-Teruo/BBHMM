@@ -9,6 +9,6 @@ public record AcceptInvitationRequest(
     UUID uuid,
 
     @NotNull(message = "requisição necessária")
-    boolean accept
+    Boolean accept
 ) {
 }
