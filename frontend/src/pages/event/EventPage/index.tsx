@@ -94,7 +94,7 @@ function EventPage() {
             key={event.uuid}
             className={`${styles.eventCard} ${event.finished ? styles.eventFinished : ""}`}
           >
-            <div onClick={() => handleSelectEvent(event)}>
+            <div className={styles.eventDiv} onClick={() => handleSelectEvent(event)}>
               <h3 className={styles.eventTitle}>{event.eventName}</h3>
               <p className={styles.eventDescription}>{event.description}</p>
               <p className={styles.eventDate}>{event.eventDate}</p>

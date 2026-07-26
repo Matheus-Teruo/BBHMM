@@ -87,20 +87,24 @@
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
       }
 
-      .eventTitle {
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
+      .eventDiv {
+        flex:1;
 
-        &:hover {
-          text-decoration: underline;
+        .eventTitle {
+          font-size: 18px;
+          font-weight: 600;
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
         }
-      }
 
-      .eventDescription {
-        color: $color-gray-600;
-        font-size: 14px;
-        line-height: 1.4;
+        .eventDescription {
+          color: $color-gray-600;
+          font-size: 14px;
+          line-height: 1.4;
+        }
       }
 
       .editArea {
