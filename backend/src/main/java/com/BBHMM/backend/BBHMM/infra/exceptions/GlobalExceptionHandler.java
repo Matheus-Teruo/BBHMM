@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         .body(ApiError.of(
             HttpStatus.NOT_FOUND,
             "Não encontrado",
-            "Objeto não encotrado",
+            "Objeto não encontrado.",
             request.getRequestURI()
         ));
   }
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         .body(ApiError.of(
             HttpStatus.UNAUTHORIZED,
             "Falha na autenticação",
-            "Usuário ou senha inválidos",
+            "Usuário ou senha inválidos.",
             request.getRequestURI()
         ));
   }
@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
         .body(ApiError.validation(
             HttpStatus.BAD_REQUEST,
             "Erro de validação",
-            ex.getMessage(),
+            "Um ou mais campos da requisição são inválidos.",
             request.getRequestURI(),
             fields
         ));
