@@ -100,16 +100,13 @@ services:
     networks:
       - public
       - tunnel
-  cloudflare:
-    profiles:
-      - cloudflare
+  cloudflared:
     container_name: bbhmm_cloudflare_tunnel
     image: cloudflare/cloudflared:latest
-    command: tunnel --no-autoupdate --url http://nginx:80
-    depends_on:
-      - proxy
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: unless-stopped
     networks:
-      - tunnel
+      - public
 
 networks:
   public:
