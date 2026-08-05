@@ -14,7 +14,7 @@ import {
   upgradeGuestPayload,
   userReducer,
 } from "@reducer/userReducer";
-import { EmailSVG, LockPadCloseSVG, LockPadOpenSVG } from "@/assets/svg";
+import { EmailSVG, LockPadCloseSVG, LockPadOpenSVG, UserCheckSVG, UserSVG, UserXSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
 import ApiError from "@data/Error";
@@ -78,6 +78,23 @@ function UpgradeGuestForm() {
           Informe os seguintes campos para realizar o upgrade
         </p>
         <form onSubmit={handleSubmit}>
+          <AuthInput
+            value={state.username}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_USERNAME",
+                payload: e.target.value,
+              })
+            }
+            ComponentUntouched={UserSVG}
+            ComponentAccepted={UserCheckSVG}
+            ComponentRejected={UserXSVG}
+            id="username"
+            placeholder="Nome de usuário"
+            isRequired
+            showStatus={touched}
+            message={messageError["username"]}
+          />
           <AuthInput
             value={state.email}
             onChange={(e) =>

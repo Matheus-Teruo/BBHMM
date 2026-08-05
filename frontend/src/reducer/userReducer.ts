@@ -158,6 +158,6 @@ export const updateUserPayload = (
 };
 
 export const upgradeGuestPayload = (state: UserState): UpgradeGuestToUser => {
-  const { uuid, password, email } = state;
-  return { uuid, password, email } as UpgradeGuestToUser;
+  const { uuid, username, password, email } = state;
+  return { uuid, username, password, email } as UpgradeGuestToUser;
 };

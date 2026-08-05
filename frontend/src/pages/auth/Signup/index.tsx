@@ -112,7 +112,7 @@ function SignUp() {
             ComponentAccepted={UserCheckSVG}
             ComponentRejected={UserXSVG}
             id="username"
-            placeholder="Usuário"
+            placeholder="Nome de usuário"
             isRequired
             showStatus={touched}
             message={messageError["username"]}

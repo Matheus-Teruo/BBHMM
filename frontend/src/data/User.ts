@@ -35,6 +35,7 @@ export interface ResetGuestToken {
 
 export interface UpgradeGuestToUser {
   uuid: string;
+  username: string;
   password: string;
   email: string;
 }
