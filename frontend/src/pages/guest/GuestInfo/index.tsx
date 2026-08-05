@@ -50,7 +50,7 @@ function GuestInfo() {
   };
 
   const copyButton = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/auth/guest/redirect?guestName=${username}&token=${token}}`);
+    navigator.clipboard.writeText(`${window.location.origin}/auth/guest/redirect?guestName=${username}&token=${token}`);
     addNotification({
       title: "Link Copiado",
       message: `O link para login do convidado ${username} foi copiado com sucesso`,
@@ -81,7 +81,7 @@ function GuestInfo() {
           <div className={styles.tokenDiv}>
             <p>Passe o seguinte link para o convidado acessar o evento.</p>
             <div className={styles.tokenFooter}>
-              <p>{`${window.location.origin}/auth/guest/redirect?guestName=${username}&token=${token}`}</p>
+              <p>{`${window.location.origin}/auth/guest/redirect?guestName=${username}&token=${guestToken}`}</p>
               <Button
                 className={styles.button}
                 onClick={() => copyButton()}
