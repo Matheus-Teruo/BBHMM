@@ -28,6 +28,7 @@ import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
 import com.BBHMM.backend.BBHMM.services.StorageService;
 import com.BBHMM.backend.BBHMM.services.UserService;
+import com.BBHMM.backend.BBHMM.services.cases.OnCaseGuest;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -39,6 +40,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService service;
+    private final OnCaseGuest onCaseGuest;
     private final EventService eventService;
     private final StorageService storageService;
 
@@ -132,11 +134,8 @@ public class UserController {
         @Valid @RequestBody ResetGuestTokenRequest request
     ) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        String password = service.generatePassword(8);
-        User user = service.getGuest(request.guestUuid(), hostUser, request.eventUuid(), password);
 
-        return ResponseEntity.ok(new NewGuestResponse(user, password));
+        return ResponseEntity.ok(onCaseGuest.caseUpdateGuestToken(request, hostUser));
     }
 
     @PreAuthorize("hasRole('GUEST')")
@@ -144,7 +143,9 @@ public class UserController {
     @Operation(summary = "Upgrade Guest to User")
     @ApiResponse(responseCode = "200", description = "Guest upgraded to user")
     @CreateWithReadErrors
-    public ResponseEntity<UserResponse> upgradeGuestToUser(@Valid @RequestBody UpgradeGuestToUserRequest request) {
+    public ResponseEntity<UserResponse> upgradeGuestToUser(
+        @Valid @RequestBody UpgradeGuestToUserRequest request
+    ) {
         User user = service.upgradeGuestToUser(request);
         var imageUrl = storageService.generatePresignedUrl(user.getImageKey(), Duration.ofMinutes(10));
 

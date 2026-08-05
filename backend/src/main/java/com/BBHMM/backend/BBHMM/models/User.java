@@ -88,6 +88,7 @@ public class User implements UserDetails {
     }
 
     public void upgradeGuestToUser(UpgradeGuestToUserRequest request, String password) {
+        this.username = request.username();
         this.password = password;
         this.email = request.email();
         this.role = RoleEnum.ROLE_USER;

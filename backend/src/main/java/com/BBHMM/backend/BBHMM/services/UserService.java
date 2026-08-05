@@ -210,7 +210,7 @@ public class UserService {
 
     @Transactional
     public User upgradeGuestToUser(UpgradeGuestToUserRequest request) {
-        validation.checkNameDuplication(null, null, request.email());
+        validation.checkNameDuplication(request.username(), null, request.email());
         User guest = safeTakeUserByUuid(request.uuid());
 
         guest.upgradeGuestToUser(request, passwordEncoder.encode(request.password()));
