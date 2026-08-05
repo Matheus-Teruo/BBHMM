@@ -50,7 +50,7 @@ function GuestInfo() {
   };
 
   const copyButton = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/auth/guest/redirect?guestName=${username}&token=${token}`);
+    navigator.clipboard.writeText(`${window.location.origin}/auth/guest/redirect?guestName=${username}&token=${guestToken}`);
     addNotification({
       title: "Link Copiado",
       message: `O link para login do convidado ${username} foi copiado com sucesso`,
