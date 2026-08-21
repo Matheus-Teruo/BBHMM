@@ -141,7 +141,10 @@ function UserInfo() {
                     >
                       {user.color}
                     </p>
-                    <Button onClick={() => setEditColor(true)}>
+                    <Button
+                      className={styles.editButton}
+                      onClick={() => setEditColor(true)}
+                    >
                       <EditSVG />
                     </Button>
                   </div>
@@ -177,7 +180,7 @@ function UserInfo() {
                   <div className={styles.value}>
                     <PixSVG />
                     <p>{user.pix.pixKey}</p>
-                    <Button className={styles.button} onClick={() => copyButton(user.pix?.pixKey)}>
+                    <Button className={styles.copyButton} onClick={() => copyButton(user.pix?.pixKey)}>
                       Copiar Link
                     </Button>
                   </div>

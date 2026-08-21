@@ -28,14 +28,14 @@ function EventPage() {
   const fetchEvent = useCallback(async () => {
 
     const sortDirection = dateFilter ? 'asc' : 'desc';
-    const sortParam = `eventDate,${sortDirection}`;
+    const sortParam = `event.eventDate,${sortDirection}`;
 
     const eventResponse = await getEvents(
       filter,
       dateFilter,
       finishedFilter,
       page.number,
-      20, // Page size
+      10, // Page size
       sortParam
     );
     setEvents(eventResponse.content);

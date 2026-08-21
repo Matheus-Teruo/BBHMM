@@ -35,6 +35,15 @@
     margin: 5px 10px;
     padding-bottom: 1px;
 
+    .editButton{
+      margin-left: 6px;
+    }
+
+    .copyButton {
+      padding: 6px 12px;
+      background-color: $color-secondary-1;
+    }
+
     @media (max-width: $mobile) {
       margin: 5px 5px;
     }
@@ -56,6 +65,7 @@
 
       p {
         padding: 0 4px;
+        flex: 1
       }
     }
 
