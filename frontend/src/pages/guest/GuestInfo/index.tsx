@@ -93,14 +93,14 @@ function GuestInfo() {
         :
           (userState.role === Role.USER &&
             <div className={styles.tokenDiv}>
-              <p>Os tokens de acesso não são passados toda vez, para gerar um novo acesso deverá criar um novo token.</p>
+              <p>Ao clicar os links gerados anteriormente para esse convidado serão invalidados.</p>
               <div className={styles.buttonResetFooter}>
                 <Button
                   className={styles.button}
                   onClick={() => generateToken()}
                   loading={waitingFetch}
                 >
-                  Gerar token de acesso
+                  Redefinir token de acesso
                 </Button>
               </div>
             </div>

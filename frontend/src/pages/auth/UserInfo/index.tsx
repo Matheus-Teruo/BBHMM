@@ -1,4 +1,4 @@
-import { EditSVG, FaceSmileSVG } from "@/assets/svg";
+import { BankSVG, EditSVG, FaceSmileSVG, PixSVG, UserSVG } from "@/assets/svg";
 import styles from "./UserInfo.module.scss";
 import GlassBackground from "@/components/GlassBackground";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -78,6 +78,17 @@ function UserInfo() {
     }
   };
 
+  const copyButton = (keyValue : string | undefined) => {
+    if (keyValue) {
+      navigator.clipboard.writeText(keyValue);
+      addNotification({
+        title: "Chave copiada",
+        message: `A chave pix do ${user.firstname} foi copiada com sucesso`,
+        type: MessageType.INFO,
+      });
+    }
+  };
+
   return (
     <>
       <div className={styles.modal}>
@@ -94,7 +105,7 @@ function UserInfo() {
             <div className={styles.field}>
               <p className={styles.title}>Nome Completo</p>
               <div className={styles.value}>
-                <FaceSmileSVG />
+                <UserSVG />
                 <p>{user.fullname}</p>
               </div>
             </div>
@@ -155,17 +166,20 @@ function UserInfo() {
               <>
                 <h3>Pix</h3>
                 <div className={styles.field}>
-                  <p className={styles.title}>Chave Pix</p>
+                  <p className={styles.title}>Nome do banco</p>
                   <div className={styles.value}>
-                    <FaceSmileSVG />
-                    <p>{user.pix.pixKey}</p>
+                    <BankSVG />
+                    <p>{user.pix.bankAccount}</p>
                   </div>
                 </div>
                 <div className={styles.field}>
-                  <p className={styles.title}>Nome do banco</p>
+                  <p className={styles.title}>Chave Pix</p>
                   <div className={styles.value}>
-                    <FaceSmileSVG />
-                    <p>{user.pix.bankAccount}</p>
+                    <PixSVG />
+                    <p>{user.pix.pixKey}</p>
+                    <Button className={styles.button} onClick={() => copyButton(user.pix?.pixKey)}>
+                      Copiar Link
+                    </Button>
                   </div>
                 </div>
               </>

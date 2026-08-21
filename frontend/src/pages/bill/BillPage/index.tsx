@@ -198,7 +198,7 @@ function BillPage() {
           </Button>
         </div>
         <div className={styles.total}>
-          <p>Total:</p>
+          <p>Balanço:</p>
           <p>R${debitTotal.value.toFixed(2)}</p>
         </div>
       </div>

@@ -26,11 +26,17 @@ function EventPage() {
   const navigate = useNavigate();
 
   const fetchEvent = useCallback(async () => {
+
+    const sortDirection = dateFilter ? 'asc' : 'desc';
+    const sortParam = `eventDate,${sortDirection}`;
+
     const eventResponse = await getEvents(
       filter,
       dateFilter,
       finishedFilter,
       page.number,
+      20, // Page size
+      sortParam
     );
     setEvents(eventResponse.content);
   }, [filter, dateFilter, finishedFilter, page.number, setEvents]);
