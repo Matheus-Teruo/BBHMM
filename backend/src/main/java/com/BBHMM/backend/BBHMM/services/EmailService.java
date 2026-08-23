@@ -69,7 +69,7 @@ public class EmailService {
 
             String token = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
             
-            String resetLink = "http://" + props.redirectUrl() + "/auth/user/reset-password?token=" + token; 
+            String resetLink = props.redirectUrl() + "/auth/user/reset-password?token=" + token; 
             context.setVariable("resetLink", resetLink);
 
             String htmlContent = templateEngine.process("email-templates/reset-password-email", context);
