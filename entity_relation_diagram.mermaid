@@ -1,0 +1,117 @@
+erDiagram
+
+    USERS {
+        BINARY16 uuid PK
+        VARCHAR50 username UK
+        VARCHAR255 password
+        ENUM role
+        VARCHAR100 fullname UK
+        VARCHAR255 email UK
+        BOOLEAN email_verified
+        VARCHAR255 image_key
+    }
+
+    PIXES {
+        BINARY16 uuid PK
+        VARCHAR100 pix_key
+        VARCHAR100 bank_account
+        BINARY16 uuid_user FK
+    }
+
+    TOKENS {
+        BINARY16 uuid PK
+        VARCHAR255 token UK
+        ENUM type
+        TIMESTAMP time_stamp
+        BOOLEAN valid
+        BINARY16 uuid_user FK
+    }
+
+    EVENTS {
+        BINARY16 uuid PK
+        VARCHAR100 event_name
+        TEXT description
+        DATE event_date
+        BOOLEAN finished
+    }
+
+    EVENT_USER {
+        BINARY16 uuid_user PK, FK
+        BINARY16 uuid_event PK, FK
+        VARCHAR7 color
+        DECIMAL total_to_receive
+        DECIMAL total_to_pay
+        DECIMAL total_discounts
+    }
+
+    BILLS {
+        BINARY16 uuid PK
+        VARCHAR100 name
+        TEXT description
+        DECIMAL value
+        BINARY16 uuid_payer FK
+        DECIMAL debit_amount
+        BINARY16 uuid_event FK
+        BOOLEAN paid
+        ENUM type
+    }
+
+    PARTICIPANTS {
+        BINARY16 uuid PK
+        BINARY16 uuid_user FK
+        BINARY16 uuid_bill FK
+        DECIMAL value
+        DECIMAL paid_value
+        BOOLEAN paid
+    }
+
+    EVENT_INVITATION {
+        BINARY16 uuid PK
+        BINARY16 uuid_invited_user FK
+        BINARY16 uuid_owner_user FK
+        BINARY16 uuid_event FK
+        BOOLEAN accepted
+    }
+
+    DISCOUNTS {
+        BINARY16 uuid PK
+        BINARY16 uuid_event FK
+        VARCHAR100 name
+        ENUM type
+        DECIMAL value
+    }
+
+    BILL_DISCOUNTS {
+        BINARY16 uuid_bill PK, FK
+        BINARY16 uuid_discount PK, FK
+        DECIMAL applied_value
+    }
+
+
+    %% Users <-> Events
+    USERS ||--o{ EVENT_USER : participates
+    EVENTS ||--o{ EVENT_USER : has_users
+
+    %% Users -> Bills
+    USERS ||--o{ BILLS : pays
+    EVENTS ||--o{ BILLS : contains
+
+    %% Users <-> Bills through Participants
+    USERS ||--o{ PARTICIPANTS : participates
+    BILLS ||--o{ PARTICIPANTS : has_participants
+
+    %% Users -> PIX
+    USERS ||--o{ PIXES : owns
+
+    %% Event Invitations
+    USERS ||--o{ EVENT_INVITATION : invited
+    USERS ||--o{ EVENT_INVITATION : owns
+    EVENTS ||--o{ EVENT_INVITATION : receives
+
+    %% Tokens
+    USERS ||--o{ TOKENS : has
+
+    %% Discounts
+    EVENTS ||--o{ DISCOUNTS : has
+    BILLS ||--o{ BILL_DISCOUNTS : receives
+    DISCOUNTS ||--o{ BILL_DISCOUNTS : applied_to
