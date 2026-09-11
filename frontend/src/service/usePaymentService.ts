@@ -2,7 +2,6 @@ import useAxios from "@/axios/useAxios";
 import Payment, { DebitTotal, PayBill, PaymentDetails } from "@data/Payment";
 import { useCallback } from "react";
 import { useSafeRequest } from "../axios/useHandleRequest";
-import ApiError from "@data/Error";
 
 const usePaymentService = () => {
   const api = useAxios();
@@ -31,7 +30,7 @@ const usePaymentService = () => {
   );
 
   const makePayment = useCallback(
-    async (payBill: PayBill): Promise<void | ApiError> =>
+    async (payBill: PayBill): Promise<void> =>
       safeRequest(() =>
         api.post<void>("/events/payment", payBill).then((res) => res.data),
       ),

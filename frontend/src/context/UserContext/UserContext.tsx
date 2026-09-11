@@ -22,13 +22,13 @@ function UserProvider({ children }: { children: React.ReactNode }) {
 
   const checkLogged = useCallback(async () => {
     try {
-      const logginUser = await checkUser();
-      if (!isApiError(logginUser)) {
-        setUser(logginUser);
-      } else {
-        setUser("unlogged");
-      }
+      const loginUser = await checkUser();
+      setUser(loginUser);
     } catch (error) {
+      if (isApiError(error)) {
+        setUser("unlogged")
+        return
+      }
       setUser("unlogged");
       console.log(error);
     }

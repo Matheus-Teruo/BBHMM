@@ -12,7 +12,7 @@ export const initialPaymentState: PayBill = {
   userToPayUuid: "",
   value: 0,
   userToReceiveUuid: "",
-  eventuUuid: "",
+  eventUuid: "",
 };
 
 export function paymentReducer(state: PayBill, action: PaymentAction): PayBill {
@@ -39,7 +39,7 @@ export function paymentReducer(state: PayBill, action: PaymentAction): PayBill {
       if (!regexUuid.test(action.payload)) {
         return state;
       }
-      return { ...state, eventuUuid: action.payload };
+      return { ...state, eventUuid: action.payload };
     }
     case "RESET":
       return initialPaymentState;

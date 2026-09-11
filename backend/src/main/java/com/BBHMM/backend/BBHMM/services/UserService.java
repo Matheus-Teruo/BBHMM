@@ -3,9 +3,9 @@ package com.BBHMM.backend.BBHMM.services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
@@ -41,6 +41,7 @@ public class UserService {
 
     private final EmailService emailService;
     private final TokenService tokenService;
+    private final StorageService storageService;
     private final UserRepository repository;
     private final UserValidation validation;
     private final BillValidation billValidation;
@@ -48,6 +49,7 @@ public class UserService {
 
     @Transactional
     public User createUser(SignupUserRequest request) {
+        validation.checkFullnameSpace(request.fullname());
         validation.checkNameDuplication(request.username(), request.fullname(), request.email());
         User user = new User(
             request,
@@ -118,8 +120,7 @@ public class UserService {
                     ));
     }
 
-    public List<EventUser> findParticipantsByEventUuid(UUID eventUuid) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public List<EventUser> findParticipantsByEventUuid(UUID eventUuid, User user) {
         billValidation.checkUserParticipationInEvent(user, eventUuid);
         var eventUsers = repository.listUsersByEvent(eventUuid);
 
@@ -182,11 +183,14 @@ public class UserService {
     }
 
     public User createGuest(CreateGuestRequest request, User hostUser, String password, Event event) {
-        validation.checkNameDuplication(request.guestName(), request.guestName(), null);
+        validation.checkFullnameSpace(request.guestName());
+        String guestUsername = request.guestName() + "-" + generatePassword(4);
+        String guestUsernameTrimmed = guestUsername.replaceAll("\\s+", "");
+        validation.checkNameDuplication(guestUsernameTrimmed, request.guestName(), null);
         billValidation.checkUserParticipationInEvent(hostUser, request.eventUuid());
         billValidation.checkEventFinished(event);
 
-        User guest = new User(request, passwordEncoder.encode(password));
+        User guest = new User(request, guestUsernameTrimmed, passwordEncoder.encode(password));
 
         repository.save(guest);
         return guest;
@@ -197,14 +201,16 @@ public class UserService {
         billValidation.checkUsersParticipationInEvent(eventUuid, List.of(guestUuid, hostUser.getUuid()));
         User guest = safeTakeUserByUuid(guestUuid);
 
-        guest.updatePassword(passwordEncoder.encode(password));
+        if(password != null) {           
+            guest.updatePassword(passwordEncoder.encode(password));
+        }
 
         return guest;
     }
 
     @Transactional
     public User upgradeGuestToUser(UpgradeGuestToUserRequest request) {
-        validation.checkNameDuplication(null, null, request.email());
+        validation.checkNameDuplication(request.username(), null, request.email());
         User guest = safeTakeUserByUuid(request.uuid());
 
         guest.upgradeGuestToUser(request, passwordEncoder.encode(request.password()));
@@ -212,11 +218,11 @@ public class UserService {
         return guest;
     }
 
-    public String generatePassword() {
+    public String generatePassword(int size) {
         SecureRandom random = new SecureRandom();
         List<Character> password = new ArrayList<>();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < size; i++) {
             String all = LETTERS + NUMBERS;
             password.add(all.charAt(random.nextInt(all.length())));
         }
@@ -229,5 +235,21 @@ public class UserService {
         }
 
         return sb.toString();
+    }
+
+    @Transactional
+    public String uploadImage(MultipartFile file, UUID userUuid) {
+        User user = safeTakeUserByUuid(userUuid);
+
+        String existingImage = user.getImageKey();
+        if (existingImage != null) {
+            storageService.deleteFile(existingImage);
+        }
+
+        String key = storageService.uploadImageFile(file, userUuid, "perfil");
+
+        user.setImageKey(key);
+
+        return key;
     }
 }

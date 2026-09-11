@@ -10,9 +10,10 @@ import { CheckResetPassword } from "@data/Token";
 import useTokenService from "@service/useTokenService";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ApiError from "@data/Error";
 
 function ForgotPasswordRedirect() {
-  const [first, setfirst] = useState<boolean>(true);
+  const [first, setFirst] = useState<boolean>(true);
   const { checkResetPassword } = useTokenService();
   const { addNotification } = useAlertsContext();
   const { user, login } = useUserContext();
@@ -25,12 +26,12 @@ function ForgotPasswordRedirect() {
   const fetchPassword = useCallback(async () => {
     const token = searchParams.get("token");
     if (token && first) {
-      setfirst(false);
+      setFirst(false);
       await sleep(1000);
-      const response = await checkResetPassword({
-        token: token,
-      } as CheckResetPassword);
-      if (!isApiError(response)) {
+      try {
+        const response = await checkResetPassword({
+          token: token,
+        } as CheckResetPassword);
         login({
           uuid: response.uuid,
           firstname: response.firstname,
@@ -38,13 +39,15 @@ function ForgotPasswordRedirect() {
           emailVerified: response.emailVerified,
         });
         navigate("/auth/user");
-      } else {
-        addNotification({
-          title: "Não foi possivel redefinir sua senha",
-          message: "Seu e-mail expirou, tente novamente enviando outro email.",
-          type: MessageType.WARNING,
-        });
-        navigate("/auth/login");
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) {
+          addNotification({
+            title: "Não foi possível redefinir sua senha",
+            message: "Seu e-mail expirou, tente novamente enviando outro email.",
+            type: MessageType.WARNING,
+          });
+          navigate("/auth/login");
+        }
       }
     }
   }, [searchParams]);

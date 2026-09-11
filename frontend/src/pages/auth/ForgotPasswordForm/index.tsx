@@ -11,6 +11,7 @@ import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import { useLocation, useNavigate } from "react-router-dom";
 import GlassBackground from "@/components/GlassBackground";
 import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
+import ApiError from "@data/Error";
 
 function ForgotPasswordForm() {
   const [email, setEmail] = useState<string>("");
@@ -45,23 +46,23 @@ function ForgotPasswordForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    setMessageError({});
-    const response = await resetPassword({ email: email });
-    if (!isApiError(response)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      setMessageError({});
+      await resetPassword({ email: email });
       addNotification({
         title: "Email enviado",
-        message: `Verifique seu email e siga as intruções do email.`,
+        message: `Verifique seu email e siga as instruções do email.`,
         type: MessageType.INFO,
       });
       closePopup();
-    } else {
-      const message = response;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   return (

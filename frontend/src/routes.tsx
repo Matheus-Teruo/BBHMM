@@ -60,7 +60,7 @@ function AppRouter() {
       </Routes>
       {backgroundLocation && (
         <Routes>
-          <Route path="/event/paymnent/new" element={<PaymentForm />} />
+          <Route path="/event/payment/new" element={<PaymentForm />} />
           <Route path="/invites/new/:eventUUID" element={<InviteUserForm />} />
           <Route path="/auth/guest/new" element={<CreateGuestForm />} />
           <Route path="/auth/guest/info" element={<GuestInfo />} />

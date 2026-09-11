@@ -31,7 +31,6 @@ public class TokenService {
         LocalDateTime rangeTimeForLast = LocalDateTime.now().minusMinutes(10);
         Optional<Token> lastToken = repository.findLastValidByUserAndType(user.getUuid(), type, rangeTimeForLast);
         if (lastToken.isPresent()) {
-            System.out.println(lastToken.get().getToken());
             lastToken.get().setValid(false);
         }
 

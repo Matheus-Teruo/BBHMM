@@ -2,6 +2,8 @@ package com.BBHMM.backend.BBHMM.services;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,6 +22,7 @@ import java.util.Objects;
 @Service
 @EnableConfigurationProperties(EmailProperties.class)
 @RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
     private final JavaMailSender mailSender;
@@ -47,7 +50,7 @@ public class EmailService {
             mailSender.send(mimeMessage);
 
         } catch (Exception e) {
-            System.err.println("Falha ao enviar e-mail: " + e.getMessage());
+            log.error("Falha ao enviar e-mail: " + e.getMessage());
         }
     }
 
@@ -66,7 +69,7 @@ public class EmailService {
 
             String token = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
             
-            String resetLink = "http://" + props.redirectUrl() + "/auth/user/reset-password?token=" + token; 
+            String resetLink = props.redirectUrl() + "/auth/user/reset-password?token=" + token; 
             context.setVariable("resetLink", resetLink);
 
             String htmlContent = templateEngine.process("email-templates/reset-password-email", context);
@@ -76,7 +79,7 @@ public class EmailService {
             mailSender.send(mimeMessage);
 
         } catch (Exception e) {
-            System.err.println("Falha ao enviar e-mail de troca de senha: " + e.getMessage());
+            log.error("Falha ao enviar e-mail de troca de senha: " + e.getMessage());
         }
     }
 }

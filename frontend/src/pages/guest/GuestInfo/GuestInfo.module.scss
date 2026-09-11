@@ -26,4 +26,27 @@
     font-weight: 700;
     margin-bottom: 8px;
   }
+
+  .tokenDiv{
+    display: flex;
+    flex-direction: column;
+    
+    .tokenFooter{
+      padding: 12px 0 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .buttonResetFooter{
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .button {
+      padding: 6px 12px;
+      margin-top: 4px;
+      background-color: $color-secondary-1;
+    }
+  }
 }

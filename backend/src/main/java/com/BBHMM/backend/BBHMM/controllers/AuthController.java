@@ -22,6 +22,7 @@ import com.BBHMM.backend.BBHMM.docs.api.ReadResourceErrors;
 import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CheckResetPasswordRequest;
+import com.BBHMM.backend.BBHMM.models.request.LoginGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.LoginUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.ResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
@@ -70,7 +71,7 @@ public class AuthController {
             .buildAndExpand(user.getUuid())
             .toUri();
         
-        return ResponseEntity.created(location).body(new UserResponse(user));
+        return ResponseEntity.created(location).body(new UserResponse(user, null));
     }
 
     @PostMapping("/login")
@@ -96,7 +97,7 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Guest logged in")
     @ReadResourceErrors
     public ResponseEntity<GuestResponse> loginGuest(
-        @Valid @RequestBody LoginUserRequest request,
+        @Valid @RequestBody LoginGuestRequest request,
         HttpServletResponse response) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         var authentication = manager.authenticate(authenticationToken);
@@ -147,7 +148,7 @@ public class AuthController {
         @Valid @RequestBody CheckResetPasswordRequest request,
         HttpServletResponse response
     ) {
-        String password = service.generatePassword();
+        String password = service.generatePassword(8);
         User user = service.checkResetPassword(request, password);
 
         var authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), password);

@@ -1,4 +1,4 @@
-import { EditSVG, FaceSmileSVG } from "@/assets/svg";
+import { BankSVG, EditSVG, FaceSmileSVG, PixSVG, UserSVG } from "@/assets/svg";
 import styles from "./UserInfo.module.scss";
 import GlassBackground from "@/components/GlassBackground";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import useEventService from "@service/useEventService";
 import { UpdateEventUser } from "@data/Event";
 import Button from "@/components/util/Button";
 import { isColorDark } from "@/util/colorHelper";
+import ApiError from "@data/Error";
 
 function UserInfo() {
   const [editColor, setEditColor] = useState<boolean>(false);
@@ -43,24 +44,24 @@ function UserInfo() {
   }, [self, user]);
 
   const handleUpdateSubmit = async () => {
-    setWaitingFetch(true);
-    setTouched(false);
-    const eventUser = await updateEventUser(eventUuid, {
-      color: color,
-    } as UpdateEventUser);
-    if (!isApiError(eventUser)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      const eventUser = await updateEventUser(eventUuid, {
+        color: color,
+      } as UpdateEventUser);
       addNotification({
         title: "Cor atualizada com sucesso",
         message: `cor atualizada para ${eventUser.color}`,
         type: MessageType.OK,
       });
       setEditColor(false);
-    } else {
-      const message = eventUser;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   const closePopup = () => {
@@ -74,6 +75,17 @@ function UserInfo() {
       });
     } else {
       navigate(-1);
+    }
+  };
+
+  const copyButton = (keyValue : string | undefined) => {
+    if (keyValue) {
+      navigator.clipboard.writeText(keyValue);
+      addNotification({
+        title: "Chave copiada",
+        message: `A chave pix do ${user.firstname} foi copiada com sucesso`,
+        type: MessageType.INFO,
+      });
     }
   };
 
@@ -93,7 +105,7 @@ function UserInfo() {
             <div className={styles.field}>
               <p className={styles.title}>Nome Completo</p>
               <div className={styles.value}>
-                <FaceSmileSVG />
+                <UserSVG />
                 <p>{user.fullname}</p>
               </div>
             </div>
@@ -122,14 +134,17 @@ function UserInfo() {
                     <p
                       style={{
                         backgroundColor: user.color,
-                        color: isColorDark(user.color) ? "white" : "black",
+                        color: (user.color !== null && isColorDark(user.color)) ? "white" : "black",
                         padding: "2px 8px",
                         borderRadius: "6px",
                       }}
                     >
                       {user.color}
                     </p>
-                    <Button onClick={() => setEditColor(true)}>
+                    <Button
+                      className={styles.editButton}
+                      onClick={() => setEditColor(true)}
+                    >
                       <EditSVG />
                     </Button>
                   </div>
@@ -154,17 +169,20 @@ function UserInfo() {
               <>
                 <h3>Pix</h3>
                 <div className={styles.field}>
-                  <p className={styles.title}>Chave Pix</p>
+                  <p className={styles.title}>Nome do banco</p>
                   <div className={styles.value}>
-                    <FaceSmileSVG />
-                    <p>{user.pix.pixKey}</p>
+                    <BankSVG />
+                    <p>{user.pix.bankAccount}</p>
                   </div>
                 </div>
                 <div className={styles.field}>
-                  <p className={styles.title}>Nome do banco</p>
+                  <p className={styles.title}>Chave Pix</p>
                   <div className={styles.value}>
-                    <FaceSmileSVG />
-                    <p>{user.pix.bankAccount}</p>
+                    <PixSVG />
+                    <p>{user.pix.pixKey}</p>
+                    <Button className={styles.copyButton} onClick={() => copyButton(user.pix?.pixKey)}>
+                      Copiar Link
+                    </Button>
                   </div>
                 </div>
               </>

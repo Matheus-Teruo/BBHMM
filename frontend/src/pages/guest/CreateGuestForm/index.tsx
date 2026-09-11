@@ -5,12 +5,13 @@ import Button from "@/components/util/Button";
 import { ButtonHTMLType } from "@/components/util/Button/ButtonHTMLType";
 import GeneralInput from "@/components/util/GeneralInput";
 import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
-import { regexLeterNumber } from "@/util/regex";
+import { regexLetterSpace } from "@/util/regex";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import ApiError from "@data/Error";
 import { CreateGuest } from "@data/User";
 import useUserService from "@service/useUserService";
 import { useState } from "react";
@@ -28,8 +29,6 @@ function CreateGuestForm() {
   const location = useLocation();
 
   const { backgroundLocation } = location.state as {
-    username: string;
-    token: string;
     backgroundLocation?: {
       pathname: string;
       search: string;
@@ -38,14 +37,14 @@ function CreateGuestForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    setMessageError({});
-    const guest = await createGuest({
-      guestName: guestName,
-      eventUuid: event?.uuid,
-    } as CreateGuest);
-    if (!isApiError(guest)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      setMessageError({});
+      const guest = await createGuest({
+        guestName: guestName,
+        eventUuid: event?.uuid,
+      } as CreateGuest);
       addNotification({
         title: "Convidado criado",
         message: `Convidado ${guestName} criado`,
@@ -60,16 +59,16 @@ function CreateGuestForm() {
           onCreated: true,
         },
       });
-    } else {
-      const message = guest;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   const handleGuestName = (value: string) => {
-    if (regexLeterNumber.test(value)) setGuestName(value);
+    if (regexLetterSpace.test(value)) setGuestName(value);
   };
 
   return (

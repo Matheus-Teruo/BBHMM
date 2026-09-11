@@ -11,27 +11,30 @@ public record EventUserResponse(
     String fullname,
     String role,
     PixResponse pix,
-    String color
+    String color,
+    String imageUrl
 ) {
-    public EventUserResponse(User user, EventUser eventUser) {
+    public EventUserResponse(User user, EventUser eventUser, String imageUrl) {
         this(
             user.getUuid(),
             user.getFullname().trim().split("\\s+")[0],
             user.getFullname(),
             user.getRole().toString(),
             user.getPix() != null ? new PixResponse(user.getPix()) : null,
-            eventUser.getColor()
+            eventUser.getColor(),
+            imageUrl
         );
     }
 
-    public EventUserResponse(EventUser eventUser) {
+    public EventUserResponse(EventUser eventUser, String imageUrl) {
         this(
             eventUser.getUser().getUuid(),
             eventUser.getUser().getFullname().trim().split("\\s+")[0],
             eventUser.getUser().getFullname(),
             eventUser.getUser().getRole().toString(),
             eventUser.getUser().getPix() != null ? new PixResponse(eventUser.getUser().getPix()) : null,
-            eventUser.getColor()
+            eventUser.getColor(),
+            imageUrl
         );
     }
 }

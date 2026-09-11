@@ -26,15 +26,19 @@ function EventPage() {
   const navigate = useNavigate();
 
   const fetchEvent = useCallback(async () => {
+
+    const sortDirection = dateFilter ? 'asc' : 'desc';
+    const sortParam = `event.eventDate,${sortDirection}`;
+
     const eventResponse = await getEvents(
       filter,
       dateFilter,
       finishedFilter,
       page.number,
+      10, // Page size
+      sortParam
     );
-    if (eventResponse) {
-      setEvents(eventResponse.content);
-    }
+    setEvents(eventResponse.content);
   }, [filter, dateFilter, finishedFilter, page.number, setEvents]);
 
   useEffect(() => {
@@ -51,7 +55,7 @@ function EventPage() {
     setFilter(event.target.value);
   };
 
-  function updateEvent(event: Event) {
+  function handleUpdateEvent(event: Event) {
     setSelectedEvent(event);
     setEventForm("Update");
   }
@@ -96,12 +100,12 @@ function EventPage() {
             key={event.uuid}
             className={`${styles.eventCard} ${event.finished ? styles.eventFinished : ""}`}
           >
-            <div onClick={() => handleSelectEvent(event)}>
+            <div className={styles.eventDiv} onClick={() => handleSelectEvent(event)}>
               <h3 className={styles.eventTitle}>{event.eventName}</h3>
               <p className={styles.eventDescription}>{event.description}</p>
               <p className={styles.eventDate}>{event.eventDate}</p>
             </div>
-            <div className={styles.editArea} onClick={() => updateEvent(event)}>
+            <div className={styles.editArea} onClick={() => handleUpdateEvent(event)}>
               <p>Editar</p>
               <EditSVG />
             </div>

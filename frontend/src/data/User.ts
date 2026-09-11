@@ -28,8 +28,14 @@ export interface CreateGuest {
   eventUuid: string;
 }
 
+export interface ResetGuestToken {
+  guestUuid: string;
+  eventUuid: string;
+}
+
 export interface UpgradeGuestToUser {
   uuid: string;
+  username: string;
   password: string;
   email: string;
 }
@@ -42,6 +48,7 @@ export default interface User {
   email: string;
   emailVerified: boolean;
   pix?: Pix;
+  imageUrl?: string;
 }
 
 export interface UserResume {
@@ -58,6 +65,7 @@ export interface EventUser {
   role: Role;
   pix?: Pix;
   color: string;
+  imageUrl?: string;
 }
 
 export interface Guest {

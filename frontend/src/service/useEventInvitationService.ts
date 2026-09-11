@@ -6,7 +6,6 @@ import EventInvitation, {
   UserInvitation,
 } from "@data/EventInvitation";
 import { useSafeRequest } from "../axios/useHandleRequest";
-import ApiError from "@data/Error";
 
 const useEventInvitationService = () => {
   const api = useAxios();
@@ -15,7 +14,7 @@ const useEventInvitationService = () => {
   const userEventInvitation = useCallback(
     async (
       invitation: UserInvitation,
-    ): Promise<EventInvitation | ApiError> =>
+    ): Promise<EventInvitation> =>
       safeRequest(() =>
         api
           .post<EventInvitation>("/events/invitation", invitation)
@@ -27,7 +26,7 @@ const useEventInvitationService = () => {
   const acceptedEventInvitation = useCallback(
     async (
       acceptInvitation: AcceptInvitation,
-    ): Promise<EventInvitation | ApiError> =>
+    ): Promise<EventInvitation> =>
       safeRequest(() =>
         api
           .post<EventInvitation>(

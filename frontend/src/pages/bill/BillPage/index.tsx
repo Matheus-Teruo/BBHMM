@@ -3,18 +3,18 @@ import Button from "@/components/util/Button";
 import { isUserLogged, isUserUnlogged } from "@/util/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { BillResume, UpdateBillParticipants } from "@data/Bills";
-import { Role, EventUser } from "@data/User";
+import { Role, EventUser, UserResume } from "@data/User";
 import useBillsService from "@service/useBillsService";
 import useEventService from "@service/useEventService";
 import { useCallback, useEffect, useState } from "react";
 import FormBill from "../FormBill";
-import { EditSVG } from "@/assets/svg";
+import { EditSVG, InfoSVG } from "@/assets/svg";
 import usePaymentService from "@service/usePaymentService";
 import { DebitTotal } from "@data/Payment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useUserService from "@service/useUserService";
 import Event from "@data/Event";
-import { isApiError } from "@/util/checkApiResponse";
+import FaceFrame from "@/components/FaceFrame";
 
 function BillPage() {
   const [event, setEvent] = useState<Event>();
@@ -26,6 +26,12 @@ function BillPage() {
   });
   const [billForm, setBillForm] = useState<null | "Create" | "Update">(null);
   const [selectedBill, setSelectedBill] = useState<BillResume | undefined>();
+  const [userState, setUserState] = useState<UserResume>({
+      uuid: "",
+      firstname: "",
+      role: Role.GUEST,
+      emailVerified: false
+    });
   const { getEvent, listUserFromEvent } = useEventService();
   const { listBills, updateBillParticipant } = useBillsService();
   const { getDebitTotal } = usePaymentService();
@@ -38,9 +44,7 @@ function BillPage() {
   const fetchEvent = useCallback(async () => {
     if (eventUUID) {
       const eventResponse = await getEvent(eventUUID);
-      if (eventResponse) {
-        setEvent(eventResponse);
-      }
+      setEvent(eventResponse);
     }
   }, [eventUUID, getEvent]);
 
@@ -89,6 +93,12 @@ function BillPage() {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    if (user && isUserLogged(user)) {
+      setUserState(user);
+    }
+  }, [user]);
+
   const handleCheckBill = async (
     value: boolean,
     participant: string,
@@ -99,11 +109,9 @@ function BillPage() {
       uuid: billUuid,
       partUuid: participant,
     } as UpdateBillParticipants;
-    const response = await updateBillParticipant(body);
-    if (!isApiError(response)) {
-      fetchBill();
-      fetchPayment();
-    }
+    await updateBillParticipant(body);
+    fetchBill();  // TODO: update para webhook
+    fetchPayment();  // TODO: update para webhook
   };
 
   function handleInvite() {
@@ -144,19 +152,19 @@ function BillPage() {
         });
       } else if (eu.role === Role.GUEST) {
         if (eventUUID) {
-          const guestRespone = await getGuest(eu.uuid, eventUUID);
-          if (!isApiError(guestRespone)) {
-            navigate("/auth/guest/info", {
-              state: {
-                username: guestRespone.username,
-                token: guestRespone.token,
-                backgroundLocation: {
-                  pathname: location.pathname,
-                  search: location.search,
-                },
+          const guestResponse = await getGuest(eu.uuid, eventUUID);
+          navigate("/auth/guest/info", {
+            state: {
+              guestUuid: guestResponse.uuid,
+              username: guestResponse.username,
+              token: guestResponse.token,
+              eventUuid: eventUUID,
+              backgroundLocation: {
+                pathname: location.pathname,
+                search: location.search,
               },
-            });
-          }
+            },
+          });
         }
       }
     }
@@ -176,31 +184,38 @@ function BillPage() {
           <Button onClick={() => setBillForm("Create")}>
             <p>Nova conta</p>
           </Button>
-          <Button onClick={() => handleInvite()}>
+          <Button
+            onClick={() => handleInvite()}
+            disabled={userState.role !== Role.USER}
+          >
             <p>Convidar</p>
           </Button>
-          <Button onClick={() => addGuest()}>
+          <Button
+            onClick={() => addGuest()}
+            disabled={userState.role !== Role.USER}
+          >
             <p>Criar Convidado</p>
           </Button>
         </div>
         <div className={styles.total}>
-          <p>Total:</p>
+          <p>Balanço:</p>
           <p>R${debitTotal.value.toFixed(2)}</p>
         </div>
       </div>
       <div className={styles.tableWrapper}>
         <ul className={styles.list}>
-          <li className={`${styles.row} ${styles.header}`}>
+          <li key="header" className={`${styles.row} ${styles.header}`}>
             <p className={`${styles.cell} ${styles.name}`}>Conta</p>
             <p className={`${styles.cell} ${styles.value}`}>Valor</p>
-            {users.map((user) => (
-              <p
-                key={user.uuid}
-                className={`${styles.cell} ${styles.userHeader}`}
-                onClick={() => handleUser(user)}
-              >
-                {user.firstname}
-              </p>
+            {users.map((userItem) => (
+              <FaceFrame
+                key={userItem.uuid}
+                onClick={() => handleUser(userItem)}
+                imageUrl={userItem.imageUrl}
+                fullname={userItem.fullname}
+                userColor={userItem.color}
+                small
+              />
             ))}
             <div className={`${styles.cell} ${styles.actions}`}>
               <p className={`${styles.cell} ${styles.actions}`}>Editar</p>
@@ -209,27 +224,28 @@ function BillPage() {
           {bills.map((bill) => (
             <li key={bill.uuid} className={styles.row}>
               <p className={`${styles.cell} ${styles.name}`}>{bill.billName}</p>
-              <p className={`${styles.cell} ${styles.value}`}>
-                R${bill.value.toFixed(2)}
-              </p>
-              {users.map((user) => (
+              <div className={`${styles.cell} ${styles.value} ${bill.participantsUuid.length == 0 && styles.billWarning}`}>
+                <p>R${bill.value.toFixed(2)}</p>
+                {bill.participantsUuid.length == 0 && <InfoSVG size={16}/>}
+              </div>
+              {users.map((userItem) => (
                 <div
-                  key={user.uuid}
+                  key={userItem.uuid}
                   className={`${styles.cell} ${styles.user}`}
                 >
                   <input
                     type="checkbox"
                     style={{
-                      accentColor: user.color,
+                      accentColor: userItem.color,
                     }}
-                    checked={bill.participantsUuid.includes(user.uuid)}
+                    checked={bill.participantsUuid.includes(userItem.uuid)}
                     onChange={(e) =>
-                      handleCheckBill(e.target.checked, user.uuid, bill.uuid)
+                      handleCheckBill(e.target.checked, userItem.uuid, bill.uuid)
                     }
                   />
                 </div>
               ))}
-              <div className={`${styles.cell} ${styles.actions}`}>
+              <div key="actions" className={`${styles.cell} ${styles.actions}`}>
                 <Button
                   className={`${styles.cell} ${styles.actions}`}
                   onClick={() => updateBill(bill)}

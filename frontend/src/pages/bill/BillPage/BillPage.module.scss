@@ -43,7 +43,7 @@
       button {
         padding: 6px 15px;
         margin-left: 4px;
-        background-color: $color-secundary-1;
+        background-color: $color-secondary-1;
         box-shadow: 1px 2px 4px 0px $color-shadow-2;
         border-radius: $border-radius;
 
@@ -83,14 +83,14 @@
 
     .header {
       font-weight: bold;
-      background: $color-secundary-1;
+      background: $color-secondary-1;
     }
 
     .row {
       display: grid;
       grid-template-columns:
         minmax(70px, 120px) /* Nome */
-        80px /* Valor */
+        100px /* Valor */
         repeat(auto-fit, 30px) /* Usuários */
         90px; /* Ações */
 
@@ -112,7 +112,7 @@
           justify-content: flex-start;
         }
         &.value {
-          justify-content: center;
+          justify-content: space-between;
         }
         &.user {
           justify-content: center;
@@ -127,13 +127,23 @@
       }
 
       .value {
-        width: 80px;
+        display: flex;
+        align-items: center;
+        border-radius: $border-radius;
+        width: 100px;
+
+        @media (max-width: $mobile) {
+          font-size: 0.8rem;
+          width: 80px;
+        }
+      }
+
+      .billWarning{
+        background-color: $color-unaccepted;
       }
 
       .userHeader {
         width: 20px;
-        writing-mode: vertical-rl;
-        transform: rotate(-30deg);
 
         input {
           width: 18px;
@@ -152,7 +162,7 @@
           display: flex;
           align-items: center;
           gap: 3px;
-          background-color: $color-secundary-1;
+          background-color: $color-secondary-1;
         }
       }
     }

@@ -9,8 +9,9 @@ import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
-import { timerFormater } from "@/util/timerFormater";
+import { timerFormatter } from "@/util/timerFormatter";
 import { isApiError, mapFieldErrors } from "@/util/checkApiResponse";
+import ApiError from "@data/Error";
 
 const WAIT_TIME = 120;
 
@@ -32,49 +33,6 @@ function EmailValidation() {
       pathname: string;
       search: string;
     };
-  };
-
-  const validateToken = async (value: string) => {
-    setWaitingFetch(true);
-    setTouched(false);
-    if (userUuid) {
-      const response = await validateEmail({ token: value });
-      if (!isApiError(response)) {
-        addNotification({
-          title: "Email Confirmado",
-          message:
-            "Parabens, obrigado por confirmar o email, agora esse email está vinculado a está conta",
-          type: MessageType.OK,
-        });
-        closePopup();
-      } else {
-        const message = response;
-        if (message.fields) setMessageError(mapFieldErrors(message.fields));
-      }
-    }
-    setTouched(true);
-    setWaitingFetch(false);
-  };
-
-  const handleMail = async () => {
-    setWaitingFetch(true);
-    setTouched(false);
-    if (userUuid) {
-      const response = await verifyEmail(userUuid);
-      if (!isApiError(response)) {
-        addNotification({
-          title: "Email enviado",
-          message: "Confira seu email, possivelmente sua caixa de spam",
-          type: MessageType.INFO,
-        });
-        setTimer(WAIT_TIME);
-      } else {
-        const message = response;
-        if (message.fields) setMessageError(mapFieldErrors(message.fields));
-      }
-    }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   useEffect(() => {
@@ -111,6 +69,49 @@ function EmailValidation() {
     }
   };
 
+  const validateToken = async (value: string) => {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      if (userUuid) {
+        await validateEmail({ token: value });
+        addNotification({
+          title: "Email Confirmado",
+          message:
+            "Parabéns, obrigado por confirmar o email, agora esse email está vinculado a está conta",
+          type: MessageType.OK,
+        });
+        closePopup();
+      }
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
+    }
+  };
+
+  const handleMail = async () => {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      if (userUuid) {
+        await verifyEmail(userUuid);
+        addNotification({
+          title: "Email enviado",
+          message: "Confira seu email, possivelmente sua caixa de spam",
+          type: MessageType.INFO,
+        });
+        setTimer(WAIT_TIME);
+      }
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
+    }
+  };
+
   return (
     <>
       <div className={styles.modal}>
@@ -129,7 +130,7 @@ function EmailValidation() {
         <div className={styles.mailAction}>
           <p>Reenvie email, caso precise</p>
           {timer > 0 ? (
-            <span>{`Aguarde ${timerFormater(timer)}`}</span>
+            <span>{`Aguarde ${timerFormatter(timer)}`}</span>
           ) : (
             <Button onClick={() => handleMail()} loading={waitingFetch}>
               Enviar E-mail

@@ -1,0 +1,270 @@
+{
+  "version": "2.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "tablePositions": [
+      {
+        "name": "users",
+        "schemaName": "public",
+        "x": 12,
+        "y": 12
+      },
+      {
+        "name": "pix",
+        "schemaName": "public",
+        "x": 12.6982421875,
+        "y": 324.05188747904754
+      },
+      {
+        "name": "tokens",
+        "schemaName": "public",
+        "x": 12.390380859375,
+        "y": 528.303165624344
+      },
+      {
+        "name": "events",
+        "schemaName": "public",
+        "x": 631.0367475237166,
+        "y": 12
+      },
+      {
+        "name": "event_invitation",
+        "schemaName": "public",
+        "x": 347.8135179792132,
+        "y": 12
+      },
+      {
+        "name": "event_user",
+        "schemaName": "public",
+        "x": 361.7710375104632,
+        "y": 254.1014899565286
+      },
+      {
+        "name": "bills",
+        "schemaName": "public",
+        "x": 348.8418382917132,
+        "y": 400.30316562434405
+      },
+      {
+        "name": "participants",
+        "schemaName": "public",
+        "x": 636.0736127580916,
+        "y": 263.5493311884546
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_user"
+        ],
+        "secondTableName": "pix",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_user"
+        ],
+        "secondTableName": "tokens",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_invited_user"
+        ],
+        "secondTableName": "event_invitation",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_owner_user"
+        ],
+        "secondTableName": "event_invitation",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "events",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_event"
+        ],
+        "secondTableName": "event_invitation",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 580.3882250104632,
+            "y": 52
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_user"
+        ],
+        "secondTableName": "event_user",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "events",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_event"
+        ],
+        "secondTableName": "event_user",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 598.795907883417,
+            "y": 334.10148995652867
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_payer"
+        ],
+        "secondTableName": "bills",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 314.1287409464518,
+            "y": 52
+          },
+          {
+            "x": 314.1287409464518,
+            "y": 576.303165624344
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "events",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_event"
+        ],
+        "secondTableName": "bills",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_user"
+        ],
+        "secondTableName": "participants",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 264.5142310006278,
+            "y": 52
+          },
+          {
+            "x": 264.5142310006278,
+            "y": 217.64135764980017
+          },
+          {
+            "x": 574.1050197056362,
+            "y": 217.64135764980017
+          },
+          {
+            "x": 574.1050197056362,
+            "y": 343.5493311884546
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "uuid"
+        ],
+        "firstTableName": "bills",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "uuid_bill"
+        ],
+        "secondTableName": "participants",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 579.3599046979632,
+            "y": 375.5493311884546
+          }
+        ]
+      }
+    ]
+  },
+  "views": {}
+}

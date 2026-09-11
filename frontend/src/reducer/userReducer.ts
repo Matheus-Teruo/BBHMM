@@ -1,7 +1,7 @@
 import {
   regexEmail,
-  regexLeterNumber,
-  regexLeterSpace,
+  regexLetterNumber,
+  regexLetterSpace,
   regexPassword,
 } from "@/util/regex";
 import { CreatePix, UpdatePix } from "@data/Pix";
@@ -28,6 +28,7 @@ type UserState = {
   email: string;
   emailVerified: boolean;
   pix: CreatePix | UpdatePix;
+  imageUrl?: string;
 };
 
 export type UpdateUserField =
@@ -58,18 +59,19 @@ export const initialUserState: UserState = {
   email: "",
   emailVerified: true,
   pix: initialPixState,
+  imageUrl: undefined
 };
 
 export function userReducer(state: UserState, action: UserAction): UserState {
   switch (action.type) {
     case "SET_USERNAME": {
-      if (!regexLeterNumber.test(action.payload)) {
+      if (!regexLetterNumber.test(action.payload)) {
         return state;
       }
       return { ...state, username: action.payload };
     }
     case "SET_FULLNAME": {
-      if (!regexLeterSpace.test(action.payload)) {
+      if (!regexLetterSpace.test(action.payload)) {
         return state;
       }
       return { ...state, fullname: action.payload };
@@ -105,6 +107,7 @@ export function userReducer(state: UserState, action: UserAction): UserState {
         email: action.payload.email,
         emailVerified: action.payload.emailVerified,
         pix: action.payload.pix ? action.payload.pix : initialPixState,
+        imageUrl: action.payload.imageUrl ? action.payload.imageUrl : undefined,
       };
     }
     case "RESET":
@@ -155,6 +158,6 @@ export const updateUserPayload = (
 };
 
 export const upgradeGuestPayload = (state: UserState): UpgradeGuestToUser => {
-  const { uuid, password, email } = state;
-  return { uuid, password, email } as UpgradeGuestToUser;
+  const { uuid, username, password, email } = state;
+  return { uuid, username, password, email } as UpgradeGuestToUser;
 };

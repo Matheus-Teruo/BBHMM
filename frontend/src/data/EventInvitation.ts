@@ -11,7 +11,7 @@ export default interface EventInvitation {
 }
 
 export interface UserInvitation {
-  userfield: string;
+  userField: string;
   eventUuid: string;
 }
 

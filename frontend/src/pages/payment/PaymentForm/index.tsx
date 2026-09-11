@@ -10,6 +10,7 @@ import {
   useAlertsContext,
 } from "@context/AlertContext/useAlertContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import ApiError from "@data/Error";
 import { EventUser } from "@data/User";
 import { initialPaymentState, paymentReducer } from "@reducer/paymentReducer";
 import usePaymentService from "@service/usePaymentService";
@@ -39,11 +40,11 @@ function PaymentForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    setMessageError({});
-    const payment = await makePayment(state);
-    if (!isApiError(payment)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      setMessageError({});
+      await makePayment(state);
       addNotification({
         title: "Conta paga",
         message: `o valor ${state.value} foi pago`,
@@ -51,12 +52,12 @@ function PaymentForm() {
       });
       dispatch({ type: "RESET" });
       navigate(-1);
-    } else {
-      const message = payment;
-      if (message.fields) setMessageError(mapFieldErrors(message.fields));
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   useEffect(() => {

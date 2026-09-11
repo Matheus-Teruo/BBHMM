@@ -1,0 +1,67 @@
+Table users {
+  uuid uuid [pk]
+  username varchar
+  password varchar
+  role varchar
+  fullname varchar
+  email varchar
+  email_verified boolean
+  image_key varchar
+}
+
+Table pix {
+  uuid uuid [pk]
+  key varchar
+  bank_account varchar
+  uuid_user uuid [ref: > users.uuid]
+}
+
+Table tokens {
+  uuid uuid [pk]
+  token varchar
+  type varchar
+  time_stamp timestamp
+  uuid_user uuid [ref: > users.uuid]
+}
+
+Table events {
+  uuid uuid [pk]
+  event_name varchar
+  description text
+  event_date date
+  finished boolean
+}
+
+Table event_invitation {
+  uuid uuid [pk]
+  uuid_invited_user uuid [ref: > users.uuid]
+  uuid_owner_user uuid [ref: > users.uuid]
+  uuid_event uuid [ref: > events.uuid]
+  accepted boolean
+}
+
+Table event_user {
+  uuid_user uuid [pk, ref: > users.uuid]
+  uuid_event uuid [pk, ref: > events.uuid]
+}
+
+Table bills {
+  uuid uuid [pk]
+  name varchar
+  description text
+  value decimal
+  uuid_payer uuid [ref: > users.uuid]
+  uuid_event uuid [ref: > events.uuid]
+  debit_amount decimal
+  paid boolean
+  type varchar
+}
+
+Table participants {
+  uuid uuid [pk]
+  uuid_user uuid [ref: > users.uuid]
+  uuid_bill uuid [ref: > bills.uuid]
+  value decimal
+  paid_value decimal
+  paid boolean
+}
