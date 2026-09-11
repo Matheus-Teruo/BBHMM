@@ -26,14 +26,14 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
         AND (:eventDate IS NULL OR eu.event.eventDate >= :eventDate)
         AND (:finished IS NULL OR eu.event.finished = :finished)
     """)
-    Page<Event> findAllbyUser(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable, UUID userUuid);
+    Page<Event> findAllByUser(String eventName, LocalDate eventDate, Boolean finished, Pageable pageable, UUID userUuid);
 
     @Query("""
         SELECT eu.event
         FROM EventUser eu
         WHERE eu.user.uuid = :userUuid
     """)
-    List<Event> findAllbyUserList(UUID userUuid);
+    List<Event> findAllByUserList(UUID userUuid);
 
     @Query("""
         SELECT CASE WHEN EXISTS(

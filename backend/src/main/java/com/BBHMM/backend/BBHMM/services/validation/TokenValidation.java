@@ -7,7 +7,7 @@ import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Token;
 import com.BBHMM.backend.BBHMM.models.TokenType;
 import com.BBHMM.backend.BBHMM.models.User;
-import com.BBHMM.backend.BBHMM.repositories.TokenRespository;
+import com.BBHMM.backend.BBHMM.repositories.TokenRepository;
 
 import java.time.LocalDateTime;
 
@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class TokenValidation {
 
-    private final TokenRespository respository;
+    private final TokenRepository repository;
 
     public void checkLastValidToken(User user, TokenType tokenType, LocalDateTime limitTime) {
-        if (respository.checkLastValidByUserAndType(user.getUuid(), tokenType, limitTime)) {
+        if (repository.checkLastValidByUserAndType(user.getUuid(), tokenType, limitTime)) {
             throw new InvalidDatabaseQueryException(
                 "Token não pode ser criado",
                 "já existe outro token existente, aguarde um momento antes de enviar outro.",

@@ -1,5 +1,6 @@
 package com.BBHMM.backend.BBHMM.config.security;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,14 +27,18 @@ public class SecurityFilter extends OncePerRequestFilter {
   private final UserRepository repository;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
+  protected void doFilterInternal(
+    @NonNull HttpServletRequest request,
+    @NonNull HttpServletResponse response,
+    @NonNull FilterChain filterChain
+  ) throws ServletException, IOException {
 
     var tokenJWT = recoverToken(request);
 
     if (tokenJWT != null) {
-      var userUuid = service.recoverUserUuid(tokenJWT);
-      Optional<User> user = repository.findById(userUuid);
+      Optional<User> user = Optional.ofNullable(
+          service.recoverUserUuid(tokenJWT)
+      ).flatMap(repository::findById);
 
       if (user.isPresent()){
         var authentication = new UsernamePasswordAuthenticationToken(

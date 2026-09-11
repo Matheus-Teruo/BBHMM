@@ -48,7 +48,7 @@ public class EventInvitationController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/invitation/accepted")
-    @Operation(summary = "Accpet Invite")
+    @Operation(summary = "Accept Invite")
     @ApiResponse(responseCode = "200", description = "Invite accepted and user is part of event")
     @CreateWithReadErrors
     public ResponseEntity<EventInvitationResponse> acceptedEventInvitation(

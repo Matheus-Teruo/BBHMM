@@ -17,7 +17,7 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CheckResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.CreateGuestRequest;
 import com.BBHMM.backend.BBHMM.models.request.EmailTokenRequest;
-import com.BBHMM.backend.BBHMM.models.request.EmailValidaitonRequest;
+import com.BBHMM.backend.BBHMM.models.request.EmailValidationRequest;
 import com.BBHMM.backend.BBHMM.models.request.ResetPasswordRequest;
 import com.BBHMM.backend.BBHMM.models.request.SignupUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpgradeGuestToUserRequest;
@@ -78,33 +78,33 @@ public class UserService {
             );
     }
 
-    public User findUserByNameOrFullnameOrEmail(String userfield) {
-        if (userfield.matches("^.+@.+\\..+$")) {
-            return repository.findByEmail(userfield)
+    public User findUserByNameOrFullnameOrEmail(String userField) {
+        if (userField.matches("^.+@.+\\..+$")) {
+            return repository.findByEmail(userField)
                     .orElseThrow(() -> new InvalidDatabaseQueryException(
                             "Usuário não encontrado",
                             "email não condiz com nenhum usuário",
                             "email",
-                            userfield
+                            userField
                     ));
         }
 
-        if (userfield.matches(".*\\s+.*")) {
-            return repository.findByFullname(userfield)
+        if (userField.matches(".*\\s+.*")) {
+            return repository.findByFullname(userField)
                     .orElseThrow(() -> new InvalidDatabaseQueryException(
                             "Usuário não encontrado",
                             "nome completo não condiz com nenhum usuário",
                             "nome completo",
-                            userfield
+                            userField
                     ));
         }
 
-        return repository.findByUsername(userfield)
+        return repository.findByUsername(userField)
                 .orElseThrow(() -> new InvalidDatabaseQueryException(
                         "Usuário não encontrado",
                         "nome de usuário não condiz com nenhum usuário",
                         "nome de usuário",
-                        userfield
+                        userField
                 ));
     }
 
@@ -147,7 +147,7 @@ public class UserService {
         return user;
     }
 
-    public void verifyEmail(EmailValidaitonRequest request, User userSecurity) {
+    public void verifyEmail(EmailValidationRequest request, User userSecurity) {
         validation.checkUserAuthentication(request.userUuid(), userSecurity);
         validation.checkUserEmailValidation(userSecurity, false);
         User user = safeTakeUserByUuid(request.userUuid());

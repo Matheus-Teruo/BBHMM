@@ -72,7 +72,7 @@ public class PaymentService {
 
     @Transactional
     public void payOffDebit(PayBillRequest request, User userOwner) {
-        var event = eventService.safeTakeEventByUuid(request.eventuUuid());
+        var event = eventService.safeTakeEventByUuid(request.eventUuid());
         billValidation.checkUserParticipationInEvent(userOwner, event.getUuid());
         billValidation.checkUsersParticipationInEvent(event.getUuid(), List.of(request.userToPayUuid(), request.userToReceiveUuid()));
         List<Bill> receiverBills = billRepository.findBillsByPayerUuidAndNotPaid(request.userToReceiveUuid(), event.getUuid());

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record EmailValidaitonRequest(
+public record EmailValidationRequest(
     @NotBlank(message = "User ID é necessário")
     UUID userUuid
 ) {

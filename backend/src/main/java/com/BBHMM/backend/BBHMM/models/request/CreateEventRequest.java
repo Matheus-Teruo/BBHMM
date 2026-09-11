@@ -10,14 +10,14 @@ import java.time.LocalDate;
 
 public record CreateEventRequest(
     @NotBlank(message = "Nome do evento é necessário")
-    @Size(min = 3, message = "Nome do evento pelomenos 3 caractéres")
+    @Size(min = 3, message = "Nome do evento pelo menos 3 caracteres")
     @Pattern(regexp = "^[\\p{L}\\p{N}:!\\-]*$", message = "Nome do evento não pode ter alguns caracteres especiais")
     @Schema(example = "newEvent")
     String eventName,
 
-    @NotBlank(message = "A decrição é necessário")
-    @Size(min = 3, message = "A decrição precisa pelomenos 3 caractéres")
-    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A decrição só deve conter letras, numeros e espaço")
+    @NotBlank(message = "A descrição é necessário")
+    @Size(min = 3, message = "A descrição precisa pelo menos 3 caracteres")
+    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?%\\\\-]*$", message = "A descrição só deve conter letras, números e espaço")
     @Schema(example = "Event description")
     String description,
 

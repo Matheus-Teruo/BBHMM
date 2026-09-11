@@ -23,7 +23,7 @@ public class EventValidation {
     private final EventInvitationRepository eventInvitationRepository;
     private final BillRepository billRepository;
 
-    public void checkDuplicationInvate(User invitedUser, Event event) {
+    public void checkDuplicationInvite(User invitedUser, Event event) {
         if (eventInvitationRepository.existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Convite pendente já existente",
@@ -46,7 +46,7 @@ public class EventValidation {
         if (repository.userAlreadyInEvent(invitedUser.getUuid(), event.getUuid())) {
             throw new InvalidDatabaseInsertionException(
                 "Usuário ja está no evento",
-                "Usuário já participa desse evento, não é possivel gerar convite",
+                "Usuário já participa desse evento, não é possível gerar convite",
                 "EventInvitation",
                 List.of(
                     new FieldErrorDetail(
@@ -60,7 +60,7 @@ public class EventValidation {
         }
     }
 
-    public void checkInvateValid(EventInvitation eventInvitation, User userInvited) {
+    public void checkInviteValid(EventInvitation eventInvitation, User userInvited) {
         if (!eventInvitation.getUserInvited().getUuid().equals(userInvited.getUuid())) {
             throw new InvalidDatabaseQueryException(
                 "Convite não pode ser aceito",
@@ -71,7 +71,7 @@ public class EventValidation {
         }
     }
 
-    public void checkEventAvaliableToFinish(Event event) {
+    public void checkEventAvailableToFinish(Event event) {
         if (!billRepository.findBillsByEventUuidAndNotPaid(event.getUuid()).isEmpty()) {
             throw new InvalidDatabaseQueryException(
                 "Evento não pode ser finalizado",

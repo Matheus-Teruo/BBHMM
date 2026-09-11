@@ -2,7 +2,7 @@ package com.BBHMM.backend.BBHMM.services;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -10,23 +10,21 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import com.BBHMM.backend.BBHMM.config.props.EmailProperties;
 import com.BBHMM.backend.BBHMM.models.User;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 @Service
+@EnableConfigurationProperties(EmailProperties.class)
 @RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
-
-    @Value("${spring.mail.sender.email}")
-    private String email;
-
-    @Value("${spring.mail.sender.frontend.domain.url}")
-    private String domain;
+    private final EmailProperties props;
 
     @Async
     public void sendValidationEmail(User user, String token) {
@@ -34,8 +32,8 @@ public class EmailService {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            helper.setFrom(email);
-            helper.setTo(user.getEmail());
+            helper.setFrom(props.senderEmail());
+            helper.setTo(Objects.requireNonNull(user.getEmail()));
             helper.setSubject("Confirmação de Conta | BBHMM");
 
             Context context = new Context();
@@ -44,7 +42,7 @@ public class EmailService {
 
             String htmlContent = templateEngine.process("email-templates/validation-email", context);
 
-            helper.setText(htmlContent, true); 
+            helper.setText(Objects.requireNonNull(htmlContent), true); 
 
             mailSender.send(mimeMessage);
 
@@ -59,8 +57,8 @@ public class EmailService {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            helper.setFrom(email);
-            helper.setTo(user.getEmail());
+            helper.setFrom(props.senderEmail());
+            helper.setTo(Objects.requireNonNull(user.getEmail()));
             helper.setSubject("Solicitação de Troca de Senha | BBHMM");
 
             Context context = new Context();
@@ -68,12 +66,12 @@ public class EmailService {
 
             String token = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
             
-            String resetLink = "http://" + domain + "/auth/user/reset-password?token=" + token; 
+            String resetLink = "http://" + props.redirectUrl() + "/auth/user/reset-password?token=" + token; 
             context.setVariable("resetLink", resetLink);
 
             String htmlContent = templateEngine.process("email-templates/reset-password-email", context);
 
-            helper.setText(htmlContent, true);
+            helper.setText(Objects.requireNonNull(htmlContent), true);
 
             mailSender.send(mimeMessage);
 

@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface TokenRespository extends JpaRepository<Token, UUID> {
+public interface TokenRepository extends JpaRepository<Token, UUID> {
 
     @EntityGraph(attributePaths = "user")
     Optional<Token> getByToken(String token);

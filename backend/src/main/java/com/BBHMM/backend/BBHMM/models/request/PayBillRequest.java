@@ -16,6 +16,6 @@ public record PayBillRequest(
     UUID userToReceiveUuid,
 
     @NotNull(message = "ID do evento é necessário")
-    UUID eventuUuid
+    UUID eventUuid
 ) {
 }

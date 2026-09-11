@@ -8,7 +8,7 @@ import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Token;
 import com.BBHMM.backend.BBHMM.models.TokenType;
 import com.BBHMM.backend.BBHMM.models.User;
-import com.BBHMM.backend.BBHMM.repositories.TokenRespository;
+import com.BBHMM.backend.BBHMM.repositories.TokenRepository;
 import com.BBHMM.backend.BBHMM.services.validation.TokenValidation;
 
 import java.security.SecureRandom;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final TokenRespository respository;
+    private final TokenRepository repository;
     private final TokenValidation validation;
     
     @Transactional
@@ -29,7 +29,7 @@ public class TokenService {
         validation.checkLastValidToken(user, type, limitTime);
 
         LocalDateTime rangeTimeForLast = LocalDateTime.now().minusMinutes(10);
-        Optional<Token> lastToken = respository.findLastValidByUserAndType(user.getUuid(), type, rangeTimeForLast);
+        Optional<Token> lastToken = repository.findLastValidByUserAndType(user.getUuid(), type, rangeTimeForLast);
         if (lastToken.isPresent()) {
             System.out.println(lastToken.get().getToken());
             lastToken.get().setValid(false);
@@ -51,14 +51,14 @@ public class TokenService {
         }
         
         Token token = new Token(tokenValue, type, user);
-        respository.save(token);
+        repository.save(token);
         return token;
     }
 
     public void validateToken(TokenType type ,String tokenValue, UUID userUuid) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime limitTime = now.minusMinutes(10);
-        Token token = respository.findByTokenAndUserUuid(tokenValue, userUuid, limitTime)
+        Token token = repository.findByTokenAndUserUuid(tokenValue, userUuid, limitTime)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             "Token não encontrado",
             "token pode ter expirado ou não existe, tente enviar outra requisição",
@@ -69,7 +69,7 @@ public class TokenService {
     }
 
     public User getUserByToken(String tokenValue) {
-        Token token = respository.getByToken(tokenValue).orElseThrow(() -> new InvalidDatabaseQueryException(
+        Token token = repository.getByToken(tokenValue).orElseThrow(() -> new InvalidDatabaseQueryException(
             "Token não encontrado",
             "token pode ter expirado ou não existe, tente enviar outra requisição",
             "token",

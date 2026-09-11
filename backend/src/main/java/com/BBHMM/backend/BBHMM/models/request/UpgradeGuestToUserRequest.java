@@ -12,7 +12,7 @@ public record UpgradeGuestToUserRequest(
     UUID uuid,
 
     @NotBlank(message = "Senha é necessária")
-    @Size(min = 8, message = "Senha precisa ter pelomenos 8 caractéres")
+    @Size(min = 8, message = "Senha precisa ter pelo menos 8 caracteres")
     @Pattern(regexp = "^[\\w@#$%^&+=!]*$", message = "Senha não pode ter alguns caracteres especiais")
     String password,
 

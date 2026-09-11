@@ -2,10 +2,13 @@ package com.BBHMM.backend.BBHMM.config.cors;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Objects;
 
 @Configuration
 @EnableConfigurationProperties(CorsProperties.class)
@@ -15,14 +18,14 @@ public class CorsConfigure implements WebMvcConfigurer {
   private final CorsProperties props;
 
   @Override
-  public void addCorsMappings(CorsRegistry registry) {
+  public void addCorsMappings(@NonNull CorsRegistry registry) {
 
     if (props.url() == null || props.url().isBlank()) {
       return;
     }
 
     registry.addMapping("/**")
-        .allowedOrigins(props.url().split(","))
+        .allowedOrigins(Objects.requireNonNull(props.url().split(",")))
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
         .allowedHeaders("Content-Type", "Accept", "Accept-Language")
         .allowCredentials(true);
