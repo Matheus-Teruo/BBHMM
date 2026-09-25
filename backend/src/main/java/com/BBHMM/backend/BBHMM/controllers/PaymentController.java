@@ -57,7 +57,7 @@ public class PaymentController {
 
     @GetMapping("/{eventUuid}/receiving")
     @Operation(summary = "Get list to receive")
-    @ApiResponse(responseCode = "200", description = "Return list of pendent receivement")
+    @ApiResponse(responseCode = "200", description = "Return list of pendent receipt")
     @ReadResourceErrors
     public ResponseEntity<List<PaymentResponse>> getDebtReceiving(@Valid @PathVariable UUID eventUuid) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

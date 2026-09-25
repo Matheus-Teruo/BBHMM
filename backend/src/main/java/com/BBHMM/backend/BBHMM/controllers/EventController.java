@@ -109,7 +109,7 @@ public class EventController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{eventUuid}")
-    @Operation(summary = "Finilize Event")
+    @Operation(summary = "Finalize Event")
     @ApiResponse(responseCode = "204", description = "Event Finished")
     @CreateWithReadErrors
     public ResponseEntity<Void> finishEvent(@Valid @PathVariable UUID eventUuid) {
