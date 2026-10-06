@@ -22,6 +22,7 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateEventUserRequest;
 import com.BBHMM.backend.BBHMM.models.response.EventResponse;
 import com.BBHMM.backend.BBHMM.models.response.EventUserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
+import com.BBHMM.backend.BBHMM.services.EventUserService;
 import com.BBHMM.backend.BBHMM.services.StorageService;
 import com.BBHMM.backend.BBHMM.services.UserService;
 
@@ -38,6 +39,7 @@ public class EventController {
 
     private final EventService service;
     private final UserService userService;
+    private final EventUserService eventUserService;
     private final StorageService storageService;
 
     @PreAuthorize("hasRole('USER')")
@@ -45,7 +47,9 @@ public class EventController {
     @Operation(summary = "Create Event")
     @ApiResponse(responseCode = "201", description = "Event created")
     @CreateWithReadErrors
-    public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody CreateEventRequest request) {
+    public ResponseEntity<EventResponse> createEvent(
+        @Valid @RequestBody CreateEventRequest request
+    ) {
         User userSec = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.safeTakeUserByUuid(userSec.getUuid());
         var event = service.createEvent(request, user);
@@ -63,7 +67,9 @@ public class EventController {
     @Operation(summary = "Read Event")
     @ApiResponse(responseCode = "200", description = "Event returned by id")
     @ReadResourceErrors
-    public ResponseEntity<EventResponse> getEvent(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<EventResponse> getEvent(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         return ResponseEntity.ok(new EventResponse(service.getEvent(eventUuid)));
     }
 
@@ -86,7 +92,9 @@ public class EventController {
     @Operation(summary = "Update Event")
     @ApiResponse(responseCode = "200", description = "Bill returned by id")
     @CreateWithReadErrors
-    public ResponseEntity<EventResponse> updateEvent(@Valid @RequestBody UpdateEventRequest request) {
+    public ResponseEntity<EventResponse> updateEvent(
+        @Valid @RequestBody UpdateEventRequest request
+    ) {
         var event = service.updateEvent(request);
 
         return ResponseEntity.ok(new EventResponse(event));
@@ -101,7 +109,7 @@ public class EventController {
         @Valid @PathVariable UUID eventUuid
     ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var eventUser = service.updateEventUser(request, eventUuid, userSecurity);
+        var eventUser = eventUserService.updateEventUser(request, eventUuid, userSecurity);
         var imageUrl = storageService.generatePresignedUrl(userSecurity.getImageKey(), Duration.ofMinutes(10));
 
         return ResponseEntity.ok(new EventUserResponse(userSecurity, eventUser, imageUrl));
@@ -112,7 +120,9 @@ public class EventController {
     @Operation(summary = "Finalize Event")
     @ApiResponse(responseCode = "204", description = "Event Finished")
     @CreateWithReadErrors
-    public ResponseEntity<Void> finishEvent(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<Void> finishEvent(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.finishEvent(eventUuid, userSecurity);
 
@@ -123,9 +133,11 @@ public class EventController {
     @Operation(summary = "List Users from Event")
     @ApiResponse(responseCode = "200", description = "Return users from event")
     @ReadResourceErrors
-    public ResponseEntity<List<EventUserResponse>> listUsersFromEvent(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<List<EventUserResponse>> listUsersFromEvent(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var response = userService.findParticipantsByEventUuid(eventUuid, userSecurity)
+        var response = eventUserService.listEventUsers(eventUuid, userSecurity)
             .stream().map(eventUser -> 
                 new EventUserResponse(eventUser, storageService.generatePresignedUrl(eventUser.getUser().getImageKey(), Duration.ofMinutes(10))))
                 .toList();

@@ -52,10 +52,10 @@ public class AuthController {
     @Operation(summary = "Create User")
     @ApiResponse(responseCode = "201", description = "User created and logged in")
     @CreateResourceErrors
-    public ResponseEntity<UserResponse> signUp(
-        @Valid @RequestBody
-        SignupUserRequest request,
-        HttpServletResponse response) {
+    public ResponseEntity<UserResponse> signup(
+        @Valid @RequestBody SignupUserRequest request,
+        HttpServletResponse response
+    ) {
         var user = service.createUser(request);
 
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
@@ -79,9 +79,9 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "User logged in")
     @ReadResourceErrors
     public ResponseEntity<UserResumeResponse> login(
-        @Valid @RequestBody
-        LoginUserRequest request,
-        HttpServletResponse response) {
+        @Valid @RequestBody LoginUserRequest request,
+        HttpServletResponse response
+    ) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         var authentication = manager.authenticate(authenticationToken);
 
@@ -98,7 +98,8 @@ public class AuthController {
     @ReadResourceErrors
     public ResponseEntity<GuestResponse> loginGuest(
         @Valid @RequestBody LoginGuestRequest request,
-        HttpServletResponse response) {
+        HttpServletResponse response
+    ) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         var authentication = manager.authenticate(authenticationToken);
 
@@ -134,7 +135,9 @@ public class AuthController {
     @Operation(summary = "Reset User password")
     @ApiResponse(responseCode = "204", description = "Reset password started")
     @CreateWithReadErrors
-    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<Void> resetPassword(
+        @Valid @RequestBody ResetPasswordRequest request
+    ) {
         service.resetPassword(request);
 
         return ResponseEntity.noContent().build();

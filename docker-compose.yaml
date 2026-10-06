@@ -6,6 +6,7 @@ services:
       dockerfile: dockerfile
     env_file:
       - .env
+    restart: always
     ports:
       - 8080:8080
     environment:
@@ -17,7 +18,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      mailhog:
+      storage:
         condition: service_started
   db:
     container_name: bbhmm_database
@@ -65,14 +66,14 @@ services:
       - public
     volumes:
       - storage-data:/data
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: bbhmm_mailhog
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-    networks:
-      - private
+  # mailhog:
+  #   image: mailhog/mailhog:latest
+  #   container_name: bbhmm_mailhog
+  #   ports:
+  #     - "1025:1025"
+  #     - "8025:8025"
+  #   networks:
+  #     - private
   frontend:
     container_name: bbhmm_frontend
     build:
@@ -80,6 +81,7 @@ services:
       dockerfile: dockerfile
     env_file:
       - .env
+    restart: always
     ports:
       - 5173:5173
     networks:
@@ -89,6 +91,7 @@ services:
   proxy:
     container_name: bbhmm_proxy
     image: nginx:alpine
+    restart: always
     ports:
       - "80:80"
     volumes:
@@ -101,10 +104,10 @@ services:
       - public
       - tunnel
   cloudflared:
+    restart: always
     container_name: bbhmm_cloudflare_tunnel
     image: cloudflare/cloudflared:latest
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
-    restart: unless-stopped
     networks:
       - public
 

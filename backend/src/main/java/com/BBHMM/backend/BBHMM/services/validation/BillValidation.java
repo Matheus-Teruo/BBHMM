@@ -11,6 +11,7 @@ import com.BBHMM.backend.BBHMM.models.Event;
 import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
+import com.BBHMM.backend.BBHMM.repositories.EventUserRepository;
 import com.BBHMM.backend.BBHMM.repositories.UserRepository;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class BillValidation {
 
     private final UserRepository userRepository;
+    private final EventUserRepository eventUserRepository;
 
     public void checkUserParticipationInEvent(User user, UUID eventUuid) {
         if (!userRepository.isUserParticipantInEvent(user.getUuid(), eventUuid)) {
@@ -38,7 +40,7 @@ public class BillValidation {
     }
 
     public void checkUsersParticipationInEvent(UUID eventUuid, List<UUID> participantsUuid) {
-        List<EventUser> eventUsers = userRepository.listUsersByEvent(eventUuid);
+        List<EventUser> eventUsers = eventUserRepository.listUsersByEvent(eventUuid);
         Set<UUID> foundUserUuids = eventUsers.stream()
                                         .map(EventUser::getUserUuid)
                                         .collect(Collectors.toSet());

@@ -1,0 +1,343 @@
+classDiagram
+
+    %% CONTROLLER
+    namespace Controllers {
+        class AuthController {
+            -UserService service
+            -EventService eventService
+            -AuthenticationManager manager
+            -TokenServiceConfig tokenService
+            +signup(SignupUserRequest, HttpServletResponse) ResponseEntity~UserResponse~
+            +login(LoginUserRequest, HttpServletResponse) ResponseEntity~UserResumeResponse~
+            +loginGuest(LoginGuestRequest, HttpServletResponse) ResponseEntity~GuestResponse~
+            +user(HttpServletResponse) ResponseEntity~UserResumeResponse~
+            +logout(HttpServletResponse) ResponseEntity~Void~
+            +resetPassword(ResetPasswordRequest) ResponseEntity~Void~
+            +checkResetPassword(CheckResetPasswordRequest, HttpServletResponse) ResponseEntity~UserResumeResponse~
+            -createCookie(String, Float) Cookie
+        }
+
+        class BillsController {
+            -BillService service
+            -CalculateBillUseCase cBillUseCase
+            +createBill(CreateBillRequest) ResponseEntity~BillResponse~
+            +getBills(UUID) ResponseEntity~BillResponse~
+            +listBills(UUID eventUuid) ResponseEntity~BillResponse~
+            +updateBill(UpdateBillRequest) ResponseEntity~BillResponse~
+            +updateBillParticipants(UpdateBillParticipantsRequest) ResponseEntity~Void~
+            +deleteBill(UUID) ResponseEntity~Void~
+        }
+
+        class EventController {
+            -EventService service
+            -UserService userService
+            -EventUserService eventUserService
+            -StorageService storageService
+            +createEvent(CreateEventRequest) ResponseEntity~EventResponse~
+            +getEvent(UUID) ResponseEntity~EventResponse~
+            +listEvents(String, LocalDate, Boolean, Pageable) ResponseEntity~Page~EventResponse~~
+            +updateEvent(UpdateEventRequest) ResponseEntity~EventResponse~
+            +updateEventUser(UpdateEventUserRequest, UUID) ResponseEntity~EventUserResponse~
+            +finishEvent(UUID) ResponseEntity~Void~
+            +listUsersFromEvent(UUID) ResponseEntity~List~EventUserResponse~~
+        }
+
+        class EventInvitationController {
+            -EventService eventService
+            +userEventInvitation(UserInvitationRequest) ResponseEntity~EventInvitationResponse~
+            +acceptedEventInvitation(AcceptInvitationRequest) ResponseEntity~EventInvitationResponse~
+            +listEventInvitation(Boolean, Pageable) ResponseEntity~Page~EventInvitationResponse~~
+        }
+
+        class PaymentController {
+            -PaymentService service
+            +getDebtTotal(UUID) ResponseEntity~DebitTotalResponse~
+            +getDebtPayment(UUID) ResponseEntity~List~PaymentResponse~~
+            +getDebtReceiving(eventUuid) ResponseEntity~List~PaymentResponse~~
+            +payOffDebtPayment(PayBillRequest) ResponseEntity~Void~
+            +listOfPayrollPerUser(UUID) ResponseEntity~List~PaymentDetailsResponse~~
+        }
+
+        class UserController {
+            -UserService service
+            -OnCaseGuest onCaseGuest
+            -EventService eventService
+            -EventUserService eventUserService
+            -StorageService storageService
+            +getUser(UUID) ResponseEntity~UserResponse~
+            +updateUser(UpdateUserRequest) ResponseEntity~UserResponse~
+            +verifyEmail(EmailValidationRequest) ResponseEntity~Void~
+            +validateEmail(EmailTokenRequest) ResponseEntity~Void~
+            +createGuest(CreateGuestRequest) ResponseEntity~NewGuestResponse~
+            +getGuest(UUID, UUID) ResponseEntity~NewGuestResponse~
+            +getGuestPassword(ResetGuestTokenRequest) ResponseEntity~NewGuestResponse~
+            +upgradeGuestToUser(UpgradeGuestToUserRequest) ResponseEntity~UserResponse~
+            +uploadImage(MultipartFile) ResponseEntity~UploadResponse~
+        }
+    }
+
+    %% SERVICES
+    namespace Services {
+        class BillService {
+            -BillRepository repository
+            -BillValidation validation
+            -EventService eventService
+            -UserService userService
+            +createBill(CreateBillRequest) Bill
+            +getBill(UUID) Bill
+            +safeTakeBillByUuid(UUID) Bill
+            +listBillsByEvent(UUID) List~Bill~
+            +listParticipantsByEvent(UUID) List~Participants~
+            +updateBill(UpdateBillRequest) Bill
+            +deleteBill(UUID) void
+            +updateParticipants(Bill, List~UUID~, BigDecimal) void
+            +updateParticipants(Bill, User, boolean, BigDecimal) void
+            +updatePaidValue(List~Participants~, Bill, BigDecimal) void
+            +reversePaidValue(List~Participants~, Bill) void
+            +updateBillPaidValue(Bill, Event) void
+            +reverseBillPaidValue(Bill) void
+        }
+
+        class EmailService {
+            -JavaMailSender mailSender
+            -SpringTemplateEngine templateEngine
+            -EmailProperties props
+            +sendValidationEmail(User, String) void
+            +sendPasswordResetEmail(User, String) void
+        }
+
+        class EventService {
+            -EventRepository repository
+            -EventValidation validation
+            -EventInvitationRepository eventInvitationRepository
+            -BillValidation billValidation
+            -UserService userService
+            -UserValidation userValidation
+            +createEvent(CreateEventRequest, User) Event
+            +getEvent(UUID) Event
+            +safeTakeEventByUuid(UUID) Event
+            +pageEvent(String, LocalDate, Boolean, Pageable) Page~Event~
+            +updateEvent(UpdateEventRequest) Event
+            +userEventInvitation(UserInvitationRequest) EventInvitation
+            +acceptedEventInvitation(AcceptInvitationRequest) EventInvitation
+            +listEventInvitation(Boolean, Pageable) Page~EventInvitation~
+            +finishEvent(UUID, User) void
+        }
+
+        class EventUserService {
+            -EventUserRepository repository
+            -EventService eventService
+            -BillRepository billRepository
+            -BillValidation billValidation
+            +updateEventUser(UpdateEventUserRequest, UUID, User) EventUser
+            +addUser(UUID, User) void
+            +findParticipantsByEventUuid(UUID, User) List~EventUser~
+            +updateEventUsersBalance(UUID, List~UUID~) void
+        }
+
+        class PaymentService {
+            -BillValidation billValidation
+            -BillRepository billRepository
+            -EventService eventService
+            +getTotal(UUID, User) BigDecimal
+            +getPaymentList(UUID, User) List~PaymentResponse~
+            +getReceivingList(UUID, User) List~PaymentResponse~
+            +payOffDebit(PayBillRequest, User) void
+            +listOfPayrollPerUser(UUID, User) List~PaymentDetailsResponse~
+            -resolvePayment(UUID) List~PaymentResponse~
+            -addTotal(Map~UUID, BigDecimal~, UUID, BigDecimal) void
+            -payOffBills(List~Bill~, BigDecimal) void
+            -payOffParticipants(List~Participants~, BigDecimal) void
+        }
+
+        class StorageService {
+            -S3Client s3Client
+            -S3Presigner presigner
+            -S3Properties props
+            +uploadImageFile(MultipartFile, UUID, String) String
+            +generatePresignedUrl(String, Duration) String
+            +deleteFile(String) void
+        }
+
+        class TokenService {
+            -TokenRepository repository
+            -TokenValidation validation
+            +createToken(TokenType, User) Token
+            +validateToken(TokenType, String, UUID) void
+            +getUserByToken(String) User
+            +generate6NumberToken() String
+        }
+
+        class UserService {
+            -EmailService emailService
+            -TokenService tokenService
+            -StorageService storageService
+            -UserRepository repository
+            -UserValidation validation
+            -BillValidation billValidation
+            -PasswordEncoder passwordEncoder
+            +createUser(SignupUserRequest) User
+            +getUser(UUID, User) User
+            +safeTakeUserByUuid(UUID) User
+            +findUserByNameOrFullnameOrEmail(String) User
+            +findUserByEmail(String) User
+            +updateUser(UpdateUserRequest, User) User
+            +verifyEmail(EmailValidationRequest, User) void
+            +confirmEmail(EmailTokenRequest, User) void
+            +resetPassword(ResetPasswordRequest) void
+            +checkResetPassword(CheckResetPasswordRequest, String) User
+            +createGuest(CreateGuestRequest, User, String, Event) User
+            +getGuest(UUID, User, UUID, String) User
+            +upgradeGuestToUser(UpgradeGuestToUserRequest) User
+            +generatePassword(int) String
+            +uploadImage(MultipartFile, UUID) String
+        }
+    }
+
+    %% USE_CASE
+    namespace useCase {
+        class CalculateBillUseCase {
+            -BillService billService
+            -BillValidation billValidation
+            -UserService userService
+            +updateBillParticipants(UpdateBillParticipantsRequest) void
+        }
+
+        class GuestUseCase {
+            -UserService userService
+            +caseUpdateGuestToken(ResetGuestTokenRequest, User) NewGuestResponse
+        }
+    }
+
+    %% REPOSITORY
+    namespace repository {
+        class BillRepository {
+            ~~interface~~
+            +findByUuid(uuid) Optional~Bill~
+            +findByUuidWithParticipants(uuid) Optional~Bill~
+            +findBillsByEventUuid(eventUuid) List~Bill~
+            +findBillsByEventUuidAndNotPaid(eventUuid) List~Bill~
+            +findBillsByPayerUuidAndNotPaid(payerUuid, eventUuid) List~Bill~
+            +findBillsByPayerUuidAndPaid(payerUuid, eventUuid) List~Bill~
+            +findPaymentByUserAndEventUuid(userUuid, eventUuid) List~Bill~
+            +findUnpaidParticipantsByUser(partUuid, eventUuid) List~Participants~
+            +findPaidParticipantsByUser(partUuid, eventUuid) List~Participants~
+            +findParticipantsByEventUuid(eventUuid) List~Participants~
+            +findUnpaidParticipants(eventUuid) List~Participants~
+        }
+
+        class EventInvitationRepository {
+            ~~interface~~
+            +findByUuid(UUID, Boolean, Pageable) Page~EventInvitation~
+            +existsByUserInvitedUuidAndEventUuidAndAcceptedIsNull(UUID, UUID) boolean
+            +findByUuid(UUID) Optional~EventInvitation~
+        }
+
+        class EventRepository {
+            ~~interface~~
+            +findByUuid(UUID) Optional~Event~
+            +findAllByUser(String, LocalDate, Boolean, Pageable, UUID) Page~Event~
+            +findAllByUserList(UUID) List~Event~
+            +userAlreadyInEvent(UUID, UUID) boolean
+            +existsByEventName(String) boolean
+        }
+
+        class EventUserRepository {
+            ~~interface~~
+            +listUsersByEvent(UUID) List~EventUser~
+        }
+
+        class TokenRepository {
+            ~~interface~~
+            +getByToken(String) Optional~Token~
+            +findLastValidByUserAndType(UUID, TokenType, LocalDateTime) Optional~Token~
+            +checkLastValidByUserAndType(UUID, TokenType, LocalDateTime) boolean
+            +findByTokenAndUserUuid(String, UUID, LocalDateTime) Optional~Token~
+        }
+
+        class TokenRepository {
+            ~~interface~~
+            +getByToken(String) Optional~Token~
+            +findLastValidByUserAndType(UUID, TokenType, LocalDateTime) Optional~Token~
+            +checkLastValidByUserAndType(UUID, TokenType, LocalDateTime) boolean
+            +findByTokenAndUserUuid(String, UUID, LocalDateTime) Optional~Token~
+        }
+
+        class UserRepository {
+            <<interface>>
+
+            +findByUuid(uuid) Optional~User~
+            +findByEmail(email) Optional~User~
+            +findByFullname(fullname) Optional~User~
+            +findByUsername(username) Optional~User~
+            +findByUsernameReturnDetails(username) UserDetails
+            +isUserParticipantInEvent(userUuid, eventUuid) boolean
+            +existsByUsername(username) boolean
+            +existsByFullname(fullname) boolean
+            +existsByEmail(email) boolean
+            +existsByIdAndRoleUser(uuid) boolean
+            +existsByIdAndRoleGuest(uuid) boolean
+        }
+    }
+
+
+    %% CONTROLLER -> SERVICE
+
+    AuthController --> UserService : call
+    AuthController --> EventService : call
+
+    BillsController --> BillService : call
+    BillsController --> CalculateBillUseCase : call
+
+    EventController --> EventService : call
+    EventController --> UserService : call
+    EventController --> EventUserService : call
+    EventController --> StorageService : call
+
+    EventInvitationController --> EventService : call
+
+    PaymentController --> PaymentService : call
+
+    UserController --> UserService : call
+    UserController --> EventService : call
+    UserController --> EventUserService : call
+    UserController --> StorageService : call
+    UserController --> GuestUseCase : call
+
+    %% SERVICE -> SERVICE
+
+    BillService --> EventService
+    BillService --> UserService
+
+    EventService --> UserService
+
+    EventUserService --> EventService
+
+    PaymentService --> EventService
+
+    UserService --> EmailService
+    UserService --> TokenService
+    UserService --> StorageService
+
+    %% USE CASE -> SERVICE
+
+    CalculateBillUseCase --> BillService
+    CalculateBillUseCase --> UserService
+
+    GuestUseCase --> UserService
+
+    %% SERVICE -> REPOSITORY
+
+    BillService --> BillRepository
+
+    EventService --> EventRepository
+    EventService --> EventInvitationRepository
+
+    EventUserService --> EventUserRepository
+    EventUserService --> BillRepository
+
+    PaymentService --> BillRepository
+
+    TokenService --> TokenRepository
+
+    UserService --> UserRepository

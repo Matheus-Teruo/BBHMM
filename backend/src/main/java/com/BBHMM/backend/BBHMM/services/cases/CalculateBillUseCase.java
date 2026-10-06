@@ -1,4 +1,4 @@
-package com.BBHMM.backend.BBHMM.services;
+package com.BBHMM.backend.BBHMM.services.cases;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.UpdateBillParticipantsRequest;
+import com.BBHMM.backend.BBHMM.services.BillService;
+import com.BBHMM.backend.BBHMM.services.UserService;
 import com.BBHMM.backend.BBHMM.services.validation.BillValidation;
 
 @Service
@@ -36,18 +38,18 @@ public class CalculateBillUseCase {
                 plus = false;
                 break;
             case "reset":
-                billService.reversePaidValue(bill.getParticipants(), bill);
+                billService.reversePaidValue(bill.getParticipants(), bill, user);
                 bill.getParticipants().removeAll(bill.getParticipants());
                 return;
             case "all":
-                billService.reversePaidValue(bill.getParticipants(), bill);
+                billService.reversePaidValue(bill.getParticipants(), bill, user);
                 bill.getParticipants().removeAll(bill.getParticipants());
-                billService.updateParticipants(bill, bill.getEvent().getEventUsers().stream().map(EventUser::getUserUuid).toList(), bill.getValue());
+                billService.updateParticipants(bill, bill.getEvent().getEventUsers().stream().map(EventUser::getUserUuid).toList(), bill.getValue(), user);
                 return;
             default:
                 return;
         }
 
-        billService.updateParticipants(bill, partUser, plus, bill.getValue());
+        billService.updateParticipants(bill, partUser, plus, bill.getValue(), user);
     }
 }

@@ -16,7 +16,6 @@ import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.AcceptInvitationRequest;
 import com.BBHMM.backend.BBHMM.models.request.CreateEventRequest;
 import com.BBHMM.backend.BBHMM.models.request.UpdateEventRequest;
-import com.BBHMM.backend.BBHMM.models.request.UpdateEventUserRequest;
 import com.BBHMM.backend.BBHMM.models.request.UserInvitationRequest;
 import com.BBHMM.backend.BBHMM.repositories.EventInvitationRepository;
 import com.BBHMM.backend.BBHMM.repositories.EventRepository;
@@ -82,19 +81,6 @@ public class EventService {
         return event;
     }
 
-    @Transactional
-    public EventUser updateEventUser(UpdateEventUserRequest request, UUID eventUuid, User userSecurity) {
-        Event event = safeTakeEventByUuid(eventUuid);
-        EventUser eventUser = event.getEventUsers()
-                                    .stream()
-                                    .filter(eu -> userSecurity.getUuid().equals(eu.getUserUuid()))
-                                    .findFirst()
-                                    .orElseThrow(() -> new InvalidDatabaseQueryException("Usuário não encontrado", "usuário não encontrado no evento", "UserID", userSecurity.getUuid().toString()));
-        eventUser.update(request);
-
-        return eventUser;
-    }
-
     public EventInvitation userEventInvitation(UserInvitationRequest request) {
         Event event = safeTakeEventByUuid(request.eventUuid());
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -131,13 +117,6 @@ public class EventService {
     public Page<EventInvitation> listEventInvitation(Boolean accepted, Pageable pageable) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return eventInvitationRepository.findAllByUserInvitedUuid(userOwner.getUuid(), accepted, pageable);
-    }
-
-    @Transactional
-    public void addUser(UUID eventUuid, User guest) {
-        Event event = safeTakeEventByUuid(eventUuid);
-        EventUser eventUser = new EventUser(guest, event);
-        event.addUser(eventUser);
     }
 
     @Transactional

@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Event;
-import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.Pix;
 import com.BBHMM.backend.BBHMM.models.Token;
 import com.BBHMM.backend.BBHMM.models.TokenType;
@@ -118,13 +117,6 @@ public class UserService {
                             "email",
                             email
                     ));
-    }
-
-    public List<EventUser> findParticipantsByEventUuid(UUID eventUuid, User user) {
-        billValidation.checkUserParticipationInEvent(user, eventUuid);
-        var eventUsers = repository.listUsersByEvent(eventUuid);
-
-        return eventUsers;
     }
 
     @Transactional

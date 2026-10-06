@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import com.BBHMM.backend.BBHMM.infra.exceptions.InvalidDatabaseQueryException;
 import com.BBHMM.backend.BBHMM.models.Bill;
 import com.BBHMM.backend.BBHMM.models.Event;
+import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.Participants;
 import com.BBHMM.backend.BBHMM.models.User;
 import com.BBHMM.backend.BBHMM.models.request.CreateBillRequest;
@@ -31,6 +32,7 @@ public class BillService {
     private final BillRepository repository;
     private final BillValidation validation;
     private final EventService eventService;
+    private final EventUserService eventUserService;
     private final UserService userService;
 
     @Transactional
@@ -43,7 +45,7 @@ public class BillService {
         validation.checkEventFinished(event);
 
         var bill = new Bill(request, event, user);
-        updateBillPaidValue(bill, event);
+        updateBillPaidValue(bill, event, userSecurity);
         repository.save(bill);
 
         return bill;
@@ -89,7 +91,7 @@ public class BillService {
         bill.update(request);
         if (request.listPartUuids() != null) {
             validation.checkUsersParticipationInEvent(bill.getEventUuid(), request.listPartUuids());
-            updateParticipants(bill, request.listPartUuids(), request.value());
+            updateParticipants(bill, request.listPartUuids(), request.value(), user);
         }
 
         return bill;
@@ -104,15 +106,15 @@ public class BillService {
 
         List<Participants> currentParticipants = bill.getParticipants();
 
-        reversePaidValue(currentParticipants, bill);
-        reverseBillPaidValue(bill);
+        reversePaidValue(currentParticipants, bill, user);
+        reverseBillPaidValue(bill, bill.getEvent(), user);
         repository.delete(bill);
     }
 
-    public void updateParticipants(Bill bill, List<UUID> listPartUuids, BigDecimal value) {
+    public void updateParticipants(Bill bill, List<UUID> listPartUuids, BigDecimal value, User userOwner) {
         List<Participants> currentParticipants = bill.getParticipants();
 
-        reversePaidValue(currentParticipants, bill);
+        reversePaidValue(currentParticipants, bill, userOwner);
 
         Set<UUID> newUuids = new HashSet<>(listPartUuids);
         Set<UUID> currentUuids = currentParticipants.stream()
@@ -136,16 +138,16 @@ public class BillService {
 
         currentParticipants.addAll(toAdd);
 
-        updatePaidValue(currentParticipants, bill, value);
+        updatePaidValue(currentParticipants, bill, value, userOwner);
 
         bill.setParticipants(currentParticipants);
     }
 
-    public void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value) {
+    public void updateParticipants(Bill bill, User participant, boolean add, BigDecimal value, User userOwner) {
 
         List<Participants> currentParticipants = bill.getParticipants();
 
-        reversePaidValue(currentParticipants, bill);
+        reversePaidValue(currentParticipants, bill, userOwner);
 
         if (add) {
             boolean alreadyExists = currentParticipants.stream()
@@ -165,15 +167,23 @@ public class BillService {
             return;
         }
 
-        updatePaidValue(currentParticipants, bill, value);
+        updatePaidValue(currentParticipants, bill, value, userOwner);
 
         bill.setParticipants(currentParticipants);
     }
 
-    private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal value) {
+    private void updatePaidValue(List<Participants> currentParticipants, Bill bill, BigDecimal value, User userOwner) {
         int size = currentParticipants.size();
+        List<EventUser> eventUsers = eventUserService.listEventUsers(bill.getEventUuid(), userOwner);
+        EventUser eventUserOwner = eventUserService.findEventUser(userOwner, bill.getEventUuid());
         BigDecimal currentValue = value;
         for (Participants participation : currentParticipants) {
+            EventUser eventUser = eventUsers.stream()
+                .filter(eu -> eu.getUserUuid().equals(
+                    participation.getUserUuid()
+                ))
+                .findFirst()
+                .orElse(null);
             BigDecimal share = currentValue.divide(
                 BigDecimal.valueOf(size--),
                 2,
@@ -188,9 +198,13 @@ public class BillService {
                 if (userDebit.compareTo(debtBill) < 0) {
                     participation.completeParticipation();
                     userBill.addToDebit(userDebit);
+                    eventUser.addDebit(currentValue);
+                    eventUserOwner.addCredit(currentValue);
                     userDebit = BigDecimal.ZERO;
                 } else if (userDebit.compareTo(debtBill) >= 0) {
                     userBill.completeBill();
+                    eventUser.addDebit(currentValue);
+                    eventUserOwner.addCredit(currentValue);
                     if (userDebit.compareTo(debtBill) == 0) {
                         participation.completeParticipation();
                     } else {
@@ -206,8 +220,16 @@ public class BillService {
         }
     }
 
-    public void reversePaidValue(List<Participants> removedParticipants, Bill bill) {
+    public void reversePaidValue(List<Participants> removedParticipants, Bill bill, User user) {
+        List<EventUser> eventUsers = eventUserService.listEventUsers(bill.getEventUuid(), user);
+        EventUser eventUserOwner = eventUserService.findEventUser(user, bill.getEventUuid());
         for (Participants participation : removedParticipants) {
+            EventUser eventUser = eventUsers.stream()
+                .filter(eu -> eu.getUserUuid().equals(
+                    participation.getUserUuid()
+                ))
+                .findFirst()
+                .orElse(null);
             BigDecimal undoPaidValue = participation.getPaidValue();
             List<Bill> userBills = repository.findBillsByPayerUuidAndPaid(participation.getUserUuid(), bill.getEventUuid());
             for (Bill userBill : userBills) {
@@ -215,9 +237,13 @@ public class BillService {
                 if (undoPaidValue.compareTo(undoDebtBill) < 0) {
                     participation.undoParticipation();
                     userBill.subtractToDebit(undoPaidValue);
+                    eventUser.subtractDebit(undoPaidValue);
+                    eventUserOwner.subtractCredit(undoPaidValue);
                     undoPaidValue = BigDecimal.ZERO;
                 } else if (undoPaidValue.compareTo(undoDebtBill) >= 0) {
                     userBill.undoCompleteBill();
+                    eventUser.subtractDebit(undoPaidValue);
+                    eventUserOwner.subtractCredit(undoPaidValue);
                     if (undoPaidValue.compareTo(undoDebtBill) == 0) {
                         participation.undoParticipation();
                     } else {
@@ -232,17 +258,29 @@ public class BillService {
         }
     }
 
-    private void updateBillPaidValue(Bill bill, Event event) {
+    private void updateBillPaidValue(Bill bill, Event event, User user) {
         List<Participants> userParticipants = repository.findUnpaidParticipantsByUser(bill.getPayerUuid(), event.getUuid());
+        List<EventUser> eventUsers = eventUserService.listEventUsers(event.getUuid(), user);
+        EventUser eventUserOwner = eventUserService.findEventUser(user, event.getUuid());
         BigDecimal userDebit = bill.getValue();
         for (Participants userParticipation : userParticipants) {
+            EventUser eventUser = eventUsers.stream()
+                .filter(eu -> eu.getUserUuid().equals(
+                    userParticipation.getUserUuid()
+                ))
+                .findFirst()
+                .orElse(null);
             BigDecimal debtParticipation = userParticipation.getRemainingBalance();
             if (userDebit.compareTo(debtParticipation) < 0) {
                 bill.completeBill();
                 userParticipation.addPaidValue(userDebit);
+                eventUser.addDebit(userDebit);
+                eventUserOwner.addCredit(userDebit);
                 userDebit = BigDecimal.ZERO;
             } else if (userDebit.compareTo(debtParticipation) >= 0) {
                 userParticipation.completeParticipation();
+                eventUser.addDebit(userDebit);
+                eventUserOwner.addCredit(userDebit);
                 if (userDebit.compareTo(debtParticipation) == 0) {
                     bill.completeBill();
                 } else {
@@ -257,17 +295,29 @@ public class BillService {
         }
     }
 
-    private void reverseBillPaidValue(Bill bill) {
+    private void reverseBillPaidValue(Bill bill, Event event, User user) {
         List<Participants> userParticipants = repository.findPaidParticipantsByUser(bill.getPayerUuid(), bill.getEventUuid());
+        List<EventUser> eventUsers = eventUserService.listEventUsers(event.getUuid(), user);
         BigDecimal undoDebitAmount = bill.getDebitAmount();
+        EventUser eventUserOwner = eventUserService.findEventUser(user, event.getUuid());
         for (Participants userParticipation : userParticipants) {
+            EventUser eventUser = eventUsers.stream()
+                .filter(eu -> eu.getUserUuid().equals(
+                    userParticipation.getUserUuid()
+                ))
+                .findFirst()
+                .orElse(null);
             BigDecimal undoDebtBill = userParticipation.getPaidValue();
             if (undoDebitAmount.compareTo(undoDebtBill) < 0) {
                 bill.undoCompleteBill();
                 userParticipation.subtractPaidValue(undoDebitAmount);
+                eventUser.subtractDebit(undoDebitAmount);
+                eventUserOwner.subtractCredit(undoDebitAmount);
                 undoDebitAmount = BigDecimal.ZERO;
             } else if (undoDebitAmount.compareTo(undoDebtBill) >= 0) {
                 userParticipation.undoParticipation();
+                eventUser.subtractDebit(undoDebitAmount);
+                eventUserOwner.subtractCredit(undoDebitAmount);
                 if (undoDebitAmount.compareTo(undoDebtBill) == 0) {
                     bill.undoCompleteBill();
                 } else {

@@ -5,10 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
-import com.BBHMM.backend.BBHMM.models.EventUser;
 import com.BBHMM.backend.BBHMM.models.User;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,9 +15,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.uuid = :uuid")
     Optional<User> findByUuid(UUID uuid);
-
-    @Query("SELECT eu FROM EventUser eu JOIN eu.event e WHERE e.uuid = :eventUuid")
-    List<EventUser> listUsersByEvent(UUID eventUuid);
 
     Optional<User> findByEmail(String email);
 

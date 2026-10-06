@@ -26,9 +26,10 @@ import com.BBHMM.backend.BBHMM.models.response.NewGuestResponse;
 import com.BBHMM.backend.BBHMM.models.response.UploadResponse;
 import com.BBHMM.backend.BBHMM.models.response.UserResponse;
 import com.BBHMM.backend.BBHMM.services.EventService;
+import com.BBHMM.backend.BBHMM.services.EventUserService;
 import com.BBHMM.backend.BBHMM.services.StorageService;
 import com.BBHMM.backend.BBHMM.services.UserService;
-import com.BBHMM.backend.BBHMM.services.cases.OnCaseGuest;
+import com.BBHMM.backend.BBHMM.services.cases.GuestUseCase;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -40,15 +41,18 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService service;
-    private final OnCaseGuest onCaseGuest;
+    private final GuestUseCase guestUseCase;
     private final EventService eventService;
+    private final EventUserService eventUserService;
     private final StorageService storageService;
 
     @GetMapping("/{userUuid}")
     @Operation(summary = "Get User details")
     @ApiResponse(responseCode = "200", description = "Return user details")
     @ReadResourceErrors
-    public ResponseEntity<UserResponse> getUser(@Valid @PathVariable UUID userUuid) {
+    public ResponseEntity<UserResponse> getUser(
+        @Valid @PathVariable UUID userUuid
+    ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.getUser(userUuid, userSecurity);
         var imageUrl = storageService.generatePresignedUrl(user.getImageKey(), Duration.ofMinutes(10));
@@ -61,7 +65,9 @@ public class UserController {
     @Operation(summary = "Update User")
     @ApiResponse(responseCode = "200", description = "User updated")
     @CreateWithReadErrors
-    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UserResponse> updateUser(
+        @Valid @RequestBody UpdateUserRequest request
+    ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = service.updateUser(request, userSecurity);
         var imageUrl = storageService.generatePresignedUrl(user.getImageKey(), Duration.ofMinutes(10));
@@ -74,7 +80,9 @@ public class UserController {
     @Operation(summary = "Email validation")
     @ApiResponse(responseCode = "204", description = "Email Sended")
     @CreateWithReadErrors
-    public ResponseEntity<Void> verifyEmail(@Valid @RequestBody EmailValidationRequest request) {
+    public ResponseEntity<Void> verifyEmail(
+        @Valid @RequestBody EmailValidationRequest request
+    ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.verifyEmail(request ,userSecurity);
 
@@ -86,7 +94,9 @@ public class UserController {
     @Operation(summary = "Confirm Email")
     @ApiResponse(responseCode = "204", description = "Email confirmed")
     @CreateWithReadErrors
-    public ResponseEntity<Void> validateEmail(@Valid @RequestBody EmailTokenRequest request) {
+    public ResponseEntity<Void> validateEmail(
+        @Valid @RequestBody EmailTokenRequest request
+    ) {
         User userSecurity = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.confirmEmail(request, userSecurity);
 
@@ -98,13 +108,15 @@ public class UserController {
     @Operation(summary = "Create Guest")
     @ApiResponse(responseCode = "200", description = "Guest created")
     @CreateWithReadErrors
-    public ResponseEntity<NewGuestResponse> createGuest(@Valid @RequestBody CreateGuestRequest request) {
+    public ResponseEntity<NewGuestResponse> createGuest(
+        @Valid @RequestBody CreateGuestRequest request
+    ) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         String password = service.generatePassword(8);
         Event event = eventService.safeTakeEventByUuid(request.eventUuid());
         User user = service.createGuest(request, hostUser, password, event);
-        eventService.addUser(request.eventUuid(), user);
+        eventUserService.addUser(request.eventUuid(), user);
 
         return ResponseEntity.ok(new NewGuestResponse(user, password));
     }
@@ -135,7 +147,7 @@ public class UserController {
     ) {
         User hostUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return ResponseEntity.ok(onCaseGuest.caseUpdateGuestToken(request, hostUser));
+        return ResponseEntity.ok(guestUseCase.caseUpdateGuestToken(request, hostUser));
     }
 
     @PreAuthorize("hasRole('GUEST')")
@@ -159,7 +171,9 @@ public class UserController {
     )
     @Operation(summary = "Upload of user perfil image")
     @ApiResponse(responseCode = "200", description = "User image changed")
-    public ResponseEntity<UploadResponse> uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<UploadResponse> uploadImage(
+        @RequestParam("image") MultipartFile image
+    ) throws IOException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(new UploadResponse(service.uploadImage(image, user.getUuid())));
     }

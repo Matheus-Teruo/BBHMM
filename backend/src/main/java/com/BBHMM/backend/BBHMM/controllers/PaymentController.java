@@ -37,7 +37,9 @@ public class PaymentController {
     @Operation(summary = "Get total of user from event")
     @ApiResponse(responseCode = "200", description = "Return total")
     @ReadResourceErrors
-    public ResponseEntity<DebitTotalResponse> getDebtTotal(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<DebitTotalResponse> getDebtTotal(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         BigDecimal value = service.getTotal(eventUuid, userOwner);
@@ -48,7 +50,9 @@ public class PaymentController {
     @Operation(summary = "Get list to pay")
     @ApiResponse(responseCode = "200", description = "Return list of pendent debt")
     @ReadResourceErrors
-    public ResponseEntity<List<PaymentResponse>> getDebtPayment(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<List<PaymentResponse>> getDebtPayment(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<PaymentResponse> response = service.getPaymentList(eventUuid, userOwner);
@@ -59,7 +63,9 @@ public class PaymentController {
     @Operation(summary = "Get list to receive")
     @ApiResponse(responseCode = "200", description = "Return list of pendent receipt")
     @ReadResourceErrors
-    public ResponseEntity<List<PaymentResponse>> getDebtReceiving(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<List<PaymentResponse>> getDebtReceiving(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<PaymentResponse> response = service.getReceivingList(eventUuid, userOwner);
@@ -70,7 +76,9 @@ public class PaymentController {
     @Operation(summary = "Pay Bill")
     @ApiResponse(responseCode = "200", description = "Bill paid")
     @CreateWithReadErrors
-    public ResponseEntity<Void> payOffDebtPayment(@Valid @RequestBody PayBillRequest request) {
+    public ResponseEntity<Void> payOffDebtPayment(
+        @Valid @RequestBody PayBillRequest request
+    ) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         service.payOffDebit(request, userOwner);
@@ -81,7 +89,9 @@ public class PaymentController {
     @Operation(summary = "List paid Bill")
     @ApiResponse(responseCode = "200", description = "Return list of paid bill")
     @ReadResourceErrors
-    public ResponseEntity<List<PaymentDetailsResponse>> listOfPayrollPerUser(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<List<PaymentDetailsResponse>> listOfPayrollPerUser(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         User userOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return ResponseEntity.ok(service.listOfPayrollPerUser(eventUuid, userOwner));

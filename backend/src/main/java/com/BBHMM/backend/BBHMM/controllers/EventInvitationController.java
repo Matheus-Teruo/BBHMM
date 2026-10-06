@@ -40,7 +40,7 @@ public class EventInvitationController {
     @ReadResourceErrors
     public ResponseEntity<EventInvitationResponse> userEventInvitation(
         @Valid @RequestBody UserInvitationRequest request
-        ) {
+    ) {
         EventInvitation eventInvitation = eventService.userEventInvitation(request);
         
         return ResponseEntity.ok(new EventInvitationResponse(eventInvitation.getUuid(), eventService.getEvent(request.eventUuid()), eventInvitation.getAccepted(), eventInvitation.getUserInvited(), eventInvitation.getUserOwner()));
@@ -53,7 +53,7 @@ public class EventInvitationController {
     @CreateWithReadErrors
     public ResponseEntity<EventInvitationResponse> acceptedEventInvitation(
         @Valid @RequestBody AcceptInvitationRequest request
-        ) {
+    ) {
         EventInvitation eventInvitation = eventService.acceptedEventInvitation(request);
         User invitedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         

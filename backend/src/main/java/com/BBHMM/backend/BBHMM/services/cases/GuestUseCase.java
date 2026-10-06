@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class OnCaseGuest {
+public class GuestUseCase {
 
     private final UserService userService;
     

@@ -18,7 +18,7 @@ import com.BBHMM.backend.BBHMM.models.request.UpdateBillRequest;
 import com.BBHMM.backend.BBHMM.models.response.BillResponse;
 import com.BBHMM.backend.BBHMM.models.response.BillsResumeResponse;
 import com.BBHMM.backend.BBHMM.services.BillService;
-import com.BBHMM.backend.BBHMM.services.CalculateBillUseCase;
+import com.BBHMM.backend.BBHMM.services.cases.CalculateBillUseCase;
 
 import java.net.URI;
 import java.util.List;
@@ -36,7 +36,9 @@ public class BillsController {
     @Operation(summary = "Create Bill")
     @ApiResponse(responseCode = "201", description = "Bill created")
     @CreateWithReadErrors
-    public ResponseEntity<BillResponse> createBill(@Valid @RequestBody CreateBillRequest request) {
+    public ResponseEntity<BillResponse> createBill(
+        @Valid @RequestBody CreateBillRequest request
+    ) {
         var bill = service.createBill(request);
 
         URI location = ServletUriComponentsBuilder
@@ -52,7 +54,9 @@ public class BillsController {
     @Operation(summary = "Read Bill by id")
     @ApiResponse(responseCode = "200", description = "Bill returned by id")
     @ReadResourceErrors
-    public ResponseEntity<BillResponse> getBills(@Valid @PathVariable UUID billUuid) {
+    public ResponseEntity<BillResponse> getBills(
+        @Valid @PathVariable UUID billUuid
+    ) {
         var bill = service.getBill(billUuid);
 
         return ResponseEntity.ok(new BillResponse(bill));
@@ -62,7 +66,9 @@ public class BillsController {
     @Operation(summary = "List Bills")
     @ApiResponse(responseCode = "200", description = "Bills returned by event")
     @ReadResourceErrors
-    public ResponseEntity<List<BillsResumeResponse>> listBills(@Valid @PathVariable UUID eventUuid) {
+    public ResponseEntity<List<BillsResumeResponse>> listBills(
+        @Valid @PathVariable UUID eventUuid
+    ) {
         var participants = service.listParticipantsByEvent(eventUuid);
         var response = service.listBillsByEvent(eventUuid).stream().map((bill) ->
             new BillsResumeResponse(
@@ -76,7 +82,9 @@ public class BillsController {
     @Operation(summary = "Update Bill")
     @ApiResponse(responseCode = "200", description = "Bill updated by id")
     @CreateWithReadErrors
-    public ResponseEntity<BillResponse> updateBill(@Valid @RequestBody UpdateBillRequest request) {
+    public ResponseEntity<BillResponse> updateBill(
+        @Valid @RequestBody UpdateBillRequest request
+    ) {
         var bill = service.updateBill(request);
 
         return ResponseEntity.ok(new BillResponse(bill));
@@ -86,7 +94,9 @@ public class BillsController {
     @Operation(summary = "Update Bill participantes")
     @ApiResponse(responseCode = "204", description = "Participants of the bill updated")
     @CreateWithReadErrors
-    public ResponseEntity<Void> updateBillParticipants(@Valid @RequestBody UpdateBillParticipantsRequest request) {
+    public ResponseEntity<Void> updateBillParticipants(
+        @Valid @RequestBody UpdateBillParticipantsRequest request
+    ) {
         cBillUseCase.updateBillParticipants(request);
 
         return ResponseEntity.noContent().build();
@@ -97,7 +107,9 @@ public class BillsController {
     @Operation(summary = "Delete Bill")
     @ApiResponse(responseCode = "204", description = "Bill deleted")
     @CreateWithReadErrors
-    public ResponseEntity<Void> deleteBill(@Valid @PathVariable UUID billUuid) {
+    public ResponseEntity<Void> deleteBill(
+        @Valid @PathVariable UUID billUuid
+    ) {
         service.deleteBill(billUuid);
 
         return ResponseEntity.noContent().build();
